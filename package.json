@@ -1,0 +1,35 @@
+{
+  "name": "@mercadona/mo.library.burrito",
+  "version": "0.0.0",
+  "description": "🌯 Yummy React tests",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mercadona/mo.library.burrito.git"
+  },
+  "keywords": [
+    "react",
+    "testing",
+    "test",
+    "integration",
+    "unit",
+    "javascript",
+    "dom",
+    "js",
+    "jest",
+    "wrap",
+    "burrito",
+    "builder",
+    "outside-in",
+    "react-redux",
+    "react-router",
+    "component",
+    "mock",
+    "fetch",
+    "http"
+  ],
+  "bugs": {
+    "url": "https://github.com/mercadona/mo.library.burrito/issues"
+  },
+  "homepage": "https://github.com/mercadona/mo.library.burrito#readme"
+}
