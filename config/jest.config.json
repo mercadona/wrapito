@@ -1,9 +1,19 @@
 {
   "rootDir": "..",
+  "coverageDirectory": "results/coverage",
+  "coverageReporters": [
+    "lcov",
+    "text-summary",
+    "clover"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.{js,jsx}"
+  ],
   "setupFiles": [
     "<rootDir>/config/enzyme.js",
     "<rootDir>/config/polyfills.js"
   ],
   "testMatch": [ "<rootDir>/**/?(*.)(test).js" ],
-  "moduleFileExtensions": ["js", "json"]
+  "moduleFileExtensions": ["js", "json"],
+  "reporters": [ "default", "jest-junit" ]
 }
