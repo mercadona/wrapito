@@ -2,7 +2,7 @@
   "name": "@mercadona/mo.library.burrito",
   "version": "0.0.0",
   "description": "🌯 Yummy React tests",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --config config/jest.config.json",
     "test:watch": "jest --watch --config config/jest.config.json",
