@@ -1,4 +1,4 @@
-import { wrap, configureMocks } from '../index'
+import { wrap, configureMocks } from '../src/index'
 import { MyComponent, MyAsyncComponent, MyComponentMakingHttpCalls } from './components.mock'
 import { combineReducers } from 'redux'
 
