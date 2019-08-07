@@ -28,6 +28,13 @@
     "fetch",
     "http"
   ],
+  "bugs": {
+    "url": "https://github.com/mercadona/mo.library.burrito/issues"
+  },
+  "homepage": "https://github.com/mercadona/mo.library.burrito#readme",
+  "dependencies": {
+    "deep-equal": "^1.0.1"
+  },
   "peerDependencies": {
     "jest": "^24.1.0",
     "react": "^16.8.6",
@@ -37,9 +44,5 @@
     "redux": "^4.0.1",
     "react-redux": "^5.0.7",
     "redux-thunk": "^2.3.0"
-  },
-  "bugs": {
-    "url": "https://github.com/mercadona/mo.library.burrito/issues"
-  },
-  "homepage": "https://github.com/mercadona/mo.library.burrito#readme"
+  }
 }
