@@ -5,7 +5,10 @@
   "main": "build/index.js",
   "scripts": {
     "test": "jest --config config/jest.config.json",
-    "test:watch": "jest --watch --config config/jest.config.json"
+    "test:watch": "jest --watch --config config/jest.config.json",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps",
+    "postbuild": "node scripts/copy-publish-files.js",
+    "publish-package": "npm run clean && npm run build && npm run postbuild && cd dist && npm publish"
   },
   "repository": {
     "type": "git",
