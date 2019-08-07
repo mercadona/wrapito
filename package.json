@@ -4,7 +4,7 @@
   "description": "🌯 Yummy React tests",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest --config config/jest.config.json",
+    "test": "jest --ci --coverage --config config/jest.config.json",
     "test:watch": "jest --watch --config config/jest.config.json",
     "build": "NODE_ENV=production babel src --out-dir dist --source-maps",
     "postbuild": "node scripts/copy-publish-files.js",
@@ -53,6 +53,7 @@
     "enzyme": "~3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "jest": "^24.1.0",
+    "jest-junit": "^6.4.0",
     "node-fetch": "^2.6.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -80,5 +81,9 @@
       "@babel/plugin-transform-runtime",
       "@babel/proposal-class-properties"
     ]
+  },
+  "jest-junit": {
+    "suiteName": "jest tests",
+    "output": "results/tests/jest-junit.xml"
   }
 }
