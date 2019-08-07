@@ -1,5 +1,9 @@
 {
   "rootDir": "..",
+  "setupFiles": [
+    "<rootDir>/config/enzyme.js",
+    "<rootDir>/config/polyfills.js"
+  ],
   "testMatch": [ "<rootDir>/**/?(*.)(test).js" ],
-  "moduleFileExtensions": ["json", "js"]
+  "moduleFileExtensions": ["js", "json"]
 }
