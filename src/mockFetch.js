@@ -1,4 +1,5 @@
 import deepEqual from 'deep-equal'
+import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
 
 global.fetch = jest.fn()
@@ -49,7 +50,15 @@ function mockFetch(responses) {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
     const responseMatchingRequest = listOfResponses.find(getRequestMatcher(request, normalizedRequestBody))
 
-    if (!responseMatchingRequest) { throw Error('cannot find any endpoint') }
+    if (!responseMatchingRequest) {
+      console.warn(`
+        ${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matching:') }
+        URL: ${ greenBright(request.url) }
+        METHOD: ${ greenBright(request.method.toLowerCase()) }
+        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+      `)
+      throw Error(redBright.bold('cannot find any mock'))
+    }
 
     return createResponse(responseMatchingRequest)
   })
