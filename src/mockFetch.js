@@ -44,7 +44,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
 )
 
 function mockFetch(responses = []) {
-  const listOfResponses = responses.length > 0 ? responses : [ responses ]
+  const listOfResponses = Array.isArray(responses) ? responses : [ responses ]
 
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
