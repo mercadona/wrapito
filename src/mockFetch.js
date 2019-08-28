@@ -43,7 +43,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
   })
 )
 
-function mockFetch(responses) {
+function mockFetch(responses = []) {
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
 
   global.fetch.mockImplementation(async request => {

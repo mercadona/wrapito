@@ -66,6 +66,16 @@ const asyncMount = Component => {
     })
   }
 
+  componentMounted.findByText = text => {
+    return new Promise(resolve => {
+      setImmediate(() => {
+        componentMounted.update()
+
+        resolve(componentMounted.findWhere(node => node.text() === text).first())
+      })
+    })
+  }
+
   return componentMounted
 }
 
