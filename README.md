@@ -32,7 +32,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## Initial setup
-In order to make easier the usage of `withMocks` and `withStore`, we can set default values to our `api host`, the initial `redux's store state` and the `reducers`. This way we make `burrito` a litle bit more agnostic.
+In order to make easier the usage of `withMocks` and `withStore`, we can set default values to our `api host`, the initial `redux's store state` and the `reducers`. This way we make `burrito` a litle bit more agnostic. For example `setupMocks.js`
 
 ```
 import { configureMocks } from '@mercadona/mo.library.burrito'
@@ -46,6 +46,14 @@ configureMocks({
   defaultStore: initialState,
   reducers,
 })
+```
+
+and add the previous file in `jest.config.json`
+
+```
+  "setupFiles": [
+    "<rootDir>/config/jest/setupMocks.js"
+  ],
 ```
 
 ## API
