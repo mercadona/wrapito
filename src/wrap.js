@@ -1,10 +1,10 @@
 import React from 'react'
-import { mount as _mount } from 'enzyme'
 import { Provider } from 'react-redux'
 
 import { mockStore } from './mockStore'
 import { MockRouter } from './mockRouter'
 import { mockFetch } from './mockFetch'
+import { getMocksConfig } from './config'
 
 const wrap = options => {
   const isComponent = typeof options === 'function'
@@ -53,35 +53,19 @@ function setupPortal(portalRootId) {
   document.body.appendChild(portalRoot)
 }
 
-const asyncMount = Component => {
-  const componentMounted = _mount(Component)
+const mount = ({ Component, props }) => getMocksConfig().mount(<Component { ...props } />)
 
-  componentMounted.asyncFind = selector => {
-    return new Promise(resolve => {
-      setImmediate(() => {
-        componentMounted.update()
-
-        resolve(componentMounted.find(selector))
-      })
-    })
-  }
-
-  return componentMounted
-}
-
-const mount = ({ Component, props }) => asyncMount(<Component { ...props } />)
-
-const mountWithRouter = ({ Component, props: componentProps, routing }) => asyncMount(
+const mountWithRouter = ({ Component, props: componentProps, routing }) => getMocksConfig().mount(
   <MockRouter { ...{ Component, routing, componentProps } } />
 )
 
-const mountWithStore = ({ Component, props, store }) => asyncMount(
+const mountWithStore = ({ Component, props, store }) => getMocksConfig().mount(
   <Provider store={ mockStore(store) }>
     <Component { ...props } />
   </Provider>
 )
 
-const mountWithStoreAndRouter = ({ Component, props: componentProps, store, routing }) => asyncMount(
+const mountWithStoreAndRouter = ({ Component, props: componentProps, store, routing }) => getMocksConfig().mount(
   <Provider store={ mockStore(store) }>
     <MockRouter { ...{ Component, routing, componentProps } } />
   </Provider>

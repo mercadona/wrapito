@@ -1,9 +1,13 @@
-import { wrap, configureMocks } from '../src/index'
-import { MyComponent, MyAsyncComponent, MyComponentMakingHttpCalls } from './components.mock'
+import { render } from 'react-dom'
 import { combineReducers } from 'redux'
+import { wrap, configureMocks } from '../src/index'
+import { getMocksConfig } from '../src/config'
+import { MyComponent, MyAsyncComponent, MyComponentMakingHttpCalls } from './components.mock'
+
+const defaultMocksConfig = getMocksConfig()
 
 function resetMocksConfig() {
-  configureMocks(null)
+  configureMocks(defaultMocksConfig)
 }
 
 describe('wrap', () => {
@@ -150,5 +154,32 @@ describe('wrap', () => {
 
     const successIconAfterSave = (await myComponentMakingHttpCalls.asyncFind('[aria-label="quantity saved"]'))
     expect(successIconAfterSave).toHaveLength(1)
+  })
+
+  it('should use Enzyme by default', () => {
+    const expectedText = 'Foo'
+    const mountedWithEnzymeComponent = wrap(MyComponent).mount()
+
+    const textFoundByUsingEnzymeAPI = mountedWithEnzymeComponent.text()
+
+    expect(textFoundByUsingEnzymeAPI).toBe(expectedText)
+  })
+
+  it('should use a custom mount', () => {
+    function mountUsingNativeBrowserAPI(component) {
+      const rootNode = document.body.appendChild(document.createElement('div'))
+
+      render(component, rootNode)
+
+      return rootNode
+    }
+
+    configureMocks({ mount: mountUsingNativeBrowserAPI })
+    const expectedText = 'Foo'
+    const mountedWithNativeBrowserAPIComponent = wrap(MyComponent).mount()
+
+    const textFoundByUsingNativeBrowserAPI = mountedWithNativeBrowserAPIComponent.textContent
+
+    expect(textFoundByUsingNativeBrowserAPI).toBe(expectedText)
   })
 })
