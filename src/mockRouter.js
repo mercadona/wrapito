@@ -20,12 +20,12 @@ const MockRouter = ({ Component, routing = { otherRoutes: [], currentRoute: {} }
 )
 
 MockRouter.propTypes = {
-  Component: oneOfType([func, node]).isRequired,
+  Component: oneOfType([func, node, object]).isRequired,
   routing: shape({
     otherRoutes: arrayOf(shape({
       path: string.isRequired,
       exact: boolean,
-      component: oneOfType([func, node]).isRequired,
+      component: oneOfType([func, node, object]).isRequired,
     })),
     currentRoute: shape({
       path: string.isRequired,
