@@ -8,8 +8,9 @@ import { getMocksConfig } from './config'
 
 const wrap = options => {
   const isComponent = typeof options === 'function'
+  const isWrappedComponent = typeof options.WrappedComponent === 'function'
 
-  if (isComponent) {
+  if (isComponent || isWrappedComponent) {
     return wrap({ Component: options })
   }
 
@@ -70,5 +71,6 @@ const mountWithStoreAndRouter = ({ Component, props: componentProps, store, rout
     <MockRouter { ...{ Component, routing, componentProps } } />
   </Provider>
 )
+
 
 export { wrap }
