@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment, useState } from 'react'
 
 export const MyComponent = props => <div>Foo</div>
 
@@ -64,5 +64,34 @@ export class MyComponentMakingHttpCalls extends Component {
       { this.state.quantity }
       { this.state.isSaved && <i aria-label="quantity saved" /> }
     </div>
+  )
+}
+
+export const MyComponentRepeatingHttpCalls = () => {
+  const [ products, setProducts ] = useState([])
+
+  const fetchProducts = async () => {
+    const productsRequest = new Request('my-host/path/to/get/products/')
+    try {
+      const productsResponse = await fetch(productsRequest)
+      const products = await productsResponse.json()
+      setProducts(products)
+    } catch (error) {}
+  }
+
+  return (
+    <Fragment>
+      <button onClick={ fetchProducts }>refresh products list</button>
+      <table>
+        <tbody>
+          { products.map(product => (
+              <tr key={ product }>
+                <td>{ product }</td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+    </Fragment>
   )
 }
