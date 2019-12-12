@@ -15,6 +15,7 @@ const defaultMocksConfig = getMocksConfig()
 
 function resetMocksConfig() {
   configureMocks(defaultMocksConfig)
+  jest.restoreAllMocks()
 }
 
 describe('burrito', () => {
