@@ -1,8 +1,14 @@
 import { render } from 'react-dom'
+import { render as renderUsingTestingLibrary, wait, fireEvent } from '@testing-library/react'
 import { combineReducers } from 'redux'
 import { wrap, configureMocks } from '../src/index'
 import { getMocksConfig } from '../src/config'
-import { MyComponent, MyAsyncComponent, MyComponentMakingHttpCalls } from './components.mock'
+import {
+  MyComponent,
+  MyAsyncComponent,
+  MyComponentMakingHttpCalls,
+  MyComponentRepeatingHttpCalls,
+} from './components.mock'
 
 const defaultMocksConfig = getMocksConfig()
 
@@ -10,14 +16,8 @@ function resetMocksConfig() {
   configureMocks(defaultMocksConfig)
 }
 
-describe('wrap', () => {
+describe('burrito', () => {
   afterEach(resetMocksConfig)
-
-  it('should render correctly', () => {
-    const myComponent = wrap(MyComponent).mount()
-    expect(myComponent).toBeDefined()
-    expect(myComponent.exists()).toBeTruthy()
-  })
 
   it('should expose a way to find elements asynchronously', async () => {
     const myAsyncComponent = wrap(MyAsyncComponent).mount()
@@ -154,6 +154,59 @@ describe('wrap', () => {
 
     const successIconAfterSave = (await myComponentMakingHttpCalls.asyncFind('[aria-label="quantity saved"]'))
     expect(successIconAfterSave).toHaveLength(1)
+  })
+
+  it('should mock different responses given the same request', async () => {
+    configureMocks({ defaultHost: 'my-host', mount: renderUsingTestingLibrary })
+
+    const productsBeforeRefreshing = ['tomato', 'orange']
+    const productsAfterRefreshing = ['tomato', 'orange', 'apple']
+    const { getAllByRole, getByText } = wrap(MyComponentRepeatingHttpCalls)
+      .withMocks({
+        path: '/path/to/get/products/',
+        multipleResponses: [
+          { responseBody: productsBeforeRefreshing },
+          { responseBody: productsAfterRefreshing },
+        ],
+      })
+      .mount()
+
+    fireEvent.click(getByText('refresh products list'))
+    await wait(() =>
+      expect(getAllByRole('row').map(row => row.textContent)).toEqual(productsBeforeRefreshing)
+    )
+
+    fireEvent.click(getByText('refresh products list'))
+    await wait(() =>
+      expect(getAllByRole('row').map(row => row.textContent)).toEqual(productsAfterRefreshing)
+    )
+  })
+
+  it('should not have enough responses specified', async () => {
+    configureMocks({ defaultHost: 'my-host', mount: renderUsingTestingLibrary })
+    console.warn = jest.fn()
+
+    const products = ['tomato', 'orange']
+    const { getAllByRole, getByText } = wrap(MyComponentRepeatingHttpCalls)
+      .withMocks({
+        path: '/path/to/get/products/',
+        multipleResponses: [
+          { responseBody: products },
+        ],
+      })
+      .mount()
+
+    fireEvent.click(getByText('refresh products list'))
+    await wait(() =>
+      expect(getAllByRole('row').map(row => row.textContent)).toEqual(products)
+    )
+
+    fireEvent.click(getByText('refresh products list'))
+    await wait(() =>
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('all responses have been returned already given')
+      )
+    )
   })
 
   it('should use Enzyme by default', () => {
