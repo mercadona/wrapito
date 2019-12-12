@@ -48,6 +48,17 @@ configureMocks({
 })
 ```
 
+Because `burrito` doens't want to know anything about how the components are mounted in the project that uses it, we can also specify how we will `mount` our components by passing the rendering/mounting function of our library of preference:
+
+```
+import { render } from '@testing-library/react'
+import { configureMocks } from '@mercadona/mo.library.burrito'
+
+configureMocks({
+  mount: render,
+})
+```
+
 and add the previous file in `jest.config.json`
 
 ```
@@ -186,6 +197,33 @@ wrap(MyComponent)
   .withMocks(responses)
   .mount()
 ```
+
+There might be cases where one request is called several times and we want it to return different responses. An example of this could be an app that shows a list of products that may be updated over time and for this puporse the app has a refresh button that will request the list again in order to update its content.
+
+Well, it can be solved by specifying the response as multiple using `multipleResponse` as follows:
+
+```
+const responses = {
+  path: '/path/to/get/the/products/list/,
+  multipleResponse: [
+    responseBody: [
+      { id: 1, name: 'hummus' },
+      { id: 2, name: 'guacamole' },
+    ],
+    responseBody: [
+      { id: 1, name: 'hummus' },
+      { id: 2, name: 'guacamole' },
+      { id: 3, name: 'peanut butter' },
+    ]
+  ],
+}
+```
+
+`multipleResponses` receives an array of responses where one set the `responseBody`, `status` or `headers` for every response.
+
+When `multipleResponses` is present, `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
+
+This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
 
 #### withProps
 Pass down the props to the wrapped component:
