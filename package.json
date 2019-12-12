@@ -50,6 +50,8 @@
     "@babel/plugin-transform-runtime": "^7.5.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
+    "@testing-library/jest-dom": "^4.2.0",
+    "@testing-library/react": "^9.3.0",
     "babel-jest": "^24.8.0",
     "enzyme": "~3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
@@ -64,15 +66,15 @@
     "redux-thunk": "^2.3.0"
   },
   "peerDependencies": {
-    "jest": "^24.9.0",
-    "chalk": "^2.4.2",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "enzyme": "~3.8.0",
-    "react-router-dom": "^5.1.2",
-    "redux": "^4.0.4",
-    "react-redux": "^7.1.3",
-    "redux-thunk": "^2.3.0"
+    "jest": "*",
+    "chalk": "*",
+    "react": "*",
+    "react-dom": "*",
+    "enzyme": "*",
+    "react-router-dom": "*",
+    "redux": "*",
+    "react-redux": "*",
+    "redux-thunk": "*"
   },
   "babel": {
     "presets": [
