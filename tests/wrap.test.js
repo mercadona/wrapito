@@ -1,5 +1,5 @@
 import { render } from 'react-dom'
-import { render as renderUsingTestingLibrary, wait, fireEvent } from '@testing-library/react'
+import { render as renderUsingTestingLibrary, wait } from '@testing-library/react'
 import { combineReducers } from 'redux'
 import { wrap, configureMocks } from '../src/index'
 import { getMocksConfig } from '../src/config'
@@ -9,6 +9,7 @@ import {
   MyComponentMakingHttpCalls,
   MyComponentRepeatingHttpCalls,
 } from './components.mock'
+import { refreshProductsList, getTableRowsText } from './helpers'
 
 const defaultMocksConfig = getMocksConfig()
 
@@ -161,7 +162,7 @@ describe('burrito', () => {
 
     const productsBeforeRefreshing = ['tomato', 'orange']
     const productsAfterRefreshing = ['tomato', 'orange', 'apple']
-    const { getAllByRole, getByText } = wrap(MyComponentRepeatingHttpCalls)
+    const { container } = wrap(MyComponentRepeatingHttpCalls)
       .withMocks({
         path: '/path/to/get/products/',
         multipleResponses: [
@@ -171,14 +172,14 @@ describe('burrito', () => {
       })
       .mount()
 
-    fireEvent.click(getByText('refresh products list'))
+    refreshProductsList(container)
     await wait(() =>
-      expect(getAllByRole('row').map(row => row.textContent)).toEqual(productsBeforeRefreshing)
+      expect(getTableRowsText(container)).toEqual(productsBeforeRefreshing)
     )
 
-    fireEvent.click(getByText('refresh products list'))
+    refreshProductsList(container)
     await wait(() =>
-      expect(getAllByRole('row').map(row => row.textContent)).toEqual(productsAfterRefreshing)
+      expect(getTableRowsText(container)).toEqual(productsAfterRefreshing)
     )
   })
 
@@ -187,7 +188,7 @@ describe('burrito', () => {
     console.warn = jest.fn()
 
     const products = ['tomato', 'orange']
-    const { getAllByRole, getByText } = wrap(MyComponentRepeatingHttpCalls)
+    const { container } = wrap(MyComponentRepeatingHttpCalls)
       .withMocks({
         path: '/path/to/get/products/',
         multipleResponses: [
@@ -196,12 +197,12 @@ describe('burrito', () => {
       })
       .mount()
 
-    fireEvent.click(getByText('refresh products list'))
+    refreshProductsList(container)
     await wait(() =>
-      expect(getAllByRole('row').map(row => row.textContent)).toEqual(products)
+      expect(getTableRowsText(container)).toEqual(products)
     )
 
-    fireEvent.click(getByText('refresh products list'))
+    refreshProductsList(container)
     await wait(() =>
       expect(console.warn).toHaveBeenCalledWith(
         expect.stringContaining('all responses have been returned already given')
