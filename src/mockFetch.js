@@ -60,7 +60,23 @@ function mockFetch(responses) {
       throw Error(redBright.bold('cannot find any mock'))
     }
 
-    return createResponse(responseMatchingRequest)
+    const { multipleResponses } = responseMatchingRequest
+    if (!multipleResponses) {
+      return createResponse(responseMatchingRequest)
+    }
+
+    const responseNotYetReturned = multipleResponses.find(({ hasBeenReturned }) => !hasBeenReturned)
+    if (!responseNotYetReturned) {
+      console.warn(`
+        ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been returned already given:') }
+        URL: ${ greenBright(request.url) }
+        METHOD: ${ greenBright(request.method.toLowerCase()) }
+        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+      `)
+      throw Error(redBright.bold('all responses for the given request have been returned already'))
+    }
+    responseNotYetReturned.hasBeenReturned = true
+    return createResponse(responseNotYetReturned)
   })
 }
 
