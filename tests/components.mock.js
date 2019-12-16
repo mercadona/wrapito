@@ -1,31 +1,33 @@
 import React, { Component, Fragment, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useSelector } from 'react-redux'
 
-export const MyComponent = props => <div>Foo</div>
+export const MyComponent = () => <div>Foo</div>
 
-export class MyAsyncComponent extends Component {
-  state = {
-    isReady: false,
-  }
-
-  async componentDidMount() {
-    const myData = await this.getResource()
-
-    if (!myData) {
-      return
+export const MyComponentWithProps = props => (
+  <div>
+    { props &&
+      Object.entries(props).map(prop => prop)
     }
+  </div>
+)
 
-    this.setState({ isReady: true })
+export const MyComponentWithPortal = ({ children }) => (
+  createPortal(children, document.getElementById('portal-root-id'))
+)
+
+export const MyComponentWithStore = () => {
+  const session = useSelector(state => state.session)
+
+  if (!session || !session.isAuth) {
+    return <p>Please, login</p>
   }
 
-  getResource() {
-    return Promise.resolve('my data')
-  }
+  return <p>Hello { session.user }</p>
+}
 
-  render() {
-    if (!this.state.isReady) { return null }
-
-    return <div data-test="title">I am ready</div>
-  }
+export const MyComponentWithRouter = ({ match }) => {
+  return <p>Current route: "{ match.url }"</p>
 }
 
 export class MyComponentMakingHttpCalls extends Component {
@@ -60,8 +62,8 @@ export class MyComponentMakingHttpCalls extends Component {
   }
 
   render = () => (
-    <div data-test="quantity" onClick={ this.saveQuantity }>
-      { this.state.quantity }
+    <div data-testid="quantity" onClick={ this.saveQuantity }>
+      <span>quantity: { this.state.quantity }</span>
       { this.state.isSaved && <i aria-label="quantity saved" /> }
     </div>
   )

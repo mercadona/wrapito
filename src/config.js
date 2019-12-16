@@ -1,24 +1,16 @@
-import { mount } from 'enzyme'
+import { render } from 'react-dom'
 
-const mountUsingEnzyme = Component => {
-  const componentMounted = mount(Component)
+const mount = component => {
+  const rootNode = document.body.appendChild(document.createElement('div'))
 
-  componentMounted.asyncFind = selector => {
-    return new Promise(resolve => {
-      setImmediate(() => {
-        componentMounted.update()
+  render(component, rootNode)
 
-        resolve(componentMounted.find(selector))
-      })
-    })
-  }
-
-  return componentMounted
+  return rootNode
 }
 
 let config = {
   defaultHost: '',
-  mount: mountUsingEnzyme,
+  mount,
   defaultStore: {},
   reducers: null,
 }
