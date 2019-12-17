@@ -49,6 +49,8 @@ const wrap = options => {
 }
 
 function setupPortal(portalRootId) {
+  if (document.getElementById(portalRootId)) { return }
+
   const portalRoot = document.createElement('div')
   portalRoot.setAttribute('id', portalRootId)
   document.body.appendChild(portalRoot)
