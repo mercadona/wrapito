@@ -9,10 +9,7 @@
   "collectCoverageFrom": [
     "src/**/*.{js,jsx}"
   ],
-  "setupFiles": [
-    "<rootDir>/config/enzyme.js",
-    "<rootDir>/config/polyfills.js"
-  ],
+  "setupFiles": ["<rootDir>/config/polyfills.js"],
   "setupFilesAfterEnv": ["<rootDir>/config/jest.setup.js"],
   "testMatch": [ "<rootDir>/**/?(*.)(test).js" ],
   "moduleFileExtensions": ["js", "json"],
