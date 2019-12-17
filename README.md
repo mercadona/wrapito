@@ -266,6 +266,3 @@ wrap(PreparationContainer)
   .withMocks(responses)
   .mount()
 ```
-
-## Next steps:
-- [ ] Remove `Enzyme` dependency, we don't want to be coupled to any testing library.
