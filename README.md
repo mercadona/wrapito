@@ -205,16 +205,20 @@ Well, it can be solved by specifying the response as multiple using `multipleRes
 ```
 const responses = {
   path: '/path/to/get/the/products/list/,
-  multipleResponse: [
+  multipleResponses: [
+  {
     responseBody: [
       { id: 1, name: 'hummus' },
       { id: 2, name: 'guacamole' },
-    ],
+    ]
+  },
+  {
     responseBody: [
       { id: 1, name: 'hummus' },
       { id: 2, name: 'guacamole' },
       { id: 3, name: 'peanut butter' },
     ]
+   },
   ],
 }
 ```
