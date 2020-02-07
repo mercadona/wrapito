@@ -54,11 +54,12 @@ function mockFetch(responses) {
 
     if (!responseMatchingRequest) {
       console.warn(`
-        ${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matching:') }
-        URL: ${ greenBright(request.url) }
-        METHOD: ${ greenBright(request.method.toLowerCase()) }
-        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
-      `)
+${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matching:') }
+
+  URL: ${ greenBright(request.url) }
+  METHOD: ${ greenBright(request.method.toLowerCase()) }
+  REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+    `)
       throw Error(redBright.bold('cannot find any mock'))
     }
 
@@ -71,10 +72,11 @@ function mockFetch(responses) {
     const responseNotYetReturned = multipleResponses.find(({ hasBeenReturned }) => !hasBeenReturned)
     if (!responseNotYetReturned) {
       console.warn(`
-        ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been returned already given:') }
-        URL: ${ greenBright(request.url) }
-        METHOD: ${ greenBright(request.method.toLowerCase()) }
-        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been returned already given:') }
+
+  URL: ${ greenBright(request.url) }
+  METHOD: ${ greenBright(request.method.toLowerCase()) }
+  REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
       `)
       throw Error(redBright.bold('all responses for the given request have been returned already'))
     }
