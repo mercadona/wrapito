@@ -1,0 +1,68 @@
+import { render, wait, cleanup } from '@testing-library/react'
+import { wrap, configureMocks, getNotUtilizedResponses } from '../src/index'
+import { MyComponentMakingHttpCalls } from './components.mock'
+
+configureMocks({ defaultHost: 'my-host', mount: render })
+
+afterEach(() => {
+  cleanup()
+  jest.restoreAllMocks()
+})
+
+it('should warn when there are responses not being used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+  wrap(MyComponentMakingHttpCalls)
+    .withMocks([
+      { path: '/path/to/get/quantity/', responseBody: '15' },
+      { path: '/path/to/endpoint/not/being/used/', responseBody: 'I am not being used' },
+    ])
+    .mount()
+
+  await wait(() => {
+    getNotUtilizedResponses()
+    expect(consoleWarn)
+      .toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I am not being used'))
+  })
+})
+
+it('should warn when there are multiple responses not being used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+  wrap(MyComponentMakingHttpCalls)
+    .withMocks([
+      { path: '/path/to/get/quantity/', responseBody: '15' },
+      { path: '/path/to/endpoint/not/being/used/', multipleResponses: [
+        { responseBody: { value: 'I will not being used' } },
+        { responseBody: { value: 'Me neither' } },
+        ]
+      },
+    ])
+    .mount()
+
+  await wait(() => {
+    getNotUtilizedResponses()
+    expect(consoleWarn)
+      .toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I will not being used'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('Me neither'))
+  })
+})
+
+it('should not warn when all the responses are being used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn')
+
+  wrap(MyComponentMakingHttpCalls)
+    .withMocks({ path: '/path/to/get/quantity/', responseBody: '15' })
+    .mount()
+
+  await wait(() => {
+    getNotUtilizedResponses()
+    expect(consoleWarn).not.toHaveBeenCalled()
+  })
+})

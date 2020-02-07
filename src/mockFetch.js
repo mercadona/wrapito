@@ -1,6 +1,7 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
+import { saveListOfResponses, addResponseAsUtilized, getNotUtilizedResponses } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
 
@@ -45,6 +46,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
 
 function mockFetch(responses) {
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
+  saveListOfResponses(listOfResponses)
 
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
@@ -62,6 +64,7 @@ function mockFetch(responses) {
 
     const { multipleResponses } = responseMatchingRequest
     if (!multipleResponses) {
+      addResponseAsUtilized(responseMatchingRequest)
       return createResponse(responseMatchingRequest)
     }
 
@@ -80,4 +83,4 @@ function mockFetch(responses) {
   })
 }
 
-export { mockFetch }
+export { mockFetch, getNotUtilizedResponses }
