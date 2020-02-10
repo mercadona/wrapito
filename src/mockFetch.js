@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
-import { saveListOfResponses, addResponseAsUtilized, getNotUtilizedResponses } from './notUtilizedResponses'
+import { saveListOfResponses, addResponseAsUtilized } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
 
@@ -86,4 +86,4 @@ ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been retu
   })
 }
 
-export { mockFetch, getNotUtilizedResponses }
+export { mockFetch }
