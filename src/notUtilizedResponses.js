@@ -38,7 +38,7 @@ return `MULTIPLE RESPONSES:
 `
   }
 
-  return `RESPONSE BODY: ${ greenBright(responseBody) }`
+  return `RESPONSE BODY: ${ greenBright(JSON.stringify(responseBody)) }`
 }
 
 const multipleResponseIsNotUsed = response => !response.hasBeenReturned
