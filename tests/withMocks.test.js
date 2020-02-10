@@ -1,5 +1,5 @@
 import { render, wait, fireEvent, cleanup } from '@testing-library/react'
-import { wrap, configureMocks } from '../src/index'
+import { wrap, configureMocks, getNotUtilizedResponses } from '../src/index'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls, } from './components.mock'
 import { refreshProductsList, getTableRowsText } from './helpers'
 import { getMocksConfig } from '../src/config'
@@ -10,6 +10,7 @@ function resetMocksConfig() {
   cleanup()
   configureMocks(defaultMocksConfig)
   jest.restoreAllMocks()
+  getNotUtilizedResponses()
 }
 
 afterEach(resetMocksConfig)

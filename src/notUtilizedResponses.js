@@ -7,7 +7,12 @@ let utilizedResponses = []
 const addResponseAsUtilized = utilizedResponse => utilizedResponses = [ ...utilizedResponses, utilizedResponse ]
 
 const getNotUtilizedResponses = () => {
-  const notUtilizedResponses = mockedResponses.filter(response => !utilizedResponses.includes(response))
+  const notUtilizedResponses = mockedResponses.filter(response => {
+    const hasNotUtilzedResponses = !utilizedResponses.includes(response)
+    const multiplResponseNotFullyReturned = response.multipleResponses && response.multipleResponses.some(multipleResponseIsNotUsed)
+    return hasNotUtilzedResponses || multiplResponseNotFullyReturned
+  })
+
   const allResponsesAreBeingUtilized = notUtilizedResponses.length === 0
 
   if (allResponsesAreBeingUtilized) return
@@ -26,12 +31,16 @@ const getProperResponseBody = (responseBody, multipleResponses) => {
   const hasMultipleResponses = multipleResponses && multipleResponses.length > 0
   if (hasMultipleResponses) {
 return `MULTIPLE RESPONSES:
-  ${ multipleResponses.map(response => greenBright(JSON.stringify(response.responseBody))).join(`
+  ${ multipleResponses
+      .filter(multipleResponseIsNotUsed)
+      .map(response => greenBright(JSON.stringify(response.responseBody))).join(`
   `) }
 `
   }
 
   return `RESPONSE BODY: ${ greenBright(responseBody) }`
 }
+
+const multipleResponseIsNotUsed = response => !response.hasBeenReturned
 
 export { saveListOfResponses, addResponseAsUtilized, getNotUtilizedResponses }
