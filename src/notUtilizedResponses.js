@@ -6,12 +6,8 @@ const saveListOfResponses = listOfResponses => mockedResponses = [ ...listOfResp
 let utilizedResponses = []
 const addResponseAsUtilized = utilizedResponse => utilizedResponses = [ ...utilizedResponses, utilizedResponse ]
 
-const getNotUtilizedResponses = () => {
-  const notUtilizedResponses = mockedResponses.filter(response => {
-    const hasNotUtilzedResponses = !utilizedResponses.includes(response)
-    const multiplResponseNotFullyReturned = response.multipleResponses && response.multipleResponses.some(multipleResponseIsNotUsed)
-    return hasNotUtilzedResponses || multiplResponseNotFullyReturned
-  })
+const highlightNotUtilizedResponses = () => {
+  const notUtilizedResponses = mockedResponses.filter(getNotUtilizedResponses)
 
   const allResponsesAreBeingUtilized = notUtilizedResponses.length === 0
 
@@ -43,4 +39,12 @@ return `MULTIPLE RESPONSES:
 
 const multipleResponseIsNotUsed = response => !response.hasBeenReturned
 
-export { saveListOfResponses, addResponseAsUtilized, getNotUtilizedResponses }
+const getNotUtilizedResponses = response => {
+  const hasNotUtilzedResponses = !utilizedResponses.includes(response)
+  const multiplResponseNotFullyReturned = response.multipleResponses &&
+    response.multipleResponses.some(multipleResponseIsNotUsed)
+
+  return hasNotUtilzedResponses || multiplResponseNotFullyReturned
+}
+
+export { saveListOfResponses, addResponseAsUtilized, highlightNotUtilizedResponses }
