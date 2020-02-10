@@ -36,7 +36,7 @@ it('should warn when there are multiple responses not being used', async () => {
     .withMocks([
       { path: '/path/to/get/quantity/', responseBody: '15' },
       { path: '/path/to/endpoint/not/being/used/', multipleResponses: [
-        { responseBody: { value: 'I will not being used' } },
+        { responseBody: { value: 'I will not be used' } },
         { responseBody: { value: 'Me neither' } },
       ]},
     ])
@@ -47,7 +47,7 @@ it('should warn when there are multiple responses not being used', async () => {
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
-    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I will not being used'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I will not be used'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('Me neither'))
   })
 })
