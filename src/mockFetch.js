@@ -81,6 +81,7 @@ ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been retu
       throw Error(redBright.bold('all responses for the given request have been returned already'))
     }
     responseNotYetReturned.hasBeenReturned = true
+    addResponseAsUtilized(responseMatchingRequest)
     return createResponse(responseNotYetReturned)
   })
 }
