@@ -1,6 +1,7 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
+import { saveListOfResponses, addResponseAsUtilized, getNotUtilizedResponses } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
 
@@ -45,6 +46,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
 
 function mockFetch(responses) {
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
+  saveListOfResponses(listOfResponses)
 
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
@@ -52,32 +54,36 @@ function mockFetch(responses) {
 
     if (!responseMatchingRequest) {
       console.warn(`
-        ${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matching:') }
-        URL: ${ greenBright(request.url) }
-        METHOD: ${ greenBright(request.method.toLowerCase()) }
-        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
-      `)
+${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matching:') }
+
+  URL: ${ greenBright(request.url) }
+  METHOD: ${ greenBright(request.method.toLowerCase()) }
+  REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+    `)
       throw Error(redBright.bold('cannot find any mock'))
     }
 
     const { multipleResponses } = responseMatchingRequest
     if (!multipleResponses) {
+      addResponseAsUtilized(responseMatchingRequest)
       return createResponse(responseMatchingRequest)
     }
 
     const responseNotYetReturned = multipleResponses.find(({ hasBeenReturned }) => !hasBeenReturned)
     if (!responseNotYetReturned) {
       console.warn(`
-        ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been returned already given:') }
-        URL: ${ greenBright(request.url) }
-        METHOD: ${ greenBright(request.method.toLowerCase()) }
-        REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
+${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been returned already given:') }
+
+  URL: ${ greenBright(request.url) }
+  METHOD: ${ greenBright(request.method.toLowerCase()) }
+  REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
       `)
       throw Error(redBright.bold('all responses for the given request have been returned already'))
     }
     responseNotYetReturned.hasBeenReturned = true
+    addResponseAsUtilized(responseMatchingRequest)
     return createResponse(responseNotYetReturned)
   })
 }
 
-export { mockFetch }
+export { mockFetch, getNotUtilizedResponses }
