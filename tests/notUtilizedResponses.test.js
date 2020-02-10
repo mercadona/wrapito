@@ -1,5 +1,5 @@
 import { render, wait, cleanup } from '@testing-library/react'
-import { wrap, configureMocks, getNotUtilizedResponses } from '../src/index'
+import { wrap, configureMocks, highlightNotUtilizedResponses } from '../src/index'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
 import { refreshProductsList } from './helpers'
 
@@ -21,7 +21,7 @@ it('should warn when there are responses not being used', async () => {
     .mount()
 
   await wait(() => {
-    getNotUtilizedResponses()
+    highlightNotUtilizedResponses()
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
@@ -43,7 +43,7 @@ it('should warn when there are multiple responses not being used', async () => {
     .mount()
 
   await wait(() => {
-    getNotUtilizedResponses()
+    highlightNotUtilizedResponses()
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
@@ -67,7 +67,7 @@ it('should warn when at least one of the multiple responses are not being used',
   refreshProductsList(container)
 
   await wait(() => {
-    getNotUtilizedResponses()
+    highlightNotUtilizedResponses()
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/get/products/'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
@@ -84,7 +84,7 @@ it('should not warn when all the responses are being used', async () => {
     .mount()
 
   await wait(() => {
-    getNotUtilizedResponses()
+    highlightNotUtilizedResponses()
     expect(consoleWarn).not.toHaveBeenCalled()
   })
 })
@@ -102,7 +102,7 @@ it('should not warn when all the multiple responses are being used', async () =>
   refreshProductsList(container)
 
   await wait(() => {
-    getNotUtilizedResponses()
+    highlightNotUtilizedResponses()
     expect(consoleWarn).not.toHaveBeenCalled()
   })
 })
