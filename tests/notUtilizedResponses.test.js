@@ -16,7 +16,7 @@ it('should warn when there are responses not being used', async () => {
   wrap(MyComponentMakingHttpCalls)
     .withMocks([
       { path: '/path/to/get/quantity/', responseBody: '15' },
-      { path: '/path/to/endpoint/not/being/used/', responseBody: 'I am not being used' },
+      { path: '/path/to/endpoint/not/being/used/', responseBody: { value: 'I am not being used' } },
     ])
     .mount()
 
