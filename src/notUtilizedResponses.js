@@ -5,6 +5,7 @@ const saveListOfResponses = listOfResponses => mockedResponses = [ ...listOfResp
 
 let utilizedResponses = []
 const addResponseAsUtilized = utilizedResponse => utilizedResponses = [ ...utilizedResponses, utilizedResponse ]
+const resetUtilizedResponses = () => utilizedResponses = []
 
 const highlightNotUtilizedResponses = () => {
   const notUtilizedResponses = mockedResponses.filter(getNotUtilizedResponses)
@@ -47,4 +48,24 @@ const getNotUtilizedResponses = response => {
   return hasNotUtilzedResponses || multiplResponseNotFullyReturned
 }
 
-export { saveListOfResponses, addResponseAsUtilized, highlightNotUtilizedResponses }
+const getDeepUtilizedResponses = () => {
+  return utilizedResponses.map(response => {
+    if (response.multipleResponses) {
+      return {
+        ...response,
+        multipleResponses: response.multipleResponses.filter(({ hasBeenReturned }) => hasBeenReturned)
+      }
+    }
+
+    return response
+  })
+}
+
+export {
+  saveListOfResponses,
+  addResponseAsUtilized,
+  highlightNotUtilizedResponses,
+  mockedResponses,
+  getDeepUtilizedResponses,
+  resetUtilizedResponses,
+}

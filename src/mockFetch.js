@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
-import { saveListOfResponses, addResponseAsUtilized } from './notUtilizedResponses'
+import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
 
@@ -45,6 +45,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
 )
 
 function mockFetch(responses) {
+  resetUtilizedResponses()
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
   saveListOfResponses(listOfResponses)
 
