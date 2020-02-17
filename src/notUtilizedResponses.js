@@ -3,9 +3,26 @@ import { greenBright, yellow, black } from 'chalk'
 let mockedResponses = []
 const saveListOfResponses = listOfResponses => mockedResponses = [ ...listOfResponses ]
 
-let utilizedResponses = []
-const addResponseAsUtilized = utilizedResponse => utilizedResponses = [ ...utilizedResponses, utilizedResponse ]
-const resetUtilizedResponses = () => utilizedResponses = []
+let utilizedResponses = new Set([])
+const addResponseAsUtilized = utilizedResponse => utilizedResponses.add(utilizedResponse)
+const resetUtilizedResponses = () => utilizedResponses = new Set([])
+const getDeepUtilizedResponses = () => {
+  return [ ...utilizedResponses ].map(response => {
+    if (response.multipleResponses) {
+      return {
+        ...response,
+        multipleResponses: response.multipleResponses.filter(({ hasBeenReturned }) => hasBeenReturned)
+      }
+    }
+
+    return response
+  })
+}
+
+let requestsMissingResponse = []
+const addRequestMissingResponse = request => requestsMissingResponse = [ ...requestsMissingResponse, request ]
+const getRequestsMissingResponse = () => [ ...requestsMissingResponse ]
+const resetRequestsMissingResponse = () => requestsMissingResponse = []
 
 const highlightNotUtilizedResponses = () => {
   const notUtilizedResponses = mockedResponses.filter(getNotUtilizedResponses)
@@ -41,24 +58,11 @@ return `MULTIPLE RESPONSES:
 const multipleResponseIsNotUsed = response => !response.hasBeenReturned
 
 const getNotUtilizedResponses = response => {
-  const hasNotUtilzedResponses = !utilizedResponses.includes(response)
+  const hasNotUtilzedResponses = ![ ...utilizedResponses ].includes(response)
   const multiplResponseNotFullyReturned = response.multipleResponses &&
     response.multipleResponses.some(multipleResponseIsNotUsed)
 
   return hasNotUtilzedResponses || multiplResponseNotFullyReturned
-}
-
-const getDeepUtilizedResponses = () => {
-  return utilizedResponses.map(response => {
-    if (response.multipleResponses) {
-      return {
-        ...response,
-        multipleResponses: response.multipleResponses.filter(({ hasBeenReturned }) => hasBeenReturned)
-      }
-    }
-
-    return response
-  })
 }
 
 export {
@@ -68,4 +72,7 @@ export {
   mockedResponses,
   getDeepUtilizedResponses,
   resetUtilizedResponses,
+  addRequestMissingResponse,
+  getRequestsMissingResponse,
+  resetRequestsMissingResponse,
 }

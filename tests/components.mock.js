@@ -39,6 +39,7 @@ export class MyComponentMakingHttpCalls extends Component {
   componentDidMount = async () => {
     const request = new Request('my-host/path/to/get/quantity/')
     const quantityResponse = await fetch(request)
+    if (!quantityResponse) return
     if (quantityResponse.status !== 200) {
       this.setState({ quantity: 'error' })
       return

@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
 import { getMocksConfig } from './config'
-import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses } from './notUtilizedResponses'
+import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses, addRequestMissingResponse, resetRequestsMissingResponse } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
 
@@ -46,6 +46,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
 
 function mockFetch(responses) {
   resetUtilizedResponses()
+  resetRequestsMissingResponse()
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
   saveListOfResponses(listOfResponses)
 
@@ -61,7 +62,13 @@ ${ white.bold.bgRed('burrito') } ${ redBright.bold('cannot find any mock matchin
   METHOD: ${ greenBright(request.method.toLowerCase()) }
   REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
     `)
-      throw Error(redBright.bold('cannot find any mock'))
+
+      addRequestMissingResponse({
+        url: request.url,
+        method: request.method.toLowerCase(),
+        requestBody: normalizedRequestBody,
+      })
+      return
     }
 
     const { multipleResponses } = responseMatchingRequest
@@ -79,8 +86,15 @@ ${ white.bold.bgRed('burrito') } ${ redBright.bold('all responses have been retu
   METHOD: ${ greenBright(request.method.toLowerCase()) }
   REQUEST BODY: ${ greenBright(JSON.stringify(normalizedRequestBody)) }
       `)
-      throw Error(redBright.bold('all responses for the given request have been returned already'))
+
+      addRequestMissingResponse({
+        url: request.url,
+        method: request.method.toLowerCase(),
+        requestBody: normalizedRequestBody,
+      })
+      return
     }
+
     responseNotYetReturned.hasBeenReturned = true
     addResponseAsUtilized(responseMatchingRequest)
     return createResponse(responseNotYetReturned)
