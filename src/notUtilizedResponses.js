@@ -69,7 +69,6 @@ export {
   saveListOfResponses,
   addResponseAsUtilized,
   highlightNotUtilizedResponses,
-  mockedResponses,
   getDeepUtilizedResponses,
   resetUtilizedResponses,
   addRequestMissingResponse,
