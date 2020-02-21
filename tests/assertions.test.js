@@ -2,7 +2,6 @@ import { render, wait } from '@testing-library/react'
 
 import { wrap, assertions, configureMocks } from '../src'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
-import { mockedResponses } from '../src/notUtilizedResponses'
 import { refreshProductsList, getTableRowsText } from './helpers'
 
 expect.extend(assertions)
@@ -12,28 +11,30 @@ configureMocks({ defaultHost: 'my-host', mount: render })
 afterEach(jest.restoreAllMocks)
 
 it('should match network requests when all the responses are being used', async () => {
+  const responses = { path: '/path/to/get/quantity/', responseBody: '15' }
   wrap(MyComponentMakingHttpCalls)
-    .withMocks({ path: '/path/to/get/quantity/', responseBody: '15' })
+    .withMocks(responses)
     .mount()
 
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeTruthy()
     expect(message()).toBeUndefined()
-    expect(mockedResponses).toMatchNetworkRequests()
+    expect(responses).toMatchNetworkRequests()
   })
 })
 
 it('should not match network requests when passing mocks not being used', async () => {
+  const responses = [
+    { path: '/path/to/get/quantity/', responseBody: '15' },
+    { path: '/path/to/endpoint/not/being/used/', responseBody: { value: 'I am not being used' } },
+  ]
   wrap(MyComponentMakingHttpCalls)
-    .withMocks([
-      { path: '/path/to/get/quantity/', responseBody: '15' },
-      { path: '/path/to/endpoint/not/being/used/', responseBody: { value: 'I am not being used' } },
-    ])
+    .withMocks(responses)
     .mount()
 
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but found mocked responses not being used:')
@@ -43,35 +44,37 @@ it('should not match network requests when passing mocks not being used', async 
     expect(message()).toContain('+       "value": "I am not being used",')
     expect(message()).toContain('+     },')
     expect(message()).toContain('+   },')
-    expect(mockedResponses).not.toMatchNetworkRequests()
+    expect(responses).not.toMatchNetworkRequests()
   })
 })
 
 it('should match network requests when all the multiple responses are being used', async () => {
+  const responses = { path: '/path/to/get/quantity/', multipleResponses: [
+    { responseBody: '15' },
+  ]}
   wrap(MyComponentMakingHttpCalls)
-    .withMocks({ path: '/path/to/get/quantity/', multipleResponses: [
-      { responseBody: '15' },
-    ]})
+    .withMocks(responses)
     .mount()
 
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeTruthy()
     expect(message()).toBeUndefined()
-    expect(mockedResponses).toMatchNetworkRequests()
+    expect(responses).toMatchNetworkRequests()
   })
 })
 
 it('should not match network requests when at least one multiple response is not being used', async () => {
+  const responses = { path: '/path/to/get/quantity/', multipleResponses: [
+    { responseBody: '15' },
+    { responseBody: { value: 'I am not being used' } },
+  ]}
   wrap(MyComponentMakingHttpCalls)
-    .withMocks({ path: '/path/to/get/quantity/', multipleResponses: [
-      { responseBody: '15' },
-      { responseBody: { value: 'I am not being used' } },
-    ]})
+    .withMocks(responses)
     .mount()
 
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but found mocked responses not being used:')
@@ -80,18 +83,19 @@ it('should not match network requests when at least one multiple response is not
     expect(message()).toContain('+           "value": "I am not being used",')
     expect(message()).toContain('+         },')
     expect(message()).toContain('+       },')
-    expect(mockedResponses).not.toMatchNetworkRequests()
+    expect(responses).not.toMatchNetworkRequests()
   })
 })
 
 it('should not match network requests when missing responses for a given request', async () => {
   console.warn = jest.fn()
+  const responses = { path: '/path/to/wrong/endpoint/', responseBody: { value: 'I will not be returned' } }
   wrap(MyComponentMakingHttpCalls)
-    .withMocks({ path: '/path/to/wrong/endpoint/', responseBody: { value: 'I will not be returned' } })
+    .withMocks(responses)
     .mount()
 
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but there are requests missing a mocked response:')
@@ -103,20 +107,21 @@ it('should not match network requests when missing responses for a given request
     expect(message()).toContain('+     "url": "my-host/path/to/get/quantity/",')
     expect(message()).toContain('+   },')
     expect(message()).toContain('+ ]')
-    expect(mockedResponses).not.toMatchNetworkRequests()
+    expect(responses).not.toMatchNetworkRequests()
   })
 })
 
 it('should not match network requests when all multiple responses have been returned already', async () => {
   console.warn = jest.fn()
   const products = ['tomato', 'orange']
+  const responses = {
+    path: '/path/to/get/products/',
+    multipleResponses: [
+      { responseBody: products },
+    ],
+  }
   const { container } = wrap(MyComponentRepeatingHttpCalls)
-    .withMocks({
-      path: '/path/to/get/products/',
-      multipleResponses: [
-        { responseBody: products },
-      ],
-    })
+    .withMocks(responses)
     .mount()
 
   refreshProductsList(container)
@@ -124,7 +129,7 @@ it('should not match network requests when all multiple responses have been retu
 
   refreshProductsList(container)
   await wait(() => {
-    const { pass, message } = assertions.toMatchNetworkRequests(mockedResponses)
+    const { pass, message } = assertions.toMatchNetworkRequests(responses)
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but there are requests missing a mocked response:')
@@ -136,6 +141,6 @@ it('should not match network requests when all multiple responses have been retu
     expect(message()).toContain('+     "url": "my-host/path/to/get/products/",')
     expect(message()).toContain('+   },')
     expect(message()).toContain('+ ]')
-    expect(mockedResponses).not.toMatchNetworkRequests()
+    expect(responses).not.toMatchNetworkRequests()
   })
 })
