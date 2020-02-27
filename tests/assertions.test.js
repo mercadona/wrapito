@@ -1,4 +1,4 @@
-import { render, wait } from '@testing-library/react'
+import { render, wait, fireEvent } from '@testing-library/react'
 
 import { wrap, assertions, configureMocks } from '../src'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
@@ -38,12 +38,12 @@ it('should not match network requests when passing mocks not being used', async 
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but found mocked responses not being used:')
-    expect(message()).toContain('+   Object {')
-    expect(message()).toContain('+     "path": "/path/to/endpoint/not/being/used/",')
-    expect(message()).toContain('+     "responseBody": Object {')
-    expect(message()).toContain('+       "value": "I am not being used",')
-    expect(message()).toContain('+     },')
-    expect(message()).toContain('+   },')
+    expect(message()).toContain('  Object {')
+    expect(message()).toContain('    "path": "/path/to/endpoint/not/being/used/",')
+    expect(message()).toContain('    "responseBody": Object {')
+    expect(message()).toContain('      "value": "I am not being used",')
+    expect(message()).toContain('    },')
+    expect(message()).toContain('  },')
     expect(responses).not.toMatchNetworkRequests()
   })
 })
@@ -78,11 +78,11 @@ it('should not match network requests when at least one multiple response is not
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but found mocked responses not being used:')
-    expect(message()).toContain('+       Object {')
-    expect(message()).toContain('+         "responseBody": Object {')
-    expect(message()).toContain('+           "value": "I am not being used",')
-    expect(message()).toContain('+         },')
-    expect(message()).toContain('+       },')
+    expect(message()).toContain('    Object {')
+    expect(message()).toContain('      "responseBody": Object {')
+    expect(message()).toContain('        "value": "I am not being used",')
+    expect(message()).toContain('      },')
+    expect(message()).toContain('    },')
     expect(responses).not.toMatchNetworkRequests()
   })
 })
@@ -99,14 +99,11 @@ it('should not match network requests when missing responses for a given request
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but there are requests missing a mocked response:')
-    expect(message()).toContain('- Array []')
-    expect(message()).toContain('+ Array [')
-    expect(message()).toContain('+   Object {')
-    expect(message()).toContain('+     "method": "get",')
-    expect(message()).toContain('+     "requestBody": null,')
-    expect(message()).toContain('+     "url": "my-host/path/to/get/quantity/",')
-    expect(message()).toContain('+   },')
-    expect(message()).toContain('+ ]')
+    expect(message()).toContain('  Object {')
+    expect(message()).toContain('    "method": "get",')
+    expect(message()).toContain('    "requestBody": null,')
+    expect(message()).toContain('    "url": "my-host/path/to/get/quantity/",')
+    expect(message()).toContain('  },')
     expect(responses).not.toMatchNetworkRequests()
   })
 })
@@ -133,14 +130,27 @@ it('should not match network requests when all multiple responses have been retu
     expect(pass).toBeFalsy()
     expect(message())
       .toContain('Expected mocked responses to match the network requests but there are requests missing a mocked response:')
-    expect(message()).toContain('- Array []')
-    expect(message()).toContain('+ Array [')
-    expect(message()).toContain('+   Object {')
-    expect(message()).toContain('+     "method": "get",')
-    expect(message()).toContain('+     "requestBody": null,')
-    expect(message()).toContain('+     "url": "my-host/path/to/get/products/",')
-    expect(message()).toContain('+   },')
-    expect(message()).toContain('+ ]')
+    expect(message()).toContain('  Object {')
+    expect(message()).toContain('    "method": "get",')
+    expect(message()).toContain('    "requestBody": null,')
+    expect(message()).toContain('    "url": "my-host/path/to/get/products/",')
+    expect(message()).toContain('  },')
     expect(responses).not.toMatchNetworkRequests()
+  })
+})
+
+it('should match network requests even when these have different sorting', async () => {
+  const responses = [
+    { method: 'post', path: '/path/to/save/quantity/', requestBody: { quantity: '15' } },
+    { path: '/path/to/get/quantity/', responseBody: '15' },
+  ]
+  const { getByText } = wrap(MyComponentMakingHttpCalls)
+    .withMocks(responses)
+    .mount()
+
+  await wait(() => fireEvent.click(getByText('quantity: 15')))
+
+  await wait(() => {
+    expect(responses).toMatchNetworkRequests()
   })
 })
