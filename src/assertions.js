@@ -1,4 +1,6 @@
-import diff from 'jest-diff'
+import deepEqual from 'deep-equal'
+import prettyFormat from 'pretty-format'
+import { red } from 'chalk'
 
 import { getDeepUtilizedResponses, getRequestsMissingResponse } from './notUtilizedResponses'
 
@@ -13,24 +15,49 @@ const assertions = {
     const thereAreRequestsMissingResponse = requestsMissingResponse.length > 0
 
     if (thereAreRequestsMissingResponse) {
-      return createJestMatcher([], requestsMissingResponse, ERRORS.MISSING_MOCKED_RESPONSE)
+      return createMissingMockedResponseMatcher(requestsMissingResponse)
     }
 
-    return createJestMatcher(getDeepUtilizedResponses(), formatMockedResponses(mockedResponses), ERRORS.NOT_BEING_USED)
+    return createResponsesNotBeingUsedMatcher(mockedResponses)
   },
 }
 
-const createJestMatcher = (expected, received, errorMessage) => {
-  const responsesDiff = diff(expected, received)
-  const pass = responsesDiff.includes('Compared values have no visual difference.')
+const createResponsesNotBeingUsedMatcher = mockedResponses => {
+  const getResponseBeingUsedChecker = mockedResponse =>
+    utilizedResponse =>
+      !deepEqual(mockedResponse, utilizedResponse)
+  const getResponsesNotBeingUsed = mockedResponse => getDeepUtilizedResponses()
+    .every(getResponseBeingUsedChecker(mockedResponse))
+
+  const responsesNotBeingUsed = formatMockedResponses(mockedResponses).filter(getResponsesNotBeingUsed).map(({ multipleResponses, ...restOfResponse }) => {
+    const hasMultipleResponses = multipleResponses && multipleResponses.length > 0
+    if (hasMultipleResponses) {
+      return multipleResponses
+        .filter(({ hasBeenReturned }) => !hasBeenReturned)
+        .map((response) => response)
+    }
+
+    return restOfResponse
+  })
+
+  const pass = responsesNotBeingUsed.length === 0
   const message = () => {
     if (pass) { return }
 
-    return `Expected mocked responses to match the network requests but ${ errorMessage }\n\n${ responsesDiff }`
+    return createErrorMessage(ERRORS.NOT_BEING_USED, responsesNotBeingUsed)
   }
 
   return { message, pass }
 }
+
+const createMissingMockedResponseMatcher = requestsMissingResponse => {
+  const message = () => createErrorMessage(ERRORS.MISSING_MOCKED_RESPONSE, requestsMissingResponse)
+
+  return { message, pass: false }
+}
+
+const createErrorMessage = (error, responses) =>
+  red(`Expected mocked responses to match the network requests but ${ error }\n\n${ prettyFormat(responses) }`)
 
 const formatMockedResponses = mockedResponses => {
   if (!mockedResponses) { return [] }
