@@ -1,4 +1,3 @@
-import React from 'react'
 import { wrap, configureMocks as configure } from '../src'
 import { render } from '@testing-library/react'
 
@@ -35,4 +34,17 @@ it('should render an app with routing given an specific path', () => {
     .mount()
 
   expect(container).toHaveTextContent('Home')
+})
+
+it('should render an app with a routing logic between pages', () => {
+  configure({ history })
+  const { container, getByText } = wrap(MyAppWithRouting)
+    .atPath('/')
+    .mount()
+
+  expect(container).toHaveTextContent('Home')
+
+  fireEvent.click(getByText('Go to categories'))
+
+  expect(container).toHaveTextContent('Categories')
 })
