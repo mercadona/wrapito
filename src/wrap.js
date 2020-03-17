@@ -20,8 +20,9 @@ const wrap = options => {
     withRouter: routing => wrap({ ...options, routing, hasRouter: true }),
     withStore: store => wrap({ ...options, store, hasStore: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
+    atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
-      const { hasMocks, responses, hasRouter, hasStore, hasPortal, portalRootId } = options
+      const { hasMocks, responses, hasRouter, hasStore, hasPortal, portalRootId, path, hasPath } = options
 
       if (hasMocks) {
         mockFetch(responses)
@@ -43,7 +44,12 @@ const wrap = options => {
         return mountWithRouter(options)
       }
 
-      return mount(options)
+      const component = mount(options)
+
+      if (hasPath) {
+        getMocksConfig().history.push(path)
+      }
+      return component
     },
   }
 }

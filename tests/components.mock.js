@@ -1,6 +1,8 @@
 import React, { Component, Fragment, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useSelector } from 'react-redux'
+import { Router, Switch, Route } from 'react-router-dom'
+import { createBrowserHistory } from 'history'
 
 export const MyComponent = () => <div>Foo</div>
 
@@ -96,5 +98,21 @@ export const MyComponentRepeatingHttpCalls = () => {
         </tbody>
       </table>
     </Fragment>
+  )
+}
+
+const Home = () => <div>Home</div>
+const Categories = () => <div>Categories</div>
+
+export const history = createBrowserHistory()
+
+export const MyAppWithRouting = () => {
+  return (
+    <Router history={ history }>
+      <Switch>
+        <Route key="home" path="/" component={Home} exact={true} />
+        <Route key="categories" path="/categories" component={Categories} exact={true} />
+      </Switch>
+    </Router>
   )
 }
