@@ -1,5 +1,5 @@
 import { wrap, configureMocks as configure } from '../src'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 
 import { MyAppWithRouting, history } from './components.mock'
 
