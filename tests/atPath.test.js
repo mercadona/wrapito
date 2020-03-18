@@ -5,12 +5,6 @@ import { MyAppWithRouting, history } from './components.mock'
 
 configure({ mount: render })
 
-it('should render a simple app', () => {
-  const { container } = wrap(MyAppWithRouting).mount()
-
-  expect(container).toHaveTextContent('Home')
-})
-
 it('should render an app with routing', () => {
   const { container } = wrap(MyAppWithRouting)
     .mount()
