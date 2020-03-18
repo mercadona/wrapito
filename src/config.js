@@ -11,7 +11,6 @@ const mount = component => {
 let config = {
   defaultHost: '',
   mount,
-  defaultStore: {},
   reducers: null,
 }
 
