@@ -68,10 +68,7 @@
     "chalk": "*",
     "react": "*",
     "react-dom": "*",
-    "react-router-dom": "*",
-    "redux": "*",
-    "react-redux": "*",
-    "redux-thunk": "*"
+    "react-router-dom": "*"
   },
   "babel": {
     "presets": [
