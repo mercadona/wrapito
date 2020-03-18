@@ -103,9 +103,13 @@ export const MyComponentRepeatingHttpCalls = () => {
   )
 }
 
+export const myFakeModule = {
+  myFakeFunction: () => null
+}
+
 const Home = ({ history }) => {
   const goToCategories = () => history.push('/categories')
-
+  myFakeModule.myFakeFunction('HOME')
   return (
     <div>
       Home
@@ -113,7 +117,11 @@ const Home = ({ history }) => {
     </div>
   )
 }
-const Categories = () => <div>Categories</div>
+const Categories = () => {
+  return (
+    <div>Categories</div>
+  )
+}
 
 export const history = createBrowserHistory()
 
