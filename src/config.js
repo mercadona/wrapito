@@ -13,13 +13,13 @@ let config = {
   mount,
 }
 
-function configureMocks(newConfig) {
+function configure(newConfig) {
   config = {
     ...config,
     ...newConfig,
   }
 }
 
-const getMocksConfig = () => ({ ...config })
+const getConfig = () => ({ ...config })
 
-export { configureMocks, getMocksConfig }
+export { configure, getConfig }
