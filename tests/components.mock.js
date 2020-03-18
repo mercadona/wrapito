@@ -20,16 +20,6 @@ export const MyComponentWithPortal = ({ children }) => (
   createPortal(children, document.getElementById('portal-root-id'))
 )
 
-export const MyComponentWithStore = () => {
-  const session = useSelector(state => state.session)
-
-  if (!session || !session.isAuth) {
-    return <p>Please, login</p>
-  }
-
-  return <p>Hello { session.user }</p>
-}
-
 export const MyComponentWithRouter = ({ match }) => {
   return <p>Current route: "{ match.url }"</p>
 }
