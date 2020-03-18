@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
-import { getMocksConfig } from './config'
+import { getConfig } from './config'
 import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses, addRequestMissingResponse, resetRequestsMissingResponse } from './notUtilizedResponses'
 
 global.fetch = jest.fn()
@@ -23,7 +23,7 @@ const matchesRequestBody = (normalizedRequestBody, requestBody) => {
 const getRequestMatcher = (request, normalizedRequestBody) => ({
   method = 'get',
   path,
-  host = getMocksConfig().defaultHost,
+  host = getConfig().defaultHost,
   requestBody = null,
 }) => {
   const url = host + path

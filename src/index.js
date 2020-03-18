@@ -1,5 +1,5 @@
 export { wrap } from './wrap'
 export { mockFetch } from './mockFetch'
-export { configureMocks } from './config'
+export { configure } from './config'
 export { highlightNotUtilizedResponses } from './notUtilizedResponses'
 export { assertions } from './assertions'

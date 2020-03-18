@@ -1,6 +1,6 @@
 import { render, cleanup } from '@testing-library/react'
-import { wrap, configureMocks } from '../src/index'
-import { getMocksConfig } from '../src/config'
+import { wrap, configure } from '../src/index'
+import { getConfig } from '../src/config'
 import { MyComponent, MyComponentWithProps, MyComponentWithPortal } from './components.mock'
 
 const portalRootId = 'portal-root-id'
@@ -11,10 +11,10 @@ const removePortals = portalRootId => {
   document.body.removeChild(portal)
 }
 
-const defaultMocksConfig = getMocksConfig()
+const defaultMocksConfig = getConfig()
 
 function resetMocksConfig() {
-  configureMocks(defaultMocksConfig)
+  configure(defaultMocksConfig)
   cleanup()
   removePortals(portalRootId)
 }
@@ -22,7 +22,7 @@ function resetMocksConfig() {
 afterEach(resetMocksConfig)
 
 it('should have props', () => {
-  configureMocks({ mount: render })
+  configure({ mount: render })
   const props = { foo: 'bar' }
 
   const { container } = wrap(MyComponentWithProps).withProps(props).mount()
@@ -40,7 +40,7 @@ it('should have an element where to place a portal', () => {
 })
 
 it('should have unique portals', () => {
-  configureMocks({ mount: render })
+  configure({ mount: render })
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
 
@@ -58,7 +58,7 @@ it('should use the default mount', () => {
 })
 
 it('should use a custom mount', () => {
-  configureMocks({ mount: render })
+  configure({ mount: render })
   const expectedText = 'Foo'
 
   const { container } = wrap(MyComponent).mount()

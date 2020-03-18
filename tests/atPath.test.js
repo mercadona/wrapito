@@ -1,4 +1,4 @@
-import { wrap, configureMocks as configure } from '../src'
+import { wrap, configure } from '../src'
 import { render, fireEvent } from '@testing-library/react'
 
 import { MyAppWithRouting, history, myFakeModule } from './components.mock'
