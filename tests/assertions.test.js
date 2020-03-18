@@ -1,12 +1,12 @@
 import { render, wait, fireEvent } from '@testing-library/react'
 
-import { wrap, assertions, configureMocks } from '../src'
+import { wrap, assertions, configure } from '../src'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
 import { refreshProductsList, getTableRowsText } from './helpers'
 
 expect.extend(assertions)
 
-configureMocks({ defaultHost: 'my-host', mount: render })
+configure({ defaultHost: 'my-host', mount: render })
 
 afterEach(jest.restoreAllMocks)
 

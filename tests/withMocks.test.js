@@ -1,14 +1,14 @@
 import { render, wait, fireEvent, cleanup } from '@testing-library/react'
-import { wrap, configureMocks, highlightNotUtilizedResponses } from '../src/index'
+import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls, } from './components.mock'
 import { refreshProductsList, getTableRowsText } from './helpers'
-import { getMocksConfig } from '../src/config'
+import { getConfig } from '../src/config'
 
-const defaultMocksConfig = getMocksConfig()
+const defaultMocksConfig = getConfig()
 
 function resetMocksConfig() {
   cleanup()
-  configureMocks(defaultMocksConfig)
+  configure(defaultMocksConfig)
   jest.restoreAllMocks()
   highlightNotUtilizedResponses()
 }
@@ -16,7 +16,7 @@ function resetMocksConfig() {
 afterEach(resetMocksConfig)
 
 it('should have mocks', async () => {
-  configureMocks({ mount: render })
+  configure({ mount: render })
   const { container } = wrap(MyComponentMakingHttpCalls)
     .withMocks({ method: 'get', path: '/path/to/get/quantity/', host: 'my-host', responseBody: '15', status: 200 })
     .mount()
@@ -29,7 +29,7 @@ it('should have mocks', async () => {
 })
 
 it('should have default mocks', async () => {
-  configureMocks({ defaultHost: 'my-host', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   const { container } = wrap(MyComponentMakingHttpCalls)
     .withMocks({ path: '/path/to/get/quantity/', responseBody: '15' })
     .mount()
@@ -42,7 +42,7 @@ it('should have default mocks', async () => {
 })
 
 it('should try to match the request body as well', async () => {
-  configureMocks({ defaultHost: 'my-host', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   const quantity = '15'
   const { getByText, getByLabelText, queryByLabelText, getByTestId } = wrap(MyComponentMakingHttpCalls)
     .withMocks([
@@ -60,7 +60,7 @@ it('should try to match the request body as well', async () => {
 })
 
 it('should mock different responses given the same request', async () => {
-  configureMocks({ defaultHost: 'my-host', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
 
   const productsBeforeRefreshing = ['tomato', 'orange']
   const productsAfterRefreshing = ['tomato', 'orange', 'apple']
@@ -86,7 +86,7 @@ it('should mock different responses given the same request', async () => {
 })
 
 it('should not have enough responses specified', async () => {
-  configureMocks({ defaultHost: 'my-host', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   console.warn = jest.fn()
 
   const products = ['tomato', 'orange']
