@@ -1,9 +1,9 @@
 import { render, wait, cleanup } from '@testing-library/react'
-import { wrap, configureMocks, highlightNotUtilizedResponses } from '../src/index'
+import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
 import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
 import { refreshProductsList } from './helpers'
 
-configureMocks({ defaultHost: 'my-host', mount: render })
+configure({ defaultHost: 'my-host', mount: render })
 
 afterEach(() => {
   cleanup()

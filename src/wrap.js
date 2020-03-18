@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { mockFetch } from './mockFetch'
-import { getMocksConfig } from './config'
+import { getConfig } from './config'
 
 const wrap = options => {
   const isComponent = typeof options === 'function'
@@ -28,7 +28,7 @@ const wrap = options => {
       }
 
       if (hasPath) {
-        getMocksConfig().history.push(path)
+        getConfig().history.push(path)
       }
 
       return mount(options)
@@ -44,6 +44,6 @@ function setupPortal(portalRootId) {
   document.body.appendChild(portalRoot)
 }
 
-const mount = ({ Component, props }) => getMocksConfig().mount(<Component {...props} />)
+const mount = ({ Component, props }) => getConfig().mount(<Component {...props} />)
 
 export { wrap }
