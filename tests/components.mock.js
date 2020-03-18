@@ -1,6 +1,10 @@
 import React, { Component, Fragment, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useSelector } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
+import { Router, Switch, Route } from 'react-router-dom'
+import { createBrowserHistory } from 'history'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
 
 export const MyComponent = () => <div>Foo</div>
 
@@ -96,5 +100,84 @@ export const MyComponentRepeatingHttpCalls = () => {
         </tbody>
       </table>
     </Fragment>
+  )
+}
+
+export const myFakeModule = {
+  myFakeFunction: () => null
+}
+
+const Home = ({ history }) => {
+  const goToCategories = () => history.push('/categories')
+  myFakeModule.myFakeFunction('HOME')
+  return (
+    <div>
+      Home
+      <button onClick={goToCategories}>Go to categories</button>
+    </div>
+  )
+}
+const Categories = () => {
+  return (
+    <div>Categories</div>
+  )
+}
+
+export const history = createBrowserHistory()
+
+export const MyAppWithRouting = () => {
+  return (
+    <Router history={ history }>
+      <Switch>
+        <Route key="home" path="/" component={Home} exact={true} />
+        <Route key="categories" path="/categories" component={Categories} exact={true} />
+      </Switch>
+    </Router>
+  )
+}
+
+const ACTION_TYPES = {
+  ADD: 'ADD',
+  REMOVE: 'REMOVE',
+}
+
+const add = () => ({ type: ACTION_TYPES.ADD })
+const remove = () => dispatch => dispatch({ type: ACTION_TYPES.REMOVE })
+
+function reducer(state = { products: 10 }, action) {
+  switch (action.type) {
+    case ACTION_TYPES.ADD:
+      return {
+        products: state.products + 1,
+      }
+
+    case ACTION_TYPES.REMOVE:
+      return {
+        products: state.products - 1,
+      }
+
+    default:
+      return state
+  }
+}
+
+const Cart = () => {
+  const { products } = useSelector(state => state)
+  const dispatch = useDispatch()
+
+  return (
+    <div>
+      <p>{ products }</p>
+      <button onClick={() => dispatch(add())}>+</button>
+      <button onClick={() => dispatch(remove())}>-</button>
+    </div>
+  )
+}
+
+export const MyAppWithStore = () => {
+  return (
+    <Provider store={ createStore(reducer, { products: 10 }, applyMiddleware(thunk)) }>
+      <Cart/>
+    </Provider>
   )
 }
