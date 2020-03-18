@@ -20,10 +20,6 @@ export const MyComponentWithPortal = ({ children }) => (
   createPortal(children, document.getElementById('portal-root-id'))
 )
 
-export const MyComponentWithRouter = ({ match }) => {
-  return <p>Current route: "{ match.url }"</p>
-}
-
 export class MyComponentMakingHttpCalls extends Component {
   state = {
     quantity: 0,
