@@ -1,9 +1,11 @@
 import { wrap, configureMocks as configure } from '../src'
 import { render, fireEvent } from '@testing-library/react'
 
-import { MyAppWithRouting, history } from './components.mock'
+import { MyAppWithRouting, history, myFakeModule } from './components.mock'
 
 configure({ mount: render })
+
+afterEach(jest.restoreAllMocks)
 
 it('should render an app with routing', () => {
   const { container } = wrap(MyAppWithRouting)
@@ -13,11 +15,13 @@ it('should render an app with routing', () => {
 })
 
 it('should render an app with routing given an specific path', () => {
+  const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
   configure({ history })
   const { container } = wrap(MyAppWithRouting)
     .atPath('/categories')
     .mount()
 
+  expect(functionCalledByHomeRoute).not.toHaveBeenCalledWith('HOME')
   expect(container).toHaveTextContent('Categories')
 })
 

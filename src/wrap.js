@@ -44,12 +44,11 @@ const wrap = options => {
         return mountWithRouter(options)
       }
 
-      const component = mount(options)
-
       if (hasPath) {
         getMocksConfig().history.push(path)
       }
-      return component
+
+      return mount(options)
     },
   }
 }
