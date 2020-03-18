@@ -67,8 +67,7 @@
     "jest": "*",
     "chalk": "*",
     "react": "*",
-    "react-dom": "*",
-    "react-router-dom": "*"
+    "react-dom": "*"
   },
   "babel": {
     "presets": [
