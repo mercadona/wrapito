@@ -1,7 +1,7 @@
 {
   "name": "@mercadona/mo.library.burrito",
   "version": "0.0.0",
-  "description": "🌯 Yummy React tests",
+  "description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --ci --coverage --config config/jest.config.json",
@@ -27,10 +27,6 @@
     "jest",
     "wrap",
     "burrito",
-    "builder",
-    "outside-in",
-    "react-redux",
-    "react-router",
     "component",
     "mock",
     "fetch",
