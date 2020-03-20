@@ -1,21 +1,18 @@
 # mo.library.burrito
-🌯 Yummy React tests with less effort.
+🌯 Wrap you tests so that you can test both behaviour and components with less effort.
 
 ## Motivation
-As we embrace outside-in testing, we are more focused on user interactions than implementation details. In order to test all the user interations that can be done at a certain point of our app, the upper the component we render in the test, the better.
-
-## The problem
-Rendering the uppest component in the tree might cause dependency and boilerplate problems such as:
-- At some point of the tree we need to access the `redux's store`
-- We are likely need params from the url and for that purpose we need to know about the `routing`.
-- What if we need to check that a button makes the user navigate to other page which actually renders another entire and different tree.
-- In most of the cases, there will be http responses that will populate the state of our component (whatever it is), and we will need to mock them all.
+As we are more focused on user interactions than implementation details. In order to test all the user interations that can be done at a certain point of our app, the upper the component we render in the test, the better.
 
 ## The idea
-To solve the above problems we need a tool that:
-- Mounts/renders the component by using a testing library passing the needed props and dependencies.
-- Simplifies and reduces the boilerplate needed to mock the `redux's store` and `state`, the http responses and the `react-router state` and `navigation`.
-To acomplish this, we have used the builder pattern that makes tests much more semantic.
+As we test our app we will be in two different scenarios where:
+- We will need to test that the user interactions cause the proper side effects such as making http calls or refreshing the UI.
+- In case we have a components library, we will need to test these by passing the needed props and checking that it returns (renders) the expected result.
+
+In general, if you want to test behaviour, you need to simulate external actions from user or from http responses.
+Most of the existing testing libraries give you control of the user actions and thats why we just ask you to set in the config what is the `render` function of your testing library.
+Unfortunately, there aren't so many options when it comes to manage http requests and responses in the tests.
+To give the mounted component context about which path is the current path where the app should be mounted, what props does the component receive, what http requests will respond with which results or where should the portal be mounted we have used the builder pattern that makes tests much more semantic.
 
 ## Installing
 Using npm:
@@ -32,29 +29,13 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## Initial setup
-In order to make easier the usage of `withMocks` and `withStore`, we can set default values to our `api host`, the initial `redux's store state` and the `reducers`. This way we make `burrito` a litle bit more agnostic. For example `setupMocks.js`
-
-```
-import { configureMocks } from '@mercadona/mo.library.burrito'
-import reducers from 'src/reducers'
-
-const { API_HOST, API_VERSION } = process.env
-const initialState = { isAuth: false }
-
-configureMocks({
-  defaultHost: `${ API_HOST }${ API_VERSION }`,
-  defaultStore: initialState,
-  reducers,
-})
-```
-
-Because `burrito` doens't want to know anything about how the components are mounted in the project that uses it, we can also specify how we will `mount` our components by passing the rendering/mounting function of our library of preference:
+Because `burrito` doens't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a litle bit more agnostic. For example `setup.burrito.js`
 
 ```
 import { render } from '@testing-library/react'
-import { configureMocks } from '@mercadona/mo.library.burrito'
+import { configure } from '@mercadona/mo.library.burrito'
 
-configureMocks({
+configure({
   mount: render,
 })
 ```
@@ -63,79 +44,11 @@ and add the previous file in `jest.config.json`
 
 ```
   "setupFiles": [
-    "<rootDir>/config/jest/setupMocks.js"
+    "<rootDir>/config/jest/setup.burrito.js"
   ],
 ```
 
-## API
-#### withStore
-It makes your component (and all the component tree below) think that he can make use of the `redux's store` and it will have the `defaultStore` as initial state.
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-wrap(MyComponent)
-  .withStore()
-  .mount()
-```
-It will work for most of the cases, but at some point one could need to recreate an specific scenario. You can do this by passing a custom initial state as parameter:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-const myCustomInitialState = { isAuth: true }
-
-wrap(MyComponent)
-  .withStore(myCustomInitialState)
-  .mount()
-```
-
-#### withRouter
-It makes your component think that he is within a router and have access to `location`, `history` and `match`.
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-wrap(MyComponent)
-  .withRouter()
-  .mount()
-```
-
-There might be cases where an specific component makes (for example) an `http request`  depending on an specific route parameter. You can set route params by specific the `currentRoute`:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-import { routes } from 'src/routes'
-
-const routing = {
-  currentRoute: {
-    exact: routes.productDetail.exact, // true
-    path: routes.productDetail.path, // '/products/:productId'
-    route: '/products/5',
-  },
-}
-
-wrap(MyComponent)
-  .withStore(routing)
-  .mount()
-```
-In the other hand, what if we want to test that after adding our product to the cart we click on the `confirm and checkout` button? We would need to test nativation between routes. We can actually do this by adding `otherRoutes`, which will be the routes where you will be navigating in your test:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-import { routes } from 'src/routes'
-
-const routing = {
-  currentRoute: {
-    exact: routes.productDetail.exact, // true
-    path: routes.productDetail.path, // '/products/:productId'
-    route: '/products/5',
-  },
-  otherRoutes: [
-    routes.checkout, // { exact: true, path: '/checkout', component: MyCheckoutComponent }
-  ]
-}
-
-wrap(MyComponent)
-  .withStore(routing)
-  .mount()
-```
-
+## Builder API
 #### withMocks
 By using this you let your components know what `http requests` will respond. It works matching the request url which is `host` + `path`, the request `method` and the `requestBody`. All three need to match, otherwise it will raise an exception to let you know that one of your components is doing an `http request` that is not being handled.
 ```
@@ -155,12 +68,12 @@ wrap(MyComponent)
 ```
 `host`, `method` and `status` will be the same most of the cases, we don't want to specify them every single time.
 
-While `host` has a default value specified by using the `configureMocks`:
+While `host` has a default value specified by using the `configure`:
 ```
-import { configureMocks } from '@mercadona/mo.library.burrito'
+import { configure } from '@mercadona/mo.library.burrito'
 
 const { API_HOST, API_VERSION } = process.env
-configureMocks({ defaultHost: `${ API_HOST }${ API_VERSION }` })
+configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
 `method` as a default value of `'get'` and `status` is `200`. This means one can use `withMocks` like this:
 ```
@@ -229,6 +142,16 @@ When `multipleResponses` is present, `burrito` will ignore the `responseBody` at
 
 This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
 
+#### atPath
+When mounting the whole app, it will be done at the default route passing the default path. But a specific route might need to be mounted and for that reason a path to match that route should be pass here.
+```
+import { wrap } from '@mercadona/mo.library.burrito'
+
+wrap(MyComponent)
+  .atPath(`/the/path/to/match/a/route/that/mounts/my/component/3`)
+  .mount()
+```
+
 #### withProps
 Pass down the props to the wrapped component:
 ```
@@ -242,7 +165,7 @@ wrap(MyComponent)
 ```
 
 #### withPortalAt
-If one or more of your components use a `react portal` in any way, you will need to specify the `id` of node where it will be added:
+If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where it will be added:
 ```
 import { wrap } from '@mercadona/mo.library.burrito'
 
@@ -258,15 +181,37 @@ import { wrap } from '@mercadona/mo.library.burrito'
 
 const props = { message: 'MyComponent will receive this as prop' }
 const responses = {
-  path: '/path/to/get/a/single/product/,
+  path: '/path/to/get/a/single/product/by/id/1/,
   responseBody: { id: 1, name: 'hummus' },
 }
 
 wrap(PreparationContainer)
+  .atPath('/products/1')
+  .withMocks(responses)
   .withProps()
   .withPortalAt('modal-root')
-  .withStore()
-  .withRouter()
-  .withMocks(responses)
   .mount()
 ```
+
+## Utils
+#### toMatchNetWorkRequests
+When mounting a component that does http calls, it might be useful to check if these requests are matching the mocks we are passing in the test. To do so, it will be necessary to use `expect.extend()` from `jest`:
+```
+import { wrap, assertions } from '@mercadona/mo.library.burrito'
+
+expect.extend(assertions)
+
+const responses = [
+  { path: '/path/to/get/quantity/', responseBody: '15' },
+  { path: '/path/to/endpoint/not/being/used/', responseBody: { value: 'I am not being used' } },
+]
+
+wrap(MyComponentMakingHttpCalls)
+    .withMocks(responses)
+    .mount()
+
+expect(responses).toMatchNetworkRequests()
+```
+
+As there's an http request that is mocked but is not gonna be used in the code, it will make the test fail and log all the requests that are mocked but not being used in the code.
+In the other hand, it can be used to do the oposite, there could be that a reqeust is being done in the code, but not being mocked in the tests.
