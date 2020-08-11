@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Component, Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { Router, Switch, Route } from 'react-router-dom'
@@ -165,5 +165,26 @@ export const MyAppWithStore = () => {
     <Provider store={ createStore(reducer, { products: 10 }, applyMiddleware(thunk)) }>
       <Cart/>
     </Provider>
+  )
+}
+
+export const MyComponentMakingHttpCallsWithQueryParams = () => {
+  const [ quantity, setQuantity ] = useState(0)
+
+  useEffect(() => {
+    getQuantity()
+  }, [])
+
+  const getQuantity = async () => {
+    const request = new Request('/path/with/query/params/?myAwesome=param')
+    const response = await fetch(request)
+    if (!response) return
+    const quantity = await response.json()
+
+    setQuantity(quantity)
+  }
+
+  return (
+    <span>quantity: { quantity }</span>
   )
 }

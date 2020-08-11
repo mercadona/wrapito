@@ -15,12 +15,13 @@ const wrap = options => {
     withProps: props => wrap({ ...options, props }),
     withPortalAt: portalRootId => wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
+    withQueryParams: () => wrap({ ...options, hasQueryParams: true }),
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
-      const { hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
+      const { hasMocks, responses, hasPortal, portalRootId, path, hasPath, hasQueryParams } = options
 
       if (hasMocks) {
-        mockFetch(responses)
+        mockFetch(responses, hasQueryParams)
       }
 
       if (hasPortal) {
