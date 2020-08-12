@@ -132,8 +132,11 @@ it('should ignore the query params by default', async () => {
 it('should not ignore the query params when is specified', async () => {
   configure({ mount: render })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
-    .withMocks({ path: '/path/with/query/params/?myAwesome=param', responseBody: '15' })
-    .withQueryParams()
+    .withMocks({
+        path: '/path/with/query/params/?myAwesome=param',
+        responseBody: '15',
+        catchParams: true,
+      })
     .mount()
 
   expect(container).toHaveTextContent('quantity: 0')

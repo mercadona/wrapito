@@ -15,8 +15,8 @@ async function getNormalizedRequestBody(request) {
 }
 
 const matchesRequestMethod = (request, method) => request.method.toLowerCase() === method
-const matchesRequestUrl = (request, url, hasQueryParams) => {
-  if (hasQueryParams) return request.url === url
+const matchesRequestUrl = (request, url, catchParams) => {
+  if (catchParams) return request.url === url
 
   const urlWithoutQueryParams = request.url.split('?')[0]
   return urlWithoutQueryParams === url
@@ -25,17 +25,18 @@ const matchesRequestBody = (normalizedRequestBody, requestBody) => {
   return deepEqual(normalizedRequestBody, requestBody)
 }
 
-const getRequestMatcher = (request, normalizedRequestBody, hasQueryParams) => ({
+const getRequestMatcher = (request, normalizedRequestBody) => ({
   method = 'get',
   path,
   host = getConfig().defaultHost,
   requestBody = null,
+  catchParams,
 }) => {
   const url = host + path
 
   return (
     matchesRequestMethod(request, method) &&
-    matchesRequestUrl(request, url, hasQueryParams) &&
+    matchesRequestUrl(request, url, catchParams) &&
     matchesRequestBody(normalizedRequestBody, requestBody)
   )
 }
@@ -49,7 +50,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
   })
 )
 
-function mockFetch(responses, hasQueryParams) {
+function mockFetch(responses) {
   resetUtilizedResponses()
   resetRequestsMissingResponse()
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
@@ -57,7 +58,7 @@ function mockFetch(responses, hasQueryParams) {
 
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
-    const responseMatchingRequest = listOfResponses.find(getRequestMatcher(request, normalizedRequestBody, hasQueryParams))
+    const responseMatchingRequest = listOfResponses.find(getRequestMatcher(request, normalizedRequestBody))
 
     if (!responseMatchingRequest) {
       console.warn(`
