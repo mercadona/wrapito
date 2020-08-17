@@ -22,7 +22,7 @@ afterEach(resetMocksConfig)
 it('should have mocks', async () => {
   configure({ mount: render })
   const { container } = wrap(MyComponentMakingHttpCalls)
-    .withMocks({ method: 'get', path: '/path/to/get/quantity/', host: 'http://my-host.com', responseBody: '15', status: 200 })
+    .withMocks({ method: 'get', path: '/path/to/get/quantity/', host: 'my-host', responseBody: '15', status: 200 })
     .mount()
 
     expect(container).toHaveTextContent('quantity: 0')
@@ -33,7 +33,7 @@ it('should have mocks', async () => {
 })
 
 it('should have default mocks', async () => {
-  configure({ defaultHost: 'http://my-host.com', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   const { container } = wrap(MyComponentMakingHttpCalls)
     .withMocks({ path: '/path/to/get/quantity/', responseBody: '15' })
     .mount()
@@ -46,7 +46,7 @@ it('should have default mocks', async () => {
 })
 
 it('should try to match the request body as well', async () => {
-  configure({ defaultHost: 'http://my-host.com', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   const quantity = '15'
   const { getByText, getByLabelText, queryByLabelText, getByTestId } = wrap(MyComponentMakingHttpCalls)
     .withMocks([
@@ -64,7 +64,7 @@ it('should try to match the request body as well', async () => {
 })
 
 it('should mock different responses given the same request', async () => {
-  configure({ defaultHost: 'http://my-host.com', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
 
   const productsBeforeRefreshing = ['tomato', 'orange']
   const productsAfterRefreshing = ['tomato', 'orange', 'apple']
@@ -90,7 +90,7 @@ it('should mock different responses given the same request', async () => {
 })
 
 it('should not have enough responses specified', async () => {
-  configure({ defaultHost: 'http://my-host.com', mount: render })
+  configure({ defaultHost: 'my-host', mount: render })
   console.warn = jest.fn()
 
   const products = ['tomato', 'orange']
@@ -117,7 +117,7 @@ it('should not have enough responses specified', async () => {
 })
 
 it('should ignore the query params by default', async () => {
-  configure({ mount: render, defaultHost: 'http://my-host.com' })
+  configure({ mount: render })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({ path: '/path/with/query/params/', responseBody: '15' })
     .mount()
@@ -130,7 +130,7 @@ it('should ignore the query params by default', async () => {
 })
 
 it('should not ignore the query params when is specified', async () => {
-  configure({ mount: render, defaultHost: 'http://my-host.com' })
+  configure({ mount: render })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({
         path: '/path/with/query/params/?myAwesome=param',
