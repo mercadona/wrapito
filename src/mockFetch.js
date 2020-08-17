@@ -18,8 +18,9 @@ const matchesRequestMethod = (request, method) => request.method.toLowerCase() =
 const matchesRequestUrl = (request, url, catchParams) => {
   if (catchParams) return request.url === url
 
-  const urlWithoutQueryParams = request.url.split('?')[0]
-  return urlWithoutQueryParams === url
+  const { pathname: requestURL } = new URL(request.url)
+  const { pathname: responseURL } = new URL(url)
+  return requestURL === responseURL
 }
 const matchesRequestBody = (normalizedRequestBody, requestBody) => {
   return deepEqual(normalizedRequestBody, requestBody)

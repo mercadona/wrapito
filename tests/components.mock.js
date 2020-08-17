@@ -27,7 +27,7 @@ export class MyComponentMakingHttpCalls extends Component {
   }
 
   componentDidMount = async () => {
-    const request = new Request('my-host/path/to/get/quantity/')
+    const request = new Request('http://my-host.com/path/to/get/quantity/')
     const quantityResponse = await fetch(request)
     if (!quantityResponse) return
     if (quantityResponse.status !== 200) {
@@ -40,7 +40,7 @@ export class MyComponentMakingHttpCalls extends Component {
   }
 
   saveQuantity = async () => {
-    const request = new Request('my-host/path/to/save/quantity/', {
+    const request = new Request('http://my-host.com/path/to/save/quantity/', {
       method: 'POST',
       body: JSON.stringify({ quantity: this.state.quantity }),
     })
@@ -64,7 +64,7 @@ export const MyComponentRepeatingHttpCalls = () => {
   const [ products, setProducts ] = useState([])
 
   const fetchProducts = async () => {
-    const productsRequest = new Request('my-host/path/to/get/products/')
+    const productsRequest = new Request('http://my-host.com/path/to/get/products/')
     try {
       const productsResponse = await fetch(productsRequest)
       const products = await productsResponse.json()
@@ -176,7 +176,7 @@ export const MyComponentMakingHttpCallsWithQueryParams = () => {
   }, [])
 
   const getQuantity = async () => {
-    const request = new Request('/path/with/query/params/?myAwesome=param')
+    const request = new Request('http://my-host.com/path/with/query/params/?myAwesome=param')
     const response = await fetch(request)
     if (!response) return
     const quantity = await response.json()

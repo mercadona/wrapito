@@ -6,7 +6,7 @@ import { refreshProductsList, getTableRowsText } from './helpers'
 
 expect.extend(assertions)
 
-configure({ defaultHost: 'my-host', mount: render })
+configure({ defaultHost: 'http://my-host.com', mount: render })
 
 afterEach(jest.restoreAllMocks)
 
@@ -102,7 +102,7 @@ it('should not match network requests when missing responses for a given request
     expect(message()).toContain('  Object {')
     expect(message()).toContain('    "method": "get",')
     expect(message()).toContain('    "requestBody": null,')
-    expect(message()).toContain('    "url": "my-host/path/to/get/quantity/",')
+    expect(message()).toContain('    "url": "http://my-host.com/path/to/get/quantity/",')
     expect(message()).toContain('  },')
     expect(responses).not.toMatchNetworkRequests()
   })
@@ -133,7 +133,7 @@ it('should not match network requests when all multiple responses have been retu
     expect(message()).toContain('  Object {')
     expect(message()).toContain('    "method": "get",')
     expect(message()).toContain('    "requestBody": null,')
-    expect(message()).toContain('    "url": "my-host/path/to/get/products/",')
+    expect(message()).toContain('    "url": "http://my-host.com/path/to/get/products/",')
     expect(message()).toContain('  },')
     expect(responses).not.toMatchNetworkRequests()
   })

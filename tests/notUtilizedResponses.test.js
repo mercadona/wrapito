@@ -1,9 +1,13 @@
 import { render, wait, cleanup } from '@testing-library/react'
 import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
-import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls } from './components.mock'
+import {
+  MyComponentMakingHttpCalls,
+  MyComponentRepeatingHttpCalls,
+  MyComponentMakingHttpCallsWithQueryParams,
+} from './components.mock'
 import { refreshProductsList } from './helpers'
 
-configure({ defaultHost: 'my-host', mount: render })
+configure({ defaultHost: 'http://my-host.com', mount: render })
 
 afterEach(() => {
   cleanup()
@@ -24,6 +28,26 @@ it('should warn when there are responses not being used', async () => {
     highlightNotUtilizedResponses()
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/to/endpoint/not/being/used/'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I am not being used'))
+  })
+})
+
+it('should warn when there are responses with query params not being used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+  wrap(MyComponentMakingHttpCallsWithQueryParams)
+    .withMocks({
+      path: '/path/with/query/params/?notUsedParam=param',
+      responseBody: 'I am not being used',
+      catchParams: true,
+    })
+    .mount()
+
+  await wait(() => {
+    highlightNotUtilizedResponses()
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('the following responses are not being used:'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('/path/with/query/params/?notUsedParam=param'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('I am not being used'))
   })
