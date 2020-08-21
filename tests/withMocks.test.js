@@ -1,6 +1,10 @@
 import { render, wait, fireEvent, cleanup } from '@testing-library/react'
 import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
-import { MyComponentMakingHttpCalls, MyComponentRepeatingHttpCalls, } from './components.mock'
+import {
+  MyComponentMakingHttpCalls,
+  MyComponentRepeatingHttpCalls,
+  MyComponentMakingHttpCallsWithQueryParams,
+} from './components.mock'
 import { refreshProductsList, getTableRowsText } from './helpers'
 import { getConfig } from '../src/config'
 
@@ -110,4 +114,34 @@ it('should not have enough responses specified', async () => {
       expect.stringContaining('all responses have been returned already given')
     )
   )
+})
+
+it('should ignore the query params by default', async () => {
+  configure({ mount: render })
+  const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
+    .withMocks({ path: '/path/with/query/params/', responseBody: '15' })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
+})
+
+it('should not ignore the query params when is specified', async () => {
+  configure({ mount: render })
+  const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
+    .withMocks({
+        path: '/path/with/query/params/?myAwesome=param',
+        responseBody: '15',
+        catchParams: true,
+      })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
 })
