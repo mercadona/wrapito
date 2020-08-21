@@ -60,6 +60,7 @@ const responses = {
   path: '/path/to/get/a/single/product/,
   responseBody: { id: 1, name: 'hummus' },
   status: 200,
+  catchParams: true,
 }
 
 wrap(MyComponent)
@@ -67,6 +68,18 @@ wrap(MyComponent)
   .mount()
 ```
 `host`, `method` and `status` will be the same most of the cases, we don't want to specify them every single time.
+
+By default burrito 🌯 ignore the query params in your responses, but if you want to test it you can use the `catchParams` property in the request, like this:
+
+```
+wrap(MyComponentUsingQueryParams)
+    .withMocks({
+        path: '/path/with/query/params/?myAwesome=param',
+        responseBody: '15',
+        catchParams: true,
+      })
+    .mount()
+```
 
 While `host` has a default value specified by using the `configure`:
 ```

@@ -15,7 +15,12 @@ async function getNormalizedRequestBody(request) {
 }
 
 const matchesRequestMethod = (request, method) => request.method.toLowerCase() === method
-const matchesRequestUrl = (request, url) => request.url === url
+const matchesRequestUrl = (request, url, catchParams) => {
+  if (catchParams) return request.url === url
+
+  const urlWithoutQueryParams = request.url.split('?')[0]
+  return urlWithoutQueryParams === url
+}
 const matchesRequestBody = (normalizedRequestBody, requestBody) => {
   return deepEqual(normalizedRequestBody, requestBody)
 }
@@ -25,12 +30,13 @@ const getRequestMatcher = (request, normalizedRequestBody) => ({
   path,
   host = getConfig().defaultHost,
   requestBody = null,
+  catchParams,
 }) => {
   const url = host + path
 
   return (
     matchesRequestMethod(request, method) &&
-    matchesRequestUrl(request, url) &&
+    matchesRequestUrl(request, url, catchParams) &&
     matchesRequestBody(normalizedRequestBody, requestBody)
   )
 }
