@@ -2,7 +2,7 @@
 Wrap you tests so that you can test both behaviour and components with less effort.
 
 ## 🎯 Motivation
-As we are more focused on user interactions than implementation details. In order to test all the user interations that can be done at a certain point of our app, the upper the component we render in the test, the better.
+As we are more focused on user interactions than implementation details. In order to test all the user interactions that can be done at a certain point of our app, the upper the component we render in the test, the better.
 
 ## 💡 The idea
 As we test our app we will be in two different scenarios where:
@@ -29,7 +29,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## 👣 Initial setup
-Because 🌯burrito doens't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a litle bit more agnostic. For example `setup.burrito.js`
+Because 🌯burrito doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
 
 ```
 import { render } from '@testing-library/react'
@@ -210,7 +210,7 @@ wrap(PreparationContainer)
   .mount()
 ```
 
-## Utils
+## ✨ Utils
 #### toMatchNetWorkRequests
 When mounting a component that does http calls, it might be useful to check if these requests are matching the mocks we are passing in the test. To do so, it will be necessary to use `expect.extend()` from `jest`:
 ```
