@@ -1,10 +1,10 @@
-# mo.library.burrito
-🌯 Wrap you tests so that you can test both behaviour and components with less effort.
+# 🌯 mo.library.burrito
+Wrap you tests so that you can test both behaviour and components with less effort.
 
-## Motivation
+## 🎯 Motivation
 As we are more focused on user interactions than implementation details. In order to test all the user interations that can be done at a certain point of our app, the upper the component we render in the test, the better.
 
-## The idea
+## 💡 The idea
 As we test our app we will be in two different scenarios where:
 - We will need to test that the user interactions cause the proper side effects such as making http calls or refreshing the UI.
 - In case we have a components library, we will need to test these by passing the needed props and checking that it returns (renders) the expected result.
@@ -14,22 +14,22 @@ Most of the existing testing libraries give you control of the user actions and 
 Unfortunately, there aren't so many options when it comes to manage http requests and responses in the tests.
 To give the mounted component context about which path is the current path where the app should be mounted, what props does the component receive, what http requests will respond with which results or where should the portal be mounted we have used the builder pattern that makes tests much more semantic.
 
-## Installing
+## 🔧 Installing
 Using npm:
 
 ```
 $ npm install @mercadona/mo.library.burrito --registry http://verdaccio.sta.monline
 ```
 
-## Basic usage
+## 👩‍💻 Basic usage
 ```
 const MyComponent = () => <span>Just a component</span>
 
 const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
-## Initial setup
-Because `burrito` doens't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a litle bit more agnostic. For example `setup.burrito.js`
+## 👣 Initial setup
+Because 🌯burrito doens't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a litle bit more agnostic. For example `setup.burrito.js`
 
 ```
 import { render } from '@testing-library/react'
@@ -48,7 +48,7 @@ and add the previous file in `jest.config.json`
   ],
 ```
 
-## Builder API
+## 🏰 Builder API
 #### withMocks
 By using this you let your components know what `http requests` will respond. It works matching the request url which is `host` + `path`, the request `method` and the `requestBody`. All three need to match, otherwise it will raise an exception to let you know that one of your components is doing an `http request` that is not being handled.
 ```
@@ -69,7 +69,7 @@ wrap(MyComponent)
 ```
 `host`, `method` and `status` will be the same most of the cases, we don't want to specify them every single time.
 
-By default burrito 🌯 is testing the query params in your responses, but if you want to ignore it you must add the `handleQueryParams` param in the config and to test it you can use the `catchParams` property in the request, like this:
+By default 🌯 burrito is testing the query params in your responses, but if you want to ignore it you must add the `handleQueryParams` param in the config and to test it you can use the `catchParams` property in the request, like this:
 
 ```
 import { configure } from '@mercadona/mo.library.burrito'
@@ -128,7 +128,7 @@ wrap(MyComponent)
   .mount()
 ```
 
-There might be cases where one request is called several times and we want it to return different responses. An example of this could be an app that shows a list of products that may be updated over time and for this puporse the app has a refresh button that will request the list again in order to update its content.
+There might be cases where one request is called several times and we want it to return different responses. An example of this could be an app that shows a list of products that may be updated over time and for this propose the app has a refresh button that will request the list again in order to update its content.
 
 Well, it can be solved by specifying the response as multiple using `multipleResponse` as follows:
 
@@ -155,7 +155,7 @@ const responses = {
 
 `multipleResponses` receives an array of responses where one set the `responseBody`, `status` or `headers` for every response.
 
-When `multipleResponses` is present, `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
+When `multipleResponses` is present, 🌯 `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
 
 This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
 
@@ -210,7 +210,7 @@ wrap(PreparationContainer)
   .mount()
 ```
 
-## Utils
+## Utils
 #### toMatchNetWorkRequests
 When mounting a component that does http calls, it might be useful to check if these requests are matching the mocks we are passing in the test. To do so, it will be necessary to use `expect.extend()` from `jest`:
 ```
@@ -231,4 +231,4 @@ expect(responses).toMatchNetworkRequests()
 ```
 
 As there's an http request that is mocked but is not gonna be used in the code, it will make the test fail and log all the requests that are mocked but not being used in the code.
-In the other hand, it can be used to do the oposite, there could be that a reqeust is being done in the code, but not being mocked in the tests.
+In the other hand, it can be used to do the opposite, there could be that a request is being done in the code, but not being mocked in the tests.
