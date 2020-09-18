@@ -16,7 +16,8 @@ async function getNormalizedRequestBody(request) {
 
 const matchesRequestMethod = (request, method) => request.method.toLowerCase() === method
 const matchesRequestUrl = (request, url, catchParams) => {
-  if (catchParams) return request.url === url
+  const ignoreQueryParams = getConfig().ignoreQueryParams
+  if (!ignoreQueryParams || catchParams) return request.url === url
 
   const urlWithoutQueryParams = request.url.split('?')[0]
   return urlWithoutQueryParams === url
