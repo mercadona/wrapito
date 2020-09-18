@@ -116,8 +116,21 @@ it('should not have enough responses specified', async () => {
   )
 })
 
-it('should ignore the query params by default', async () => {
+it('should not ignore the query params by default', async () => {
   configure({ mount: render })
+  const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
+    .withMocks({ path: '/path/with/query/params/?myAwesome=param', responseBody: '15' })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
+})
+
+it('should ignore the query params when is configured', async () => {
+  configure({ mount: render, handleQueryParams: true })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({ path: '/path/with/query/params/', responseBody: '15' })
     .mount()
@@ -129,8 +142,8 @@ it('should ignore the query params by default', async () => {
   expect(update).toBeInTheDocument()
 })
 
-it('should not ignore the query params when is specified', async () => {
-  configure({ mount: render })
+it('should not ignore the query params when is specified and it is configured', async () => {
+  configure({ mount: render, handleQueryParams: true  })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({
         path: '/path/with/query/params/?myAwesome=param',
