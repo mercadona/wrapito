@@ -130,7 +130,7 @@ it('should not ignore the query params by default', async () => {
 })
 
 it('should ignore the query params when is configured', async () => {
-  configure({ mount: render, ignoreQueryParams: true })
+  configure({ mount: render, handleQueryParams: true })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({ path: '/path/with/query/params/', responseBody: '15' })
     .mount()
@@ -143,7 +143,7 @@ it('should ignore the query params when is configured', async () => {
 })
 
 it('should not ignore the query params when is specified and it is configured', async () => {
-  configure({ mount: render, ignoreQueryParams: true  })
+  configure({ mount: render, handleQueryParams: true  })
   const { container, findByText } = wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withMocks({
         path: '/path/with/query/params/?myAwesome=param',

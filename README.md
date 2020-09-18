@@ -69,9 +69,13 @@ wrap(MyComponent)
 ```
 `host`, `method` and `status` will be the same most of the cases, we don't want to specify them every single time.
 
-By default burrito 🌯 ignore the query params in your responses, but if you want to test it you can use the `catchParams` property in the request, like this:
+By default burrito 🌯 is testing the query params in your responses, but if you want to ignore it you must add the `handleQueryParams` param in the config and to test it you can use the `catchParams` property in the request, like this:
 
 ```
+import { configure } from '@mercadona/mo.library.burrito'
+
+configure({ handleQueryParams: true })
+
 wrap(MyComponentUsingQueryParams)
     .withMocks({
         path: '/path/with/query/params/?myAwesome=param',
