@@ -18,6 +18,7 @@ const wrap = options => {
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
       const { hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
+      const { portal, history } = getConfig()
 
       if (hasMocks) {
         mockFetch(responses)
@@ -27,8 +28,12 @@ const wrap = options => {
         setupPortal(portalRootId)
       }
 
+      if (portal) {
+        setupPortal(portal)
+      }
+
       if (hasPath) {
-        getConfig().history.push(path)
+        history.push(path)
       }
 
       return mount(options)
@@ -44,6 +49,6 @@ function setupPortal(portalRootId) {
   document.body.appendChild(portalRoot)
 }
 
-const mount = ({ Component, props }) => getConfig().mount(<Component {...props} />)
+const mount = ({ Component, props }) => getConfig().mount(<Component { ...props } />)
 
 export { wrap }
