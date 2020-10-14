@@ -23,8 +23,8 @@ const wrap = options => {
         mockFetch(responses)
       }
 
-      if (hasPortal) {
-        setupPortal(portalRootId)
+      if (hasPortal || getConfig().portal) {
+        setupPortal(portalRootId || getConfig().portal)
       }
 
       if (hasPath) {
@@ -44,6 +44,6 @@ function setupPortal(portalRootId) {
   document.body.appendChild(portalRoot)
 }
 
-const mount = ({ Component, props }) => getConfig().mount(<Component {...props} />)
+const mount = ({ Component, props }) => getConfig().mount(<Component { ...props } />)
 
 export { wrap }
