@@ -3,7 +3,14 @@ import { white, redBright, greenBright } from 'chalk'
 import { getConfig } from './config'
 import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses, addRequestMissingResponse, resetRequestsMissingResponse } from './notUtilizedResponses'
 
-global.fetch = jest.fn()
+
+beforeEach(() => {
+  global.fetch = jest.fn()
+})
+
+afterEach(() => {
+  global.fetch.mockRestore()
+})
 
 async function getNormalizedRequestBody(request) {
   try {
@@ -51,7 +58,7 @@ const createResponse = async ({ responseBody, status = 200, headers }) => (
   })
 )
 
-function mockFetch(responses) {
+function mockFetch(responses = [], options = {}) {
   resetUtilizedResponses()
   resetRequestsMissingResponse()
   const listOfResponses = responses.length > 0 ? responses : [ responses ]
@@ -60,6 +67,10 @@ function mockFetch(responses) {
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
     const responseMatchingRequest = listOfResponses.find(getRequestMatcher(request, normalizedRequestBody))
+
+    if (!responseMatchingRequest && options.hasNetwork) {
+      return createResponse({})
+    }
 
     if (!responseMatchingRequest) {
       console.warn(`

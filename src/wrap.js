@@ -22,7 +22,7 @@ const wrap = options => {
       const { portal, history } = getConfig()
 
       if (hasNetwork) {
-        mockFetch(responses)
+        mockFetch(responses, { hasNetwork })
       }
 
       if (hasMocks) {

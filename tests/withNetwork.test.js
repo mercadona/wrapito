@@ -1,13 +1,27 @@
 import { render, screen } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
-import { MyComponentMakingHttpCalls } from './components.mock'
+import { MyComponentWithNetwork } from './components.mock'
 
-fit('should have network', async () => {
+it('should have network', async () => {
+  jest.spyOn(console, 'warn')
   configure({ mount: render })
-  wrap(MyComponentMakingHttpCalls)
-    .withNetwork({ method: 'get', path: '/path/to/get/quantity/', host: 'my-host', responseBody: '15', status: 200 })
+  wrap(MyComponentWithNetwork)
+    .withNetwork([
+      { path: '/path/with/response/', host: 'my-host', responseBody: '15' }
+    ])
     .mount()
 
-  expect(await screen.findByText('quantity: 15')).toBeInTheDocument()
+  expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
+  expect(await screen.findByText('15')).toBeInTheDocument()
+  expect(console.warn).not.toHaveBeenCalled()
+})
+
+it('should have network without responses', async () => {
+  configure({ mount: render })
+  wrap(MyComponentWithNetwork)
+    .withNetwork()
+    .mount()
+
+  expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
 })
