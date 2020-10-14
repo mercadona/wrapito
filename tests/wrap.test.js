@@ -30,7 +30,7 @@ it('should have props', () => {
   expect(container).toHaveTextContent(props.foo)
 })
 
-fit('should have an element where to place a portal defined in the config', () => {
+it('should have an element where to place a portal defined in the config', () => {
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
   configure({ portal: 'portal-root-id' })

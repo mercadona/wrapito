@@ -18,17 +18,22 @@ const wrap = options => {
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
       const { hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
+      const { portal, history } = getConfig()
 
       if (hasMocks) {
         mockFetch(responses)
       }
 
-      if (hasPortal || getConfig().portal) {
-        setupPortal(portalRootId || getConfig().portal)
+      if (hasPortal) {
+        setupPortal(portalRootId)
+      }
+
+      if (portal) {
+        setupPortal(portal)
       }
 
       if (hasPath) {
-        getConfig().history.push(path)
+        history.push(path)
       }
 
       return mount(options)
