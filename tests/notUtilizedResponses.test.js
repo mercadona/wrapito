@@ -7,7 +7,7 @@ configure({ defaultHost: 'my-host', mount: render })
 
 afterEach(() => {
   cleanup()
-  jest.restoreAllMocks()
+  console.warn.mockRestore()
 })
 
 it('should warn when there are responses not being used', async () => {

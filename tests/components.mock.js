@@ -188,3 +188,35 @@ export const MyComponentMakingHttpCallsWithQueryParams = () => {
     <span>quantity: { quantity }</span>
   )
 }
+
+export const MyComponentWithNetwork = () => {
+  const [ status, setStatus ] = useState(null)
+  const [ quantity, setQuantity ] = useState(null)
+
+  useEffect(() => {
+    doRequest()
+    doRequestWithResponse()
+  }, [])
+
+  const doRequest = async () => {
+    const request = new Request('my-host/path/')
+    const response = await fetch(request)
+    if (response) {
+      setStatus('SUCCESS')
+    }
+  }
+
+  const doRequestWithResponse = async () => {
+    const request = new Request('my-host/path/with/response/')
+    const response = await fetch(request)
+    const quantity = await response.json()
+    setQuantity(quantity)
+  }
+
+  return (
+    <div>
+      <div>{ status }</div>
+      <div>{ quantity }</div>
+    </div>
+  )
+}

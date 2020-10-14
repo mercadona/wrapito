@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { mockFetch } from './mockFetch'
+import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 
 const wrap = options => {
@@ -15,10 +16,15 @@ const wrap = options => {
     withProps: props => wrap({ ...options, props }),
     withPortalAt: portalRootId => wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
+    withNetwork: responses => wrap({ ...options, responses, hasNetwork: true }),
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
-      const { hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
+      const { hasNetwork, hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
       const { portal, history } = getConfig()
+
+      if (hasNetwork) {
+        mockNetwork(responses)
+      }
 
       if (hasMocks) {
         mockFetch(responses)

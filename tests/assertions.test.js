@@ -8,8 +8,6 @@ expect.extend(assertions)
 
 configure({ defaultHost: 'my-host', mount: render })
 
-afterEach(jest.restoreAllMocks)
-
 it('should match network requests when all the responses are being used', async () => {
   const responses = { path: '/path/to/get/quantity/', responseBody: '15' }
   wrap(MyComponentMakingHttpCalls)
