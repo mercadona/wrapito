@@ -30,6 +30,16 @@ it('should have props', () => {
   expect(container).toHaveTextContent(props.foo)
 })
 
+it('should have an element where to place a portal defined in the config', () => {
+  const childrenText = 'I am a portal'
+  const props = { children: childrenText }
+  configure({ portal: 'portal-root-id' })
+
+  wrap(MyComponentWithPortal).withProps(props).mount()
+
+  expect(document.body).toHaveTextContent(childrenText)
+})
+
 it('should have an element where to place a portal', () => {
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
