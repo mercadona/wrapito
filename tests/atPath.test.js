@@ -5,8 +5,6 @@ import { MyAppWithRouting, history, myFakeModule } from './components.mock'
 
 configure({ mount: render })
 
-afterEach(jest.restoreAllMocks)
-
 it('should render an app with routing', () => {
   const { container } = wrap(MyAppWithRouting)
     .mount()

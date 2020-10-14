@@ -13,7 +13,6 @@ const defaultMocksConfig = getConfig()
 function resetMocksConfig() {
   cleanup()
   configure(defaultMocksConfig)
-  jest.restoreAllMocks()
   highlightNotUtilizedResponses()
 }
 
