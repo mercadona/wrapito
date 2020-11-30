@@ -1,8 +1,7 @@
-import deepEqual from 'deep-equal'
 import { white, redBright, greenBright } from 'chalk'
-import { getConfig } from './config'
-import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses, addRequestMissingResponse, resetRequestsMissingResponse } from './notUtilizedResponses'
 
+import { getRequestMatcher } from './requestMatcher'
+import { saveListOfResponses, addResponseAsUtilized, resetUtilizedResponses, addRequestMissingResponse, resetRequestsMissingResponse } from './notUtilizedResponses'
 
 beforeEach(() => {
   global.fetch = jest.fn()
@@ -19,34 +18,6 @@ async function getNormalizedRequestBody(request) {
   } catch (error) {
     return null
   }
-}
-
-const matchesRequestMethod = (request, method) => request.method.toLowerCase() === method
-const matchesRequestUrl = (request, url, catchParams) => {
-  const handleQueryParams = getConfig().handleQueryParams
-  if (!handleQueryParams || catchParams) return request.url === url
-
-  const urlWithoutQueryParams = request.url.split('?')[0]
-  return urlWithoutQueryParams === url
-}
-const matchesRequestBody = (normalizedRequestBody, requestBody) => {
-  return deepEqual(normalizedRequestBody, requestBody)
-}
-
-const getRequestMatcher = (request, normalizedRequestBody) => ({
-  method = 'get',
-  path,
-  host = getConfig().defaultHost,
-  requestBody = null,
-  catchParams,
-}) => {
-  const url = host + path
-
-  return (
-    matchesRequestMethod(request, method) &&
-    matchesRequestUrl(request, url, catchParams) &&
-    matchesRequestBody(normalizedRequestBody, requestBody)
-  )
 }
 
 const createResponse = async ({ responseBody, status = 200, headers }) => (
