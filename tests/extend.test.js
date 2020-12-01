@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { mockFetch } from '../src/mockFetch'
+import { mockNetwork } from '../src/mockNetwork'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithLogin } from './components.mock'
@@ -11,7 +11,7 @@ it('should extend burrito', async () => {
     mount: render,
     extend: {
       withCustomExtension: () =>
-        mockFetch([
+        mockNetwork([
           {
             path: '/path/to/login/',
             host: 'my-host',
