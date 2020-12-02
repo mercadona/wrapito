@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import { mockNetwork } from '../src/mockNetwork'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithLogin } from './components.mock'
@@ -10,20 +9,20 @@ it('should extend burrito', async () => {
   configure({
     mount: render,
     extend: {
-      withCustomExtension: () =>
+      withLogin: ({ mockNetwork }, username) =>
         mockNetwork([
           {
             path: '/path/to/login/',
             host: 'my-host',
             method: 'post',
-            responseBody: 'Fran Perea',
+            responseBody: username,
           },
         ]),
       withOtherCustomExtension: () => otherCustomExtension(customArgs),
     },
   })
   wrap(MyComponentWithLogin)
-    .withCustomExtension()
+    .withLogin('Fran Perea')
     .withOtherCustomExtension()
     .mount()
 

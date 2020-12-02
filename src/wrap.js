@@ -11,7 +11,7 @@ const extendWith = (extensions, options) => {
     (alreadyExtended, nextExtension) => ({
       ...alreadyExtended,
       [nextExtension]: (...args) => {
-        extensions[nextExtension](args)
+        extensions[nextExtension]({ mockNetwork }, args)
         return wrap(options)
       },
     }),
