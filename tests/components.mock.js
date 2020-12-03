@@ -9,16 +9,11 @@ import thunk from 'redux-thunk'
 export const MyComponent = () => <div>Foo</div>
 
 export const MyComponentWithProps = props => (
-  <div>
-    { props &&
-      Object.entries(props).map(prop => prop)
-    }
-  </div>
+  <div>{props && Object.entries(props).map(prop => prop)}</div>
 )
 
-export const MyComponentWithPortal = ({ children }) => (
+export const MyComponentWithPortal = ({ children }) =>
   createPortal(children, document.getElementById('portal-root-id'))
-)
 
 export class MyComponentMakingHttpCalls extends Component {
   state = {
@@ -54,14 +49,14 @@ export class MyComponentMakingHttpCalls extends Component {
 
   render = () => (
     <div data-testid="quantity" onClick={ this.saveQuantity }>
-      <span>quantity: { this.state.quantity }</span>
-      { this.state.isSaved && <i aria-label="quantity saved" /> }
+      <span>quantity: {this.state.quantity}</span>
+      {this.state.isSaved && <i aria-label="quantity saved" />}
     </div>
   )
 }
 
 export const MyComponentRepeatingHttpCalls = () => {
-  const [ products, setProducts ] = useState([])
+  const [products, setProducts] = useState([])
 
   const fetchProducts = async () => {
     const productsRequest = new Request('my-host/path/to/get/products/')
@@ -77,12 +72,11 @@ export const MyComponentRepeatingHttpCalls = () => {
       <button onClick={ fetchProducts }>refresh products list</button>
       <table>
         <tbody>
-          { products.map(product => (
-              <tr key={ product }>
-                <td>{ product }</td>
-              </tr>
-            )
-          )}
+          {products.map(product => (
+            <tr key={ product }>
+              <td>{product}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </Fragment>
@@ -90,7 +84,7 @@ export const MyComponentRepeatingHttpCalls = () => {
 }
 
 export const myFakeModule = {
-  myFakeFunction: () => null
+  myFakeFunction: () => null,
 }
 
 const Home = ({ history }) => {
@@ -99,14 +93,12 @@ const Home = ({ history }) => {
   return (
     <div>
       Home
-      <button onClick={goToCategories}>Go to categories</button>
+      <button onClick={ goToCategories }>Go to categories</button>
     </div>
   )
 }
 const Categories = () => {
-  return (
-    <div>Categories</div>
-  )
+  return <div>Categories</div>
 }
 
 export const history = createBrowserHistory()
@@ -115,8 +107,13 @@ export const MyAppWithRouting = () => {
   return (
     <Router history={ history }>
       <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route key="categories" path="/categories" component={Categories} exact={true} />
+        <Route key="home" path="/" component={ Home } exact={ true } />
+        <Route
+          key="categories"
+          path="/categories"
+          component={ Categories }
+          exact={ true }
+        />
       </Switch>
     </Router>
   )
@@ -132,18 +129,18 @@ const remove = () => dispatch => dispatch({ type: ACTION_TYPES.REMOVE })
 
 function reducer(state = { products: 10 }, action) {
   switch (action.type) {
-    case ACTION_TYPES.ADD:
-      return {
-        products: state.products + 1,
-      }
+  case ACTION_TYPES.ADD:
+    return {
+      products: state.products + 1,
+    }
 
-    case ACTION_TYPES.REMOVE:
-      return {
-        products: state.products - 1,
-      }
+  case ACTION_TYPES.REMOVE:
+    return {
+      products: state.products - 1,
+    }
 
-    default:
-      return state
+  default:
+    return state
   }
 }
 
@@ -153,23 +150,25 @@ const Cart = () => {
 
   return (
     <div>
-      <p>{ products }</p>
-      <button onClick={() => dispatch(add())}>+</button>
-      <button onClick={() => dispatch(remove())}>-</button>
+      <p>{products}</p>
+      <button onClick={ () => dispatch(add()) }>+</button>
+      <button onClick={ () => dispatch(remove()) }>-</button>
     </div>
   )
 }
 
 export const MyAppWithStore = () => {
   return (
-    <Provider store={ createStore(reducer, { products: 10 }, applyMiddleware(thunk)) }>
-      <Cart/>
+    <Provider
+      store={ createStore(reducer, { products: 10 }, applyMiddleware(thunk)) }
+    >
+      <Cart />
     </Provider>
   )
 }
 
 export const MyComponentMakingHttpCallsWithQueryParams = () => {
-  const [ quantity, setQuantity ] = useState(0)
+  const [quantity, setQuantity] = useState(0)
 
   useEffect(() => {
     getQuantity()
@@ -184,14 +183,12 @@ export const MyComponentMakingHttpCallsWithQueryParams = () => {
     setQuantity(quantity)
   }
 
-  return (
-    <span>quantity: { quantity }</span>
-  )
+  return <span>quantity: {quantity}</span>
 }
 
 export const MyComponentWithNetwork = () => {
-  const [ status, setStatus ] = useState(null)
-  const [ quantity, setQuantity ] = useState(null)
+  const [status, setStatus] = useState(null)
+  const [quantity, setQuantity] = useState(null)
 
   useEffect(() => {
     doRequest()
@@ -215,8 +212,26 @@ export const MyComponentWithNetwork = () => {
 
   return (
     <div>
-      <div>{ status }</div>
-      <div>{ quantity }</div>
+      <div>{status}</div>
+      <div>{quantity}</div>
     </div>
   )
+}
+
+export const MyComponentWithLogin = () => {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    login()
+  }, [])
+
+  const login = async () => {
+    const request = new Request('my-host/path/to/login/', { method: 'POST' })
+    const response = await fetch(request)
+    const username = await response.json()
+    setUser(username)
+  }
+
+  if (!user) return <span>Not logged</span>
+  return <span>Logged as {user}</span>
 }

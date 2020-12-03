@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithNetwork } from './components.mock'
@@ -8,7 +8,7 @@ it('should have network', async () => {
   configure({ mount: render })
   wrap(MyComponentWithNetwork)
     .withNetwork([
-      { path: '/path/with/response/', host: 'my-host', responseBody: '15' }
+      { path: '/path/with/response/', host: 'my-host', responseBody: '15' },
     ])
     .mount()
 
@@ -19,9 +19,7 @@ it('should have network', async () => {
 
 it('should have network without responses', async () => {
   configure({ mount: render })
-  wrap(MyComponentWithNetwork)
-    .withNetwork()
-    .mount()
+  wrap(MyComponentWithNetwork).withNetwork().mount()
 
   expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
 })
