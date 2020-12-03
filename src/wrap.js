@@ -4,6 +4,21 @@ import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 
+const extendWith = (extensions, options) => {
+  if (!extensions) return {}
+
+  return Object.keys(extensions).reduce(
+    (alreadyExtended, nextExtension) => ({
+      ...alreadyExtended,
+      [nextExtension]: (...args) => {
+        extensions[nextExtension]({ mockNetwork }, args)
+        return wrap(options)
+      },
+    }),
+    {},
+  )
+}
+
 const wrap = options => {
   const isComponent = typeof options === 'function'
   const isWrappedComponent = typeof options.WrappedComponent === 'function'
@@ -12,15 +27,27 @@ const wrap = options => {
     return wrap({ Component: options })
   }
 
+  const { extend, portal, history } = getConfig()
+  const extensions = extendWith(extend, options)
+
   return {
     withProps: props => wrap({ ...options, props }),
-    withPortalAt: portalRootId => wrap({ ...options, portalRootId, hasPortal: true }),
+    withPortalAt: portalRootId =>
+      wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
     withNetwork: responses => wrap({ ...options, responses, hasNetwork: true }),
+    ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
-      const { hasNetwork, hasMocks, responses, hasPortal, portalRootId, path, hasPath } = options
-      const { portal, history } = getConfig()
+      const {
+        hasNetwork,
+        hasMocks,
+        responses,
+        hasPortal,
+        portalRootId,
+        path,
+        hasPath,
+      } = options
 
       if (hasNetwork) {
         mockNetwork(responses)
@@ -48,13 +75,16 @@ const wrap = options => {
 }
 
 function setupPortal(portalRootId) {
-  if (document.getElementById(portalRootId)) { return }
+  if (document.getElementById(portalRootId)) {
+    return
+  }
 
   const portalRoot = document.createElement('div')
   portalRoot.setAttribute('id', portalRootId)
   document.body.appendChild(portalRoot)
 }
 
-const mount = ({ Component, props }) => getConfig().mount(<Component { ...props } />)
+const mount = ({ Component, props }) =>
+  getConfig().mount(<Component { ...props } />)
 
 export { wrap }
