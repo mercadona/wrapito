@@ -1,5 +1,5 @@
 import { wrap, configure } from '../src'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
 
 import { MyAppWithRouting, MyComponent, history, myFakeModule } from './components.mock'
 
@@ -17,6 +17,7 @@ it('should render an app without routing with specific url', () => {
     .atPath('/?query=query')
     .mount()
 
+  expect(screen.getByText('Foo')).toBeInTheDocument()
   expect(window.location.href).toBe('http://localhost/?query=query')
 })
 
