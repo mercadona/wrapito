@@ -65,8 +65,12 @@ const wrap = options => {
         setupPortal(portal)
       }
 
-      if (hasPath) {
+      if (hasPath && history) {
         history.push(path)
+      }
+
+      if (hasPath && !history) {
+        window.history.replaceState(null, null, path)
       }
 
       return mount(options)
