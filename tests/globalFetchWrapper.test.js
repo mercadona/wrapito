@@ -1,4 +1,4 @@
-import { render, wait, fireEvent } from '@testing-library/react'
+import { render, wait, fireEvent } from '@testing-library/react'
 
 import { wrap, globalFetchAssertions, configure } from '../src'
 import { MyComponentMakingHttpCalls } from './components.mock'
@@ -8,14 +8,22 @@ expect.extend(globalFetchAssertions)
 
 configure({ defaultHost: 'my-host', mount: render })
 
-it('this is a placeholder', async () => {
-  wrap(MyComponentMakingHttpCalls).mount()
+it('should pass', async () => {
+  await fetch('/some/path')
 
-  await wait(() => {
-    const inputValue = 'whatever'
-    const { pass, message } = globalFetchAssertions.newAssertion(inputValue)
-    expect(pass).toBeTruthy()
-    expect(message()).toBeUndefined()
-    expect(inputValue).newAssertion()
-  })
+  const path = '/some/path'
+  const { pass, message } = globalFetchAssertions.toHaveBeenFetched(path)
+  expect(pass).toBeTruthy()
+  expect(message()).toBeUndefined()
+  expect(path).toHaveBeenFetched()
 })
+
+// it('should not pass', async () => {
+//   wrap(MyComponentMakingHttpCalls).mount()
+
+//   await wait(() => {
+//     const path = '/some/unknown'
+//     const { pass, message } = globalFetchAssertions.toHaveBeenFetched(path)
+//     expect(pass).toBeFalsy()
+//   })
+// })
