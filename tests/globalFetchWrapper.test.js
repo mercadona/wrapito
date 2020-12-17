@@ -1,29 +1,24 @@
-import { render, wait, fireEvent } from '@testing-library/react'
-
-import { wrap, globalFetchAssertions, configure } from '../src'
-import { MyComponentMakingHttpCalls } from './components.mock'
-import { refreshProductsList, getTableRowsText } from './helpers'
+import { globalFetchAssertions } from '../src'
 
 expect.extend(globalFetchAssertions)
 
-configure({ defaultHost: 'my-host', mount: render })
+it('should check that the path has been called', async () => {
+  const path = '/some/path/'
+  const expectedPath = '/some/path/'
+  await fetch(path)
 
-it('should pass', async () => {
-  await fetch('/some/path')
+  const { message } = globalFetchAssertions.toHaveBeenFetched(expectedPath)
 
-  const path = '/some/path'
-  const { pass, message } = globalFetchAssertions.toHaveBeenFetched(path)
-  expect(pass).toBeTruthy()
   expect(message()).toBeUndefined()
-  expect(path).toHaveBeenFetched()
+  expect(expectedPath).toHaveBeenFetched()
 })
 
-// it('should not pass', async () => {
-//   wrap(MyComponentMakingHttpCalls).mount()
+it('should check that the path has not been called', async () => {
+  const path = '/some/unknown'
 
-//   await wait(() => {
-//     const path = '/some/unknown'
-//     const { pass, message } = globalFetchAssertions.toHaveBeenFetched(path)
-//     expect(pass).toBeFalsy()
-//   })
-// })
+  await fetch('/some/path')
+  const { message } = globalFetchAssertions.toHaveBeenFetched(path)
+
+  expect(message()).toBe('/some/unknown ain\'t got called')
+  expect(path).not.toHaveBeenFetched()
+})

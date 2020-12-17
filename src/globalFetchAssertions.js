@@ -1,13 +1,15 @@
-const globalFetchAssertions = {
-  toHaveBeenFetched(inputValue) {
-    const requests = fetch.mock.calls
-    console.log(requests)
+const hasBeenFetched = (path) => {
+  return fetch.mock.calls.find(([ mockedPath ]) => mockedPath === path)
+}
 
-    if (requests.find( request => request[0] === inputValue)) {
+const globalFetchAssertions = {
+  toHaveBeenFetched(path) {
+
+    if (hasBeenFetched(path)) {
       return { message: () => undefined, pass: true }
     }
 
-    return { pass: false }
+    return { pass: false, message: () => `${path} ain't got called` }
   },
 }
 
