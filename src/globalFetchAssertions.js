@@ -7,6 +7,8 @@ const findRequestByPath = path =>
 
 const getRequestMethod = request => request[1].method
 
+const noMatchingMethod = (options, targetRequestMethod) => options?.method && targetRequestMethod !== options.method
+
 const globalFetchAssertions = {
   toHaveBeenFetched(path) {
     if (hasBeenFetched(path)) {
@@ -25,7 +27,7 @@ const globalFetchAssertions = {
 
     const targetRequestMethod = getRequestMethod(targetRequest)
 
-    if (options?.method && targetRequestMethod !== options.method) {
+    if (noMatchingMethod(options, targetRequestMethod)) {
       return {
         pass: false,
         message: () =>
