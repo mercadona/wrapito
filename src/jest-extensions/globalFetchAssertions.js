@@ -9,10 +9,10 @@ const getRequestMethod = request => request[1].method
 
 const getRequestBody = request => request[1].body
 
-const noMatchingMethod = (options, targetRequestMethod) =>
+const isMethodDifferent = (options, targetRequestMethod) =>
   options?.method && targetRequestMethod !== options.method
 
-const noMatchingBody = (options, targetRequestBody) => {
+const isBodyDifferent = (options, targetRequestBody) => {
   if (options?.body === undefined) return false
 
   const targetRequestBodyEntries = Object.entries(targetRequestBody).sort()
@@ -42,7 +42,7 @@ const globalFetchAssertions = {
 
     const targetRequestMethod = getRequestMethod(targetRequest)
 
-    if (noMatchingMethod(options, targetRequestMethod)) {
+    if (isMethodDifferent(options, targetRequestMethod)) {
       return {
         pass: false,
         message: () =>
@@ -52,7 +52,7 @@ const globalFetchAssertions = {
 
     const targetRequestBody = getRequestBody(targetRequest)
 
-    if (noMatchingBody(options, targetRequestBody)) {
+    if (isBodyDifferent(options, targetRequestBody)) {
       return {
         pass: false,
         message: () => `Fetch body does not match`,
