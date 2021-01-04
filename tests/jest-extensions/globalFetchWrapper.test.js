@@ -57,6 +57,30 @@ describe('toHaveBeenFetchedWith', () => {
       })
     })
 
+    it('should check allow to specify the body elements in different order', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { body: { name: 'name', surname: 'surname' } })
+
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+        {
+          body: {
+            surname: 'surname',
+            name: 'name',
+          },
+        },
+      )
+
+      expect(message()).toBeUndefined()
+      expect(expectedPath).toHaveBeenFetchedWith({
+        body: {
+          surname: 'surname',
+          name: 'name',
+        },
+      })
+    })
+
     it('should check that the path has not been called with the supplied body', async () => {
       const path = '/some/path/'
       const expectedPath = '/some/path/'

@@ -7,8 +7,22 @@ const findRequestByPath = path =>
 
 const getRequestMethod = request => request[1].method
 
+const getRequestBody = request => request[1].body
+
 const noMatchingMethod = (options, targetRequestMethod) =>
   options?.method && targetRequestMethod !== options.method
+
+const noMatchingBody = (options, targetRequestBody) => {
+  if (options?.body === undefined) return false
+
+  const targetRequestBodyEntries = Object.entries(targetRequestBody).sort()
+  const optionsBodyEntries = Object.entries(options.body).sort()
+
+  return (
+    JSON.stringify(targetRequestBodyEntries) !==
+    JSON.stringify(optionsBodyEntries)
+  )
+}
 
 const globalFetchAssertions = {
   toHaveBeenFetched(path) {
@@ -36,10 +50,9 @@ const globalFetchAssertions = {
       }
     }
 
-    if (
-      options?.body !== undefined &&
-      JSON.stringify(targetRequest[1].body) !== JSON.stringify(options.body)
-    ) {
+    const targetRequestBody = getRequestBody(targetRequest)
+
+    if (noMatchingBody(options, targetRequestBody)) {
       return {
         pass: false,
         message: () => `Fetch body does not match`,
