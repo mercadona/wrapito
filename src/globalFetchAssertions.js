@@ -25,7 +25,7 @@ const globalFetchAssertions = {
 
     const targetRequestMethod = getRequestMethod(targetRequest)
 
-    if (targetRequestMethod !== options.method) {
+    if (options?.method && targetRequestMethod !== options.method) {
       return {
         pass: false,
         message: () =>

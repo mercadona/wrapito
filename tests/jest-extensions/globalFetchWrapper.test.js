@@ -24,6 +24,19 @@ it('should check that the path has not been called', async () => {
 })
 
 describe('toHaveBeenFetchedWith', () => {
+  it('should allow to leave the method empty', async () => {
+    const path = '/some/path/'
+    const expectedPath = '/some/path/'
+    await fetch(path, { method: 'POST' })
+
+    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+      expectedPath,
+    )
+
+    expect(message()).toBeUndefined()
+    expect(expectedPath).toHaveBeenFetchedWith()
+  })
+
   it('should check that the path has been called with the supplied method', async () => {
     const path = '/some/path/'
     const expectedPath = '/some/path/'
