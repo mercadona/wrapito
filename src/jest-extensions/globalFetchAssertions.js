@@ -7,7 +7,8 @@ const findRequestByPath = path =>
 
 const getRequestMethod = request => request[1].method
 
-const noMatchingMethod = (options, targetRequestMethod) => options?.method && targetRequestMethod !== options.method
+const noMatchingMethod = (options, targetRequestMethod) =>
+  options?.method && targetRequestMethod !== options.method
 
 const globalFetchAssertions = {
   toHaveBeenFetched(path) {
@@ -32,6 +33,16 @@ const globalFetchAssertions = {
         pass: false,
         message: () =>
           `fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
+      }
+    }
+
+    if (
+      options?.body !== undefined &&
+      JSON.stringify(targetRequest[1].body) !== JSON.stringify(options.body)
+    ) {
+      return {
+        pass: false,
+        message: () => `Fetch body does not match`,
       }
     }
 

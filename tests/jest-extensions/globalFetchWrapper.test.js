@@ -34,54 +34,115 @@ describe('toHaveBeenFetchedWith', () => {
     expect(path).not.toHaveBeenFetched()
   })
 
-  it('should check that the path has been called with the supplied method', async () => {
-    const path = '/some/path/'
-    const expectedPath = '/some/path/'
-    await fetch(path, { method: 'POST' })
+  describe('request body', () => {
+    it('should check that the path has been called with the supplied body', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { body: { name: 'some name' } })
 
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-      expectedPath,
-      {
-        method: 'POST',
-      },
-    )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+        {
+          body: {
+            name: 'some name',
+          },
+        },
+      )
 
-    expect(message()).toBeUndefined()
-    expect(expectedPath).toHaveBeenFetchedWith({
-      method: 'POST',
+      expect(message()).toBeUndefined()
+      expect(expectedPath).toHaveBeenFetchedWith({
+        body: {
+          name: 'some name',
+        },
+      })
+    })
+
+    it('should check that the path has not been called with the supplied body', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { body: { surname: 'some surname' } })
+
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+        {
+          body: {
+            name: 'some name',
+          },
+        },
+      )
+
+      expect(message()).toBe('Fetch body does not match')
+      expect(expectedPath).not.toHaveBeenFetchedWith({
+        body: {
+          name: 'some name',
+        },
+      })
+    })
+
+    it('should allow to leave the body option empty empty', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { body: { surname: 'some surname' } })
+
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+      )
+
+      expect(message()).toBeUndefined()
+      expect(expectedPath).toHaveBeenFetchedWith()
     })
   })
 
-  it('should check that the path has not been called with the supplied method', async () => {
-    const path = '/some/path/'
-    const expectedPath = '/some/path/'
-    await fetch(path, { method: 'PUT' })
+  describe('request method', () => {
+    it('should check that the path has been called with the supplied method', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { method: 'POST' })
 
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-      expectedPath,
-      {
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+        {
+          method: 'POST',
+        },
+      )
+
+      expect(message()).toBeUndefined()
+      expect(expectedPath).toHaveBeenFetchedWith({
         method: 'POST',
-      },
-    )
-
-    expect(message()).toBe(
-      'fetch method does not match, expected POST received PUT',
-    )
-    expect(expectedPath).not.toHaveBeenFetchedWith({
-      method: 'POST',
+      })
     })
-  })
 
-  it('should allow to leave the method empty', async () => {
-    const path = '/some/path/'
-    const expectedPath = '/some/path/'
-    await fetch(path, { method: 'POST' })
+    it('should check that the path has not been called with the supplied method', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { method: 'PUT' })
 
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-      expectedPath,
-    )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+        {
+          method: 'POST',
+        },
+      )
 
-    expect(message()).toBeUndefined()
-    expect(expectedPath).toHaveBeenFetchedWith()
+      expect(message()).toBe(
+        'fetch method does not match, expected POST received PUT',
+      )
+      expect(expectedPath).not.toHaveBeenFetchedWith({
+        method: 'POST',
+      })
+    })
+
+    it('should allow to leave the method empty', async () => {
+      const path = '/some/path/'
+      const expectedPath = '/some/path/'
+      await fetch(path, { method: 'POST' })
+
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+        expectedPath,
+      )
+
+      expect(message()).toBeUndefined()
+      expect(expectedPath).toHaveBeenFetchedWith()
+    })
   })
 })
