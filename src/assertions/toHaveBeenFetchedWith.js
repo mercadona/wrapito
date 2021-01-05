@@ -6,8 +6,8 @@ const getRequestsMethods = requests =>
 
 const getRequestBody = requests => requests[0][1]?.body
 
-const isMethodDifferent = (optionsMethod, targetRequestsMethods) =>
-  optionsMethod && !targetRequestsMethods.includes(optionsMethod)
+const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
+  expectedMethod && !targetRequestsMethods.includes(expectedMethod)
 
 const isBodyDifferent = (optionsBody, targetRequestBody) => {
   if (!optionsBody) return false
@@ -21,16 +21,19 @@ const isBodyDifferent = (optionsBody, targetRequestBody) => {
   )
 }
 
+const empty = requests => requests.length === 0
+
 const toHaveBeenFetchedWith = (path, options) => {
   const targetRequests = findRequestsByPath(path)
 
-  if (targetRequests.length === 0) {
+  if (empty(targetRequests)) {
     return { pass: false, message: () => `${path} ain't got called` }
   }
 
   const targetRequestsMethods = getRequestsMethods(targetRequests)
+  const expectedMethod = options?.method
 
-  if (isMethodDifferent(options?.method, targetRequestsMethods)) {
+  if (methodDoesNotMatch(expectedMethod, targetRequestsMethods)) {
     return {
       pass: false,
       message: () =>
