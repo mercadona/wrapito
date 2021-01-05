@@ -4,21 +4,22 @@ const findRequestsByPath = path =>
 const getRequestsMethods = requests =>
   requests.map(request => request[1]?.method)
 
-const getRequestBody = requests => requests[0][1]?.body
+const getRequestsBodies = requests => requests.map(request => request[1]?.body)
 
 const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
   expectedMethod && !targetRequestsMethods.includes(expectedMethod)
 
-const isBodyDifferent = (optionsBody, targetRequestBody) => {
-  if (!optionsBody) return false
+const bodyDoesNotMatch = (expectedBody, targetRequestsBodies) => {
+  if (!expectedBody) return false
 
-  const targetRequestBodyEntries = Object.entries(targetRequestBody).sort()
-  const optionsBodyEntries = Object.entries(optionsBody).sort()
-
-  return (
-    JSON.stringify(targetRequestBodyEntries) !==
-    JSON.stringify(optionsBodyEntries)
+  const expectedBodyEntries = JSON.stringify(
+    Object.entries(expectedBody).sort(),
   )
+  const targetRequestBodyEntries = targetRequestsBodies.map(request =>
+    JSON.stringify(Object.entries(request).sort()),
+  )
+
+  return !targetRequestBodyEntries.includes(expectedBodyEntries)
 }
 
 const empty = requests => requests.length === 0
@@ -41,15 +42,16 @@ const toHaveBeenFetchedWith = (path, options) => {
     }
   }
 
-  const targetRequestBody = getRequestBody(targetRequests)
+  const targetRequestsBodies = getRequestsBodies(targetRequests)
+  const expectedBody = options?.body
 
-  if (isBodyDifferent(options?.body, targetRequestBody)) {
+  if (bodyDoesNotMatch(expectedBody, targetRequestsBodies)) {
     return {
       pass: false,
       message: () =>
         `Fetch body does not match, expected ${JSON.stringify(
           options.body,
-        )} received ${JSON.stringify(targetRequestBody)}`,
+        )} received ${JSON.stringify(targetRequestsBodies)}`,
     }
   }
 
