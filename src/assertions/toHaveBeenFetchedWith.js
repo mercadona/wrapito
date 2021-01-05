@@ -1,12 +1,13 @@
-const findRequestByPath = path =>
-  fetch.mock.calls.find(([mockedPath]) => mockedPath === path)
+const findRequestsByPath = path =>
+  fetch.mock.calls.filter(([mockedPath]) => mockedPath === path)
 
-const getRequestMethod = request => request[1]?.method
+const getRequestsMethods = requests =>
+  requests.map(request => request[1]?.method)
 
-const getRequestBody = request => request[1]?.body
+const getRequestBody = requests => requests[0][1]?.body
 
-const isMethodDifferent = (optionsMethod, targetRequestMethod) =>
-  optionsMethod && targetRequestMethod !== optionsMethod
+const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
+  expectedMethod && !targetRequestsMethods.includes(expectedMethod)
 
 const isBodyDifferent = (optionsBody, targetRequestBody) => {
   if (!optionsBody) return false
@@ -20,24 +21,27 @@ const isBodyDifferent = (optionsBody, targetRequestBody) => {
   )
 }
 
-const toHaveBeenFetchedWith = (path, options) => {
-  const targetRequest = findRequestByPath(path)
+const empty = requests => requests.length === 0
 
-  if (!targetRequest) {
+const toHaveBeenFetchedWith = (path, options) => {
+  const targetRequests = findRequestsByPath(path)
+
+  if (empty(targetRequests)) {
     return { pass: false, message: () => `${path} ain't got called` }
   }
 
-  const targetRequestMethod = getRequestMethod(targetRequest)
+  const targetRequestsMethods = getRequestsMethods(targetRequests)
+  const expectedMethod = options?.method
 
-  if (isMethodDifferent(options?.method, targetRequestMethod)) {
+  if (methodDoesNotMatch(expectedMethod, targetRequestsMethods)) {
     return {
       pass: false,
       message: () =>
-        `Fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
+        `Fetch method does not match, expected ${options.method} received ${targetRequestsMethods}`,
     }
   }
 
-  const targetRequestBody = getRequestBody(targetRequest)
+  const targetRequestBody = getRequestBody(targetRequests)
 
   if (isBodyDifferent(options?.body, targetRequestBody)) {
     return {
