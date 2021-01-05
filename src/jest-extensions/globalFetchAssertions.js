@@ -5,9 +5,9 @@ const hasBeenFetched = path => {
 const findRequestByPath = path =>
   fetch.mock.calls.find(([mockedPath]) => mockedPath === path)
 
-const getRequestMethod = request => request[1].method
+const getRequestMethod = request => request[1]?.method
 
-const getRequestBody = request => request[1].body
+const getRequestBody = request => request[1]?.body
 
 const isMethodDifferent = (optionsMethod, targetRequestMethod) =>
   optionsMethod && targetRequestMethod !== optionsMethod

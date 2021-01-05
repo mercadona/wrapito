@@ -24,12 +24,25 @@ it('should check that the path has not been called', async () => {
 })
 
 describe('toHaveBeenFetchedWith', () => {
+  it('should check that the path has been called', async () => {
+    const path = '/some/path/'
+    const expectedPath = '/some/path/'
+    await fetch(path)
+
+    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(expectedPath)
+
+    expect(message()).toBeUndefined()
+    expect(expectedPath).toHaveBeenFetched()
+  })
+
   it('should check that the path has not been called', async () => {
     const path = '/some/path'
     const expectedPath = '/some/unknown'
 
     await fetch(path)
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(expectedPath)
+    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+      expectedPath,
+    )
 
     expect(message()).toBe("/some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetched()
@@ -40,14 +53,11 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { name: 'some name' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-        {
-          body: {
-            name: 'some name',
-          },
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+        body: {
+          name: 'some name',
         },
-      )
+      })
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
@@ -61,15 +71,12 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { name: 'name', surname: 'surname' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-        {
-          body: {
-            surname: 'surname',
-            name: 'name',
-          },
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+        body: {
+          surname: 'surname',
+          name: 'name',
         },
-      )
+      })
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
@@ -104,9 +111,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { surname: 'some surname' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-      )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()
@@ -118,12 +123,9 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'POST' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-        {
-          method: 'POST',
-        },
-      )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+        method: 'POST',
+      })
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
@@ -135,12 +137,9 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'PUT' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-        {
-          method: 'POST',
-        },
-      )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+        method: 'POST',
+      })
 
       expect(message()).toBe(
         'Fetch method does not match, expected POST received PUT',
@@ -154,9 +153,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'POST' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        path,
-      )
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()
