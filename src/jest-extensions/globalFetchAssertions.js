@@ -9,14 +9,14 @@ const getRequestMethod = request => request[1].method
 
 const getRequestBody = request => request[1].body
 
-const isMethodDifferent = (options, targetRequestMethod) =>
-  options?.method && targetRequestMethod !== options.method
+const isMethodDifferent = (optionsMethod, targetRequestMethod) =>
+  optionsMethod && targetRequestMethod !== optionsMethod
 
-const isBodyDifferent = (options, targetRequestBody) => {
-  if (options?.body === undefined) return false
+const isBodyDifferent = (optionsBody, targetRequestBody) => {
+  if (!optionsBody) return false
 
   const targetRequestBodyEntries = Object.entries(targetRequestBody).sort()
-  const optionsBodyEntries = Object.entries(options.body).sort()
+  const optionsBodyEntries = Object.entries(optionsBody).sort()
 
   return (
     JSON.stringify(targetRequestBodyEntries) !==
@@ -42,7 +42,7 @@ const globalFetchAssertions = {
 
     const targetRequestMethod = getRequestMethod(targetRequest)
 
-    if (isMethodDifferent(options, targetRequestMethod)) {
+    if (isMethodDifferent(options?.method, targetRequestMethod)) {
       return {
         pass: false,
         message: () =>
@@ -52,7 +52,7 @@ const globalFetchAssertions = {
 
     const targetRequestBody = getRequestBody(targetRequest)
 
-    if (isBodyDifferent(options, targetRequestBody)) {
+    if (isBodyDifferent(options?.body, targetRequestBody)) {
       return {
         pass: false,
         message: () => `Fetch body does not match`,
