@@ -55,7 +55,10 @@ const globalFetchAssertions = {
     if (isBodyDifferent(options?.body, targetRequestBody)) {
       return {
         pass: false,
-        message: () => `Fetch body does not match`,
+        message: () =>
+          `Fetch body does not match, expected ${JSON.stringify(
+            options.body,
+          )} received ${JSON.stringify(targetRequestBody)}`,
       }
     }
 

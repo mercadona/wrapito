@@ -83,37 +83,34 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should check that the path has not been called with the supplied body', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
-      await fetch(path, { body: { surname: 'some surname' } })
+      const expectedBody = { name: 'some name' }
+      const receivedBody = { surname: 'some surname' }
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
-        {
-          body: {
-            name: 'some name',
-          },
-        },
+      await fetch(path, { body: receivedBody })
+      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+        body: expectedBody,
+      })
+
+      expect(message()).toBe(
+        `Fetch body does not match, expected ${JSON.stringify(
+          expectedBody,
+        )} received ${JSON.stringify(receivedBody)}`,
       )
-
-      expect(message()).toBe('Fetch body does not match')
-      expect(expectedPath).not.toHaveBeenFetchedWith({
-        body: {
-          name: 'some name',
-        },
+      expect(path).not.toHaveBeenFetchedWith({
+        body: expectedBody,
       })
     })
 
     it('should allow to leave the body option empty empty', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { body: { surname: 'some surname' } })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
       )
 
       expect(message()).toBeUndefined()
-      expect(expectedPath).toHaveBeenFetchedWith()
+      expect(path).toHaveBeenFetchedWith()
     })
   })
 
