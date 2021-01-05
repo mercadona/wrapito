@@ -1,5 +1,5 @@
 import { toMatchNetworkRequests } from './toMatchNetworkRequests'
-import { toHaveBeenFetchedWith } from './globalFetchAssertions'
+import { toHaveBeenFetchedWith } from './toHaveBeenFetchedWith'
 
 const assertions = {
   toMatchNetworkRequests,
