@@ -44,6 +44,25 @@ describe('toHaveBeenFetchedWith', () => {
       })
     })
 
+    it('should differentiate between to request to the same path but with different body', async () => {
+      const path = '/some/path/'
+      await fetch(path, { body: { name: 'some name' } })
+      await fetch(path, { body: { age: 32 } })
+
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
+        body: {
+          age: 32,
+        },
+      })
+
+      expect(message()).toBeUndefined()
+      expect(path).toHaveBeenFetchedWith({
+        body: {
+          age: 32,
+        },
+      })
+    })
+
     it('should allow to specify the body elements in different order', async () => {
       const path = '/some/path/'
       await fetch(path, { body: { name: 'name', surname: 'surname' } })
@@ -77,7 +96,7 @@ describe('toHaveBeenFetchedWith', () => {
       expect(message()).toBe(
         `Fetch body does not match, expected ${JSON.stringify(
           expectedBody,
-        )} received ${JSON.stringify(receivedBody)}`,
+        )} received ${JSON.stringify([receivedBody])}`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
