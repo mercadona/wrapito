@@ -1,7 +1,3 @@
-const hasBeenFetched = path => {
-  return fetch.mock.calls.find(([mockedPath]) => mockedPath === path)
-}
-
 const findRequestByPath = path =>
   fetch.mock.calls.find(([mockedPath]) => mockedPath === path)
 
@@ -25,14 +21,6 @@ const isBodyDifferent = (optionsBody, targetRequestBody) => {
 }
 
 const globalFetchAssertions = {
-  toHaveBeenFetched(path) {
-    if (hasBeenFetched(path)) {
-      return { message: () => undefined, pass: true }
-    }
-
-    return { pass: false, message: () => `${path} ain't got called` }
-  },
-
   toHaveBeenFetchedWith(path, options) {
     const targetRequest = findRequestByPath(path)
 
