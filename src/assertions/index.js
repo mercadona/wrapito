@@ -1,4 +1,4 @@
-import { toMatchNetworkRequests } from './to-match-network-requests'
+import { toMatchNetworkRequests } from './toMatchNetworkRequests'
 
 const assertions = {
   toMatchNetworkRequests,
