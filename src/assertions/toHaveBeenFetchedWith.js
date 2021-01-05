@@ -1,12 +1,13 @@
-const findRequestByPath = path =>
-  fetch.mock.calls.find(([mockedPath]) => mockedPath === path)
+const findRequestsByPath = path =>
+  fetch.mock.calls.filter(([mockedPath]) => mockedPath === path)
 
-const getRequestMethod = request => request[1]?.method
+const getRequestsMethods = requests =>
+  requests.map(request => request[1]?.method)
 
-const getRequestBody = request => request[1]?.body
+const getRequestBody = requests => requests[0][1]?.body
 
-const isMethodDifferent = (optionsMethod, targetRequestMethod) =>
-  optionsMethod && targetRequestMethod !== optionsMethod
+const isMethodDifferent = (optionsMethod, targetRequestsMethods) =>
+  optionsMethod && !targetRequestsMethods.includes(optionsMethod)
 
 const isBodyDifferent = (optionsBody, targetRequestBody) => {
   if (!optionsBody) return false
@@ -21,23 +22,23 @@ const isBodyDifferent = (optionsBody, targetRequestBody) => {
 }
 
 const toHaveBeenFetchedWith = (path, options) => {
-  const targetRequest = findRequestByPath(path)
+  const targetRequests = findRequestsByPath(path)
 
-  if (!targetRequest) {
+  if (targetRequests.length === 0) {
     return { pass: false, message: () => `${path} ain't got called` }
   }
 
-  const targetRequestMethod = getRequestMethod(targetRequest)
+  const targetRequestsMethods = getRequestsMethods(targetRequests)
 
-  if (isMethodDifferent(options?.method, targetRequestMethod)) {
+  if (isMethodDifferent(options?.method, targetRequestsMethods)) {
     return {
       pass: false,
       message: () =>
-        `Fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
+        `Fetch method does not match, expected ${options.method} received ${targetRequestsMethods}`,
     }
   }
 
-  const targetRequestBody = getRequestBody(targetRequest)
+  const targetRequestBody = getRequestBody(targetRequests)
 
   if (isBodyDifferent(options?.body, targetRequestBody)) {
     return {

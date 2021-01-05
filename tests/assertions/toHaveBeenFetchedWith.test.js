@@ -19,9 +19,7 @@ describe('toHaveBeenFetchedWith', () => {
     const expectedPath = '/some/unknown'
 
     await fetch(path)
-    const { message } = assertions.toHaveBeenFetchedWith(
-      expectedPath,
-    )
+    const { message } = assertions.toHaveBeenFetchedWith(expectedPath)
 
     expect(message()).toBe("/some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetchedWith()
@@ -109,6 +107,21 @@ describe('toHaveBeenFetchedWith', () => {
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
         method: 'POST',
+      })
+    })
+
+    it('should differentiate between to request to the same path with different methods', async () => {
+      const path = '/some/path/'
+      await fetch(path, { method: 'POST' })
+      await fetch(path, { method: 'PUT' })
+
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
+        method: 'PUT',
+      })
+
+      expect(message()).toBeUndefined()
+      expect(path).toHaveBeenFetchedWith({
+        method: 'PUT',
       })
     })
 
