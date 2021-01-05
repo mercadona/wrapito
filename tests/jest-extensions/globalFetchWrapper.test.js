@@ -1,6 +1,6 @@
-import { globalFetchAssertions } from '../../src'
+import { assertions } from '../../src'
 
-expect.extend(globalFetchAssertions)
+expect.extend(assertions)
 
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
@@ -8,7 +8,7 @@ describe('toHaveBeenFetchedWith', () => {
     const expectedPath = '/some/path/'
     await fetch(path)
 
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(expectedPath)
+    const { message } = assertions.toHaveBeenFetchedWith(expectedPath)
 
     expect(message()).toBeUndefined()
     expect(expectedPath).toHaveBeenFetchedWith()
@@ -19,7 +19,7 @@ describe('toHaveBeenFetchedWith', () => {
     const expectedPath = '/some/unknown'
 
     await fetch(path)
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
+    const { message } = assertions.toHaveBeenFetchedWith(
       expectedPath,
     )
 
@@ -32,7 +32,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { name: 'some name' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
         body: {
           name: 'some name',
         },
@@ -50,7 +50,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { name: 'name', surname: 'surname' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
         body: {
           surname: 'surname',
           name: 'name',
@@ -72,7 +72,7 @@ describe('toHaveBeenFetchedWith', () => {
       const receivedBody = { surname: 'some surname' }
 
       await fetch(path, { body: receivedBody })
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
         body: expectedBody,
       })
 
@@ -90,7 +90,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { body: { surname: 'some surname' } })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path)
+      const { message } = assertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()
@@ -102,7 +102,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'POST' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
         method: 'POST',
       })
 
@@ -116,7 +116,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'PUT' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path, {
+      const { message } = assertions.toHaveBeenFetchedWith(path, {
         method: 'POST',
       })
 
@@ -132,7 +132,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '/some/path/'
       await fetch(path, { method: 'POST' })
 
-      const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path)
+      const { message } = assertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()

@@ -20,38 +20,36 @@ const isBodyDifferent = (optionsBody, targetRequestBody) => {
   )
 }
 
-const globalFetchAssertions = {
-  toHaveBeenFetchedWith(path, options) {
-    const targetRequest = findRequestByPath(path)
+const toHaveBeenFetchedWith = (path, options) => {
+  const targetRequest = findRequestByPath(path)
 
-    if (!targetRequest) {
-      return { pass: false, message: () => `${path} ain't got called` }
+  if (!targetRequest) {
+    return { pass: false, message: () => `${path} ain't got called` }
+  }
+
+  const targetRequestMethod = getRequestMethod(targetRequest)
+
+  if (isMethodDifferent(options?.method, targetRequestMethod)) {
+    return {
+      pass: false,
+      message: () =>
+        `Fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
     }
+  }
 
-    const targetRequestMethod = getRequestMethod(targetRequest)
+  const targetRequestBody = getRequestBody(targetRequest)
 
-    if (isMethodDifferent(options?.method, targetRequestMethod)) {
-      return {
-        pass: false,
-        message: () =>
-          `Fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
-      }
+  if (isBodyDifferent(options?.body, targetRequestBody)) {
+    return {
+      pass: false,
+      message: () =>
+        `Fetch body does not match, expected ${JSON.stringify(
+          options.body,
+        )} received ${JSON.stringify(targetRequestBody)}`,
     }
+  }
 
-    const targetRequestBody = getRequestBody(targetRequest)
-
-    if (isBodyDifferent(options?.body, targetRequestBody)) {
-      return {
-        pass: false,
-        message: () =>
-          `Fetch body does not match, expected ${JSON.stringify(
-            options.body,
-          )} received ${JSON.stringify(targetRequestBody)}`,
-      }
-    }
-
-    return { message: () => undefined, pass: true }
-  },
+  return { message: () => undefined, pass: true }
 }
 
-export { globalFetchAssertions }
+export { toHaveBeenFetchedWith }
