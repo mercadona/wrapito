@@ -211,6 +211,24 @@ wrap(PreparationContainer)
 ```
 
 ## ✨ Utils
+#### toHaveBeenFetchedWith
+Some times checking only the visual side effects in the UI it's not enough. In the case that we want to check if a particular network side effect is happening, this assertion will come in handy.
+
+```
+import { globalFetchAssertions } from '@mercadona/mo.library.burrito'
+
+expect.extend(globalFetchAssertions)
+
+wrap(MyComponentMakingHttpCalls)
+    .withMocks(responses)
+    .mount()
+
+expect('/some/path').toHaveBeenFetchedWith({
+  method: 'POST',
+  body: { key: 'value' },
+})
+```
+
 #### toMatchNetWorkRequests
 When mounting a component that does http calls, it might be useful to check if these requests are matching the mocks we are passing in the test. To do so, it will be necessary to use `expect.extend()` from `jest`:
 ```
