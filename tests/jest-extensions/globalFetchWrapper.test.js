@@ -143,7 +143,7 @@ describe('toHaveBeenFetchedWith', () => {
       )
 
       expect(message()).toBe(
-        'fetch method does not match, expected POST received PUT',
+        'Fetch method does not match, expected POST received PUT',
       )
       expect(path).not.toHaveBeenFetchedWith({
         method: 'POST',

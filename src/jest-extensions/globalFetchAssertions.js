@@ -46,7 +46,7 @@ const globalFetchAssertions = {
       return {
         pass: false,
         message: () =>
-          `fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
+          `Fetch method does not match, expected ${options.method} received ${targetRequestMethod}`,
       }
     }
 
