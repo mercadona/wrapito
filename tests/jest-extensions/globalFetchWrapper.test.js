@@ -25,23 +25,23 @@ it('should check that the path has not been called', async () => {
 
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has not been called', async () => {
-    const path = '/some/unknown'
+    const path = '/some/path'
+    const expectedPath = '/some/unknown'
 
-    await fetch('/some/path')
-    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(path)
+    await fetch(path)
+    const { message } = globalFetchAssertions.toHaveBeenFetchedWith(expectedPath)
 
     expect(message()).toBe("/some/unknown ain't got called")
-    expect(path).not.toHaveBeenFetched()
+    expect(expectedPath).not.toHaveBeenFetched()
   })
 
   describe('request body', () => {
     it('should check that the path has been called with the supplied body', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { body: { name: 'some name' } })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
         {
           body: {
             name: 'some name',
@@ -50,20 +50,19 @@ describe('toHaveBeenFetchedWith', () => {
       )
 
       expect(message()).toBeUndefined()
-      expect(expectedPath).toHaveBeenFetchedWith({
+      expect(path).toHaveBeenFetchedWith({
         body: {
           name: 'some name',
         },
       })
     })
 
-    it('should check allow to specify the body elements in different order', async () => {
+    it('should allow to specify the body elements in different order', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { body: { name: 'name', surname: 'surname' } })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
         {
           body: {
             surname: 'surname',
@@ -73,7 +72,7 @@ describe('toHaveBeenFetchedWith', () => {
       )
 
       expect(message()).toBeUndefined()
-      expect(expectedPath).toHaveBeenFetchedWith({
+      expect(path).toHaveBeenFetchedWith({
         body: {
           surname: 'surname',
           name: 'name',
@@ -117,29 +116,27 @@ describe('toHaveBeenFetchedWith', () => {
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { method: 'POST' })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
         {
           method: 'POST',
         },
       )
 
       expect(message()).toBeUndefined()
-      expect(expectedPath).toHaveBeenFetchedWith({
+      expect(path).toHaveBeenFetchedWith({
         method: 'POST',
       })
     })
 
     it('should check that the path has not been called with the supplied method', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { method: 'PUT' })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
         {
           method: 'POST',
         },
@@ -148,22 +145,21 @@ describe('toHaveBeenFetchedWith', () => {
       expect(message()).toBe(
         'fetch method does not match, expected POST received PUT',
       )
-      expect(expectedPath).not.toHaveBeenFetchedWith({
+      expect(path).not.toHaveBeenFetchedWith({
         method: 'POST',
       })
     })
 
     it('should allow to leave the method empty', async () => {
       const path = '/some/path/'
-      const expectedPath = '/some/path/'
       await fetch(path, { method: 'POST' })
 
       const { message } = globalFetchAssertions.toHaveBeenFetchedWith(
-        expectedPath,
+        path,
       )
 
       expect(message()).toBeUndefined()
-      expect(expectedPath).toHaveBeenFetchedWith()
+      expect(path).toHaveBeenFetchedWith()
     })
   })
 })
