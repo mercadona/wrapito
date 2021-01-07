@@ -4,7 +4,7 @@ expect.extend(assertions)
 
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
-    const path = '/some/path/'
+    const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
     await fetch(path)
 
@@ -15,7 +15,7 @@ describe('toHaveBeenFetchedWith', () => {
   })
 
   it('should check that the path has not been called', async () => {
-    const path = '/some/path'
+    const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/unknown'
 
     await fetch(path)
@@ -27,7 +27,7 @@ describe('toHaveBeenFetchedWith', () => {
 
   describe('request body', () => {
     it('should check that the path has been called with the supplied body', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { body: { name: 'some name' } })
 
       const { message } = assertions.toHaveBeenFetchedWith(path, {
@@ -45,7 +45,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should differentiate between to request to the same path but with different body', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { body: { name: 'some name' } })
       await fetch(path, { body: { age: 32 } })
 
@@ -64,7 +64,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should allow to specify the body elements in different order', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { body: { name: 'name', surname: 'surname' } })
 
       const { message } = assertions.toHaveBeenFetchedWith(path, {
@@ -84,7 +84,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should check that the path has not been called with the supplied body', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       const expectedBody = { name: 'some name' }
       const receivedBody = { surname: 'some surname' }
 
@@ -104,7 +104,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should allow to leave the body option empty', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { body: { surname: 'some surname' } })
 
       const { message } = assertions.toHaveBeenFetchedWith(path)
@@ -116,7 +116,7 @@ describe('toHaveBeenFetchedWith', () => {
 
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { method: 'POST' })
 
       const { message } = assertions.toHaveBeenFetchedWith(path, {
@@ -130,7 +130,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should differentiate between to request to the same path with different methods', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { method: 'POST' })
       await fetch(path, { method: 'PUT' })
 
@@ -145,7 +145,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should check that the path has not been called with the supplied method', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { method: 'PUT' })
 
       const { message } = assertions.toHaveBeenFetchedWith(path, {
@@ -161,7 +161,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should allow to leave the method empty', async () => {
-      const path = '/some/path/'
+      const path = '//some-domain.com/some/path/'
       await fetch(path, { method: 'POST' })
 
       const { message } = assertions.toHaveBeenFetchedWith(path)
