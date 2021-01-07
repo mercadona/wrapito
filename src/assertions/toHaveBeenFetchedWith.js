@@ -1,5 +1,5 @@
 const findRequestsByPath = path =>
-  fetch.mock.calls.filter(([mockedPath]) => mockedPath === path)
+  fetch.mock.calls.filter(([mockedPath]) => mockedPath.includes(path))
 
 const getRequestsMethods = requests =>
   requests.map(request => request[1]?.method)
