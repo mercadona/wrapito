@@ -215,9 +215,9 @@ wrap(PreparationContainer)
 Some times checking only the visual side effects in the UI it's not enough. In the case that we want to check if a particular network side effect is happening, this assertion will come in handy.
 
 ```
-import { globalFetchAssertions } from '@mercadona/mo.library.burrito'
+import { wrap, assertions } from '@mercadona/mo.library.burrito'
 
-expect.extend(globalFetchAssertions)
+expect.extend(assertions)
 
 wrap(MyComponentMakingHttpCalls)
     .withMocks(responses)
