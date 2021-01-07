@@ -3,34 +3,38 @@ import { assertions } from '../../src'
 expect.extend(assertions)
 
 describe('toHaveBeenFetchedWith', () => {
-  it('should check that the path has been called', async () => {
+  fit('should check that the path has been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
-    await fetch(path)
 
-    const { message } = assertions.toHaveBeenFetchedWith(expectedPath)
+    await fetch(new Request(path))
+    const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
 
     expect(message()).toBeUndefined()
     expect(expectedPath).toHaveBeenFetchedWith()
   })
 
-  it('should check that the path has not been called', async () => {
+  fit('should check that the path has not been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/unknown'
 
-    await fetch(path)
-    const { message } = assertions.toHaveBeenFetchedWith(expectedPath)
+    await fetch(new Request(path))
+    const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
 
     expect(message()).toBe("/some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
   describe('request body', () => {
-    it('should check that the path has been called with the supplied body', async () => {
+    fit('should check that the path has been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { body: { name: 'some name' } })
+      const request = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ name: 'some name' }),
+      })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         body: {
           name: 'some name',
         },

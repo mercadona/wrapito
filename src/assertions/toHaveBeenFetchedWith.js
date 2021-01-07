@@ -1,10 +1,18 @@
 const findRequestsByPath = path =>
-  fetch.mock.calls.filter(([mockedPath]) => mockedPath.includes(path))
+  fetch.mock.calls.filter(call => call[0].url.includes(path))
 
 const getRequestsMethods = requests =>
   requests.map(request => request[1]?.method)
 
-const getRequestsBodies = requests => requests.map(request => request[1]?.body)
+const getRequestsBodies = async requests =>
+  Promise.all(
+    requests.map(request =>
+      request[0]
+        .clone()
+        .json()
+        .catch(_ => undefined),
+    ),
+  )
 
 const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
   expectedMethod && !targetRequestsMethods.includes(expectedMethod)
@@ -12,19 +20,21 @@ const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
 const bodyDoesNotMatch = (expectedBody, targetRequestsBodies) => {
   if (!expectedBody) return false
 
-  const expectedBodyEntries = JSON.stringify(
-    Object.entries(expectedBody).sort(),
-  )
-  const targetRequestBodyEntries = targetRequestsBodies.map(request =>
-    JSON.stringify(Object.entries(request).sort()),
+  const comparableExpectedBody = Object.entries(expectedBody)
+    .sort()
+    .flat()
+    .join()
+
+  const comparableTargetRequestsBodies = targetRequestsBodies.map(request =>
+    Object.entries(request).sort().join(),
   )
 
-  return !targetRequestBodyEntries.includes(expectedBodyEntries)
+  return !comparableTargetRequestsBodies.includes(comparableExpectedBody)
 }
 
 const empty = requests => requests.length === 0
 
-const toHaveBeenFetchedWith = (path, options) => {
+const toHaveBeenFetchedWith = async (path, options) => {
   const targetRequests = findRequestsByPath(path)
 
   if (empty(targetRequests)) {
@@ -42,7 +52,7 @@ const toHaveBeenFetchedWith = (path, options) => {
     }
   }
 
-  const targetRequestsBodies = getRequestsBodies(targetRequests)
+  const targetRequestsBodies = await getRequestsBodies(targetRequests)
   const expectedBody = options?.body
 
   if (bodyDoesNotMatch(expectedBody, targetRequestsBodies)) {
