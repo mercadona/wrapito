@@ -14,10 +14,10 @@ const getRequestsBodies = async requests =>
     ),
   )
 
-const methodDoesNotMatch = (expectedMethod, targetRequestsMethods) =>
-  expectedMethod && !targetRequestsMethods.includes(expectedMethod)
+const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
+  expectedMethod && !receivedRequestsMethods.includes(expectedMethod)
 
-const bodyDoesNotMatch = (expectedBody, targetRequestsBodies) => {
+const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
   const comparableExpectedBody = Object.entries(expectedBody)
@@ -25,7 +25,7 @@ const bodyDoesNotMatch = (expectedBody, targetRequestsBodies) => {
     .flat()
     .join()
 
-  const comparableTargetRequestsBodies = targetRequestsBodies.map(request =>
+  const comparableTargetRequestsBodies = receivedRequestsBodies.map(request =>
     Object.entries(request).sort().join(),
   )
 
@@ -41,27 +41,27 @@ const toHaveBeenFetchedWith = async (path, options) => {
     return { pass: false, message: () => `${path} ain't got called` }
   }
 
-  const targetRequestsMethods = getRequestsMethods(targetRequests)
+  const receivedRequestsMethods = getRequestsMethods(targetRequests)
   const expectedMethod = options?.method
 
-  if (methodDoesNotMatch(expectedMethod, targetRequestsMethods)) {
+  if (methodDoesNotMatch(expectedMethod, receivedRequestsMethods)) {
     return {
       pass: false,
       message: () =>
-        `Fetch method does not match, expected ${options.method} received ${targetRequestsMethods}`,
+        `Fetch method does not match, expected ${expectedMethod} received ${receivedRequestsMethods}`,
     }
   }
 
-  const targetRequestsBodies = await getRequestsBodies(targetRequests)
+  const receivedRequestsBodies = await getRequestsBodies(targetRequests)
   const expectedBody = options?.body
 
-  if (bodyDoesNotMatch(expectedBody, targetRequestsBodies)) {
+  if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
     return {
       pass: false,
       message: () =>
         `Fetch body does not match, expected ${JSON.stringify(
-          options.body,
-        )} received ${JSON.stringify(targetRequestsBodies)}`,
+          expectedBody,
+        )} received ${JSON.stringify(receivedRequestsBodies)}`,
     }
   }
 
