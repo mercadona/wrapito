@@ -3,7 +3,7 @@ import { assertions } from '../../src'
 expect.extend(assertions)
 
 describe('toHaveBeenFetchedWith', () => {
-  fit('should check that the path has been called', async () => {
+  it('should check that the path has been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
 
@@ -14,7 +14,7 @@ describe('toHaveBeenFetchedWith', () => {
     expect(expectedPath).toHaveBeenFetchedWith()
   })
 
-  fit('should check that the path has not been called', async () => {
+  it('should check that the path has not been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/unknown'
 
@@ -25,7 +25,7 @@ describe('toHaveBeenFetchedWith', () => {
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
-  describe.only('request body', () => {
+  describe('request body', () => {
     it('should check that the path has been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
       const request = new Request(path, {
@@ -141,9 +141,10 @@ describe('toHaveBeenFetchedWith', () => {
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { method: 'POST' })
+      const request = new Request(path, { method: 'POST' })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         method: 'POST',
       })
 
@@ -155,10 +156,12 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should differentiate between to request to the same path with different methods', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { method: 'POST' })
-      await fetch(path, { method: 'PUT' })
+      const postRequest = new Request(path, { method: 'POST' })
+      const putRequest = new Request(path, { method: 'PUT' })
+      await fetch(postRequest)
+      await fetch(putRequest)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         method: 'PUT',
       })
 
@@ -170,9 +173,10 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should check that the path has not been called with the supplied method', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { method: 'PUT' })
+      const request = new Request(path, { method: 'PUT' })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         method: 'POST',
       })
 
@@ -186,9 +190,10 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should allow to leave the method empty', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { method: 'POST' })
+      const request = new Request(path, { method: 'POST' })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path)
+      const { message } = await assertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()

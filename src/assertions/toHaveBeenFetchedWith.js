@@ -2,7 +2,7 @@ const findRequestsByPath = path =>
   fetch.mock.calls.filter(call => call[0].url.includes(path))
 
 const getRequestsMethods = requests =>
-  requests.map(request => request[1]?.method)
+  requests.map(request => request[0]?.method)
 
 const getRequestsBodies = async requests =>
   Promise.all(
