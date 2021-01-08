@@ -4,15 +4,20 @@ const findRequestsByPath = path =>
 const getRequestsMethods = requests =>
   requests.map(request => request[0]?.method)
 
-const getRequestsBodies = async requests =>
-  Promise.all(
-    requests.map(request =>
-      request[0]
-        .clone()
-        .json()
-        .catch(_ => undefined),
-    ),
-  )
+const getRequestsBodies = requests =>
+  requests.map(request => {
+    const requestBody = request[0].body
+    if (!requestBody) return {}
+
+    return JSON.parse(Buffer.from(requestBody).toString())
+  })
+
+const getRequestsBodiesPatch = requests =>
+  requests.map(request => {
+    if (!request[0]._bodyInit) return {}
+
+    JSON.parse(request[0]._bodyInit)
+  })
 
 const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
   expectedMethod && !receivedRequestsMethods.includes(expectedMethod)
@@ -20,9 +25,7 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
-  const comparableExpectedBody = Object.entries(expectedBody)
-    .sort()
-    .join()
+  const comparableExpectedBody = Object.entries(expectedBody).sort().join()
 
   const comparableTargetRequestsBodies = receivedRequestsBodies.map(request =>
     Object.entries(request).sort().join(),
@@ -33,7 +36,7 @@ const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
 
 const empty = requests => requests.length === 0
 
-const toHaveBeenFetchedWith = async (path, options) => {
+const toHaveBeenFetchedWith = (path, options) => {
   const targetRequests = findRequestsByPath(path)
 
   if (empty(targetRequests)) {
@@ -51,7 +54,7 @@ const toHaveBeenFetchedWith = async (path, options) => {
     }
   }
 
-  const receivedRequestsBodies = await getRequestsBodies(targetRequests)
+  const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
