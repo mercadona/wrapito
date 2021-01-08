@@ -20,6 +20,7 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
+  console.log(Object.entries(expectedBody).sort())
   const comparableExpectedBody = Object.entries(expectedBody)
     .sort()
     .flat()

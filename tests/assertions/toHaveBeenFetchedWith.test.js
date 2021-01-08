@@ -99,7 +99,7 @@ describe('toHaveBeenFetchedWith', () => {
       })
     })
 
-    it('should check that the path has not been called with the supplied body', async () => {
+    fit('should check that the path has not been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
       const expectedBody = { name: 'some name' }
       const receivedBody = { surname: 'some surname' }
