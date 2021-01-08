@@ -22,7 +22,6 @@ const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
 
   const comparableExpectedBody = Object.entries(expectedBody)
     .sort()
-    .flat()
     .join()
 
   const comparableTargetRequestsBodies = receivedRequestsBodies.map(request =>
