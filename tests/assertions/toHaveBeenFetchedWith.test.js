@@ -25,8 +25,8 @@ describe('toHaveBeenFetchedWith', () => {
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
-  describe('request body', () => {
-    fit('should check that the path has been called with the supplied body', async () => {
+  describe.only('request body', () => {
+    it('should check that the path has been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
@@ -50,10 +50,18 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should differentiate between to request to the same path but with different body', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { body: { name: 'some name' } })
-      await fetch(path, { body: { age: 32 } })
+      const firstRequest = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ name: 'some name' }),
+      })
+      const secondRequest = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ age: 32 }),
+      })
+      await fetch(firstRequest)
+      await fetch(secondRequest)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         body: {
           age: 32,
         },
@@ -69,9 +77,13 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should allow to specify the body elements in different order', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { body: { name: 'name', surname: 'surname' } })
+      const request = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ name: 'name', surname: 'surname' }),
+      })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         body: {
           surname: 'surname',
           name: 'name',
@@ -91,9 +103,13 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '//some-domain.com/some/path/'
       const expectedBody = { name: 'some name' }
       const receivedBody = { surname: 'some surname' }
+      const request = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify(receivedBody),
+      })
 
-      await fetch(path, { body: receivedBody })
-      const { message } = assertions.toHaveBeenFetchedWith(path, {
+      await fetch(request)
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
         body: expectedBody,
       })
 
@@ -109,9 +125,13 @@ describe('toHaveBeenFetchedWith', () => {
 
     it('should allow to leave the body option empty', async () => {
       const path = '//some-domain.com/some/path/'
-      await fetch(path, { body: { surname: 'some surname' } })
+      const request = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ surname: 'some surname' }),
+      })
+      await fetch(request)
 
-      const { message } = assertions.toHaveBeenFetchedWith(path)
+      const { message } = await assertions.toHaveBeenFetchedWith(path)
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith()
