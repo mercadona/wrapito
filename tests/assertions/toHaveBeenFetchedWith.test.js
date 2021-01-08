@@ -48,6 +48,31 @@ describe('toHaveBeenFetchedWith', () => {
       })
     })
 
+    it('should not throw already read TypeError', async () => {
+      const path = '//some-domain.com/some/path/'
+      const request = new Request(path, {
+        method: 'POST',
+        body: JSON.stringify({ name: 'some name' }),
+        _bodyInit: JSON.stringify({ name: 'some name' }),
+      })
+
+      await fetch(request)
+      fetch.mock.calls[0][0].json()
+
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+        body: {
+          name: 'some name',
+        },
+      })
+
+      expect(message()).toBeUndefined()
+      expect(path).toHaveBeenFetchedWith({
+        body: {
+          name: 'some name',
+        },
+      })
+    })
+
     it('should differentiate between to request to the same path but with different body', async () => {
       const path = '//some-domain.com/some/path/'
       const firstRequest = new Request(path, {
