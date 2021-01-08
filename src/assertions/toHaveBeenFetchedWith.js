@@ -20,10 +20,9 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
-  console.log(Object.entries(expectedBody).sort())
+  console.log(Object.entries(expectedBody).sort()[0])
   const comparableExpectedBody = Object.entries(expectedBody)
-    .sort()
-    .flat()
+    .sort()[0]
     .join()
 
   const comparableTargetRequestsBodies = receivedRequestsBodies.map(request =>
