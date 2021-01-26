@@ -6,17 +6,9 @@ const getRequestsMethods = requests =>
 
 const getRequestsBodies = requests =>
   requests.map(request => {
-    const requestBody = request[0].body
-    if (!requestBody) return {}
-
-    return JSON.parse(Buffer.from(requestBody).toString())
-  })
-
-const getRequestsBodiesPatch = requests =>
-  requests.map(request => {
     if (!request[0]._bodyInit) return {}
 
-    JSON.parse(request[0]._bodyInit)
+    return JSON.parse(request[0]._bodyInit)
   })
 
 const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
