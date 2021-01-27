@@ -250,3 +250,11 @@ expect(responses).toMatchNetworkRequests()
 
 As there's an http request that is mocked but is not gonna be used in the code, it will make the test fail and log all the requests that are mocked but not being used in the code.
 In the other hand, it can be used to do the opposite, there could be that a request is being done in the code, but not being mocked in the tests.
+
+## 🔧 Development
+
+In order to test the library in a project without releasing the library:
+
+- ```npm run build```
+- This will generate a local build in the `dist` folder
+- Copy the content of that folder in `node_modules/@mercadona/mo.library.burrito` in your project
