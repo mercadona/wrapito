@@ -37,7 +37,8 @@
   },
   "homepage": "https://github.com/mercadona/mo.library.burrito#readme",
   "dependencies": {
-    "deep-equal": "^1.0.1"
+    "deep-equal": "^1.0.1",
+    "whatwg-fetch": "^3.5.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
