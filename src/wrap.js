@@ -19,7 +19,14 @@ const extendWith = (extensions, options) => {
     (alreadyExtended, nextExtension) => ({
       ...alreadyExtended,
       [nextExtension]: (...args) => {
-        extensions[nextExtension]({ mockNetwork }, args)
+        extensions[nextExtension](
+          {
+            addResponses: responses => {
+              options.responses = responses
+            },
+          },
+          args,
+        )
         return wrap(options)
       },
     }),
@@ -43,7 +50,12 @@ const wrap = options => {
     withPortalAt: portalRootId =>
       wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
-    withNetwork: responses => wrap({ ...options, responses, hasNetwork: true }),
+    withNetwork: responses =>
+      wrap({
+        ...options,
+        responses: [...options.responses, ...responses],
+        hasNetwork: true,
+      }),
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {

@@ -1,12 +1,12 @@
 import { getRequestMatcher } from './requestMatcher'
 
-// beforeEach(() => {
-//   global.fetch = jest.fn()
-// })
+beforeEach(() => {
+  global.fetch = jest.fn()
+})
 
-// afterEach(() => {
-//   global.fetch.mockRestore()
-// })
+afterEach(() => {
+  global.fetch.mockRestore()
+})
 
 async function getNormalizedRequestBody(request) {
   try {
@@ -27,7 +27,6 @@ const createResponse = async ({ responseBody, status = 200, headers }) =>
 
 function mockNetwork(responses = []) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
-  console.log('instances', global.fetch.mock)
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
     const responseMatchingRequest = listOfResponses.find(

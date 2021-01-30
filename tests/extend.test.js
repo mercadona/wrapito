@@ -30,12 +30,12 @@ it('should extend burrito', async () => {
   expect(otherCustomExtension).toHaveBeenCalledWith(customArgs)
 })
 
-it('should be compatible with withNetwork', async () => {
+it.only('should be compatible with withNetwork', async () => {
   configure({
     mount: render,
     extend: {
-      withLogin: ({ mockNetwork }, username) =>
-        mockNetwork([
+      withLogin: ({ addResponses }, username) =>
+        addResponses([
           {
             path: '/path/to/login/',
             host: 'my-host',
@@ -47,12 +47,14 @@ it('should be compatible with withNetwork', async () => {
   })
   wrap(MyComponentWithLogin)
     .withLogin('Fran Perea')
-    .withNetwork({
-      path: '/path/to/logout/',
-      host: 'my-host',
-      method: 'post',
-      responseBody: 'John Doe',
-    })
+    .withNetwork([
+      {
+        path: '/path/to/logout/',
+        host: 'my-host',
+        method: 'post',
+        responseBody: 'John Doe',
+      },
+    ])
     .mount()
 
   await screen.findByText('Logged in as Fran Perea')
