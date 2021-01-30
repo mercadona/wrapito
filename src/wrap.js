@@ -69,7 +69,7 @@ const wrap = options => {
         hasPath,
       } = options
 
-      if (hasNetwork) {
+      if (responses.length > 0) {
         mockNetwork(responses)
       }
 

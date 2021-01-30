@@ -9,8 +9,8 @@ it('should extend burrito', async () => {
   configure({
     mount: render,
     extend: {
-      withLogin: ({ mockNetwork }, username) =>
-        mockNetwork([
+      withLogin: ({ addResponses }, username) =>
+        addResponses([
           {
             path: '/path/to/login/',
             host: 'my-host',
@@ -30,7 +30,7 @@ it('should extend burrito', async () => {
   expect(otherCustomExtension).toHaveBeenCalledWith(customArgs)
 })
 
-it.only('should be compatible with withNetwork', async () => {
+it('should be compatible with withNetwork', async () => {
   configure({
     mount: render,
     extend: {
