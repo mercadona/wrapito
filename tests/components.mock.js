@@ -219,7 +219,8 @@ export const MyComponentWithNetwork = () => {
 }
 
 export const MyComponentWithLogin = () => {
-  const [user, setUser] = useState(null)
+  const [username, setUser] = useState(null)
+  const [status, setStatus] = useState(null)
 
   useEffect(() => {
     login()
@@ -230,8 +231,25 @@ export const MyComponentWithLogin = () => {
     const response = await fetch(request)
     const username = await response.json()
     setUser(username)
+    setStatus('LOGIN')
   }
 
-  if (!user) return <span>Not logged</span>
-  return <span>Logged as {user}</span>
+  const logout = async () => {
+    const request = new Request('my-host/path/to/logout/', { method: 'POST' })
+    const response = await fetch(request)
+    const username = await response.json()
+    setUser(username)
+    setStatus('LOGOUT')
+  }
+
+  if (status === 'LOGIN') {
+    return (
+      <div>
+        <span>Logged in as {username}</span>
+        <button onClick={ logout }>Logout</button>
+      </div>
+    )
+  }
+  if (status === 'LOGOUT') return <span>Logged out as {username}</span>
+  return <span>Not logged</span>
 }

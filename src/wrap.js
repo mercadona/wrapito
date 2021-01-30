@@ -4,6 +4,14 @@ import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 
+beforeEach(() => {
+  global.fetch = jest.fn()
+})
+
+afterEach(() => {
+  global.fetch.mockRestore()
+})
+
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
