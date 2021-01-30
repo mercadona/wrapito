@@ -42,6 +42,10 @@ const wrap = options => {
     return wrap({ Component: options })
   }
 
+  if (!options.responses) {
+    return wrap({ ...options, responses: [] })
+  }
+
   const { extend, portal, history } = getConfig()
   const extensions = extendWith(extend, options)
 
@@ -50,7 +54,7 @@ const wrap = options => {
     withPortalAt: portalRootId =>
       wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
-    withNetwork: responses =>
+    withNetwork: (responses = []) =>
       wrap({
         ...options,
         responses: [...options.responses, ...responses],
@@ -69,7 +73,7 @@ const wrap = options => {
         hasPath,
       } = options
 
-      if (responses.length > 0) {
+      if (hasNetwork) {
         mockNetwork(responses)
       }
 
