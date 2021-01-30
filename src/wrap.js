@@ -58,13 +58,11 @@ const wrap = options => {
       wrap({
         ...options,
         responses: [...options.responses, ...responses],
-        hasNetwork: true,
       }),
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
       const {
-        hasNetwork,
         hasMocks,
         responses,
         hasPortal,
@@ -73,12 +71,10 @@ const wrap = options => {
         hasPath,
       } = options
 
-      if (responses.length > 0 || hasNetwork) {
-        mockNetwork(responses)
-      }
-
       if (hasMocks) {
         mockFetch(responses)
+      } else {
+        mockNetwork(responses)
       }
 
       if (hasPortal) {
