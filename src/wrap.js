@@ -22,7 +22,7 @@ const extendWith = (extensions, options) => {
         extensions[nextExtension](
           {
             addResponses: responses => {
-              options.responses = responses
+              options.responses = [...options.responses, ...responses]
             },
           },
           args,

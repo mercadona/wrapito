@@ -62,3 +62,36 @@ it('should be compatible with withNetwork', async () => {
 
   expect(await screen.findByText('Logged out as John Doe')).toBeInTheDocument()
 })
+
+it('should be composable', async () => {
+  configure({
+    mount: render,
+    extend: {
+      withLogin: ({ addResponses }, username) =>
+        addResponses([
+          {
+            path: '/path/to/login/',
+            host: 'my-host',
+            method: 'post',
+            responseBody: username,
+          },
+        ]),
+    },
+  })
+  wrap(MyComponentWithLogin)
+    .withNetwork([
+      {
+        path: '/path/to/logout/',
+        host: 'my-host',
+        method: 'post',
+        responseBody: 'John Doe',
+      },
+    ])
+    .withLogin('Fran Perea')
+    .mount()
+
+  await screen.findByText('Logged in as Fran Perea')
+  fireEvent.click(screen.getByText('Logout'))
+
+  expect(await screen.findByText('Logged out as John Doe')).toBeInTheDocument()
+})
