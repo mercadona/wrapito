@@ -4,6 +4,14 @@ import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 
+beforeEach(() => {
+  global.fetch = jest.fn()
+})
+
+afterEach(() => {
+  global.fetch.mockRestore()
+})
+
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
@@ -11,7 +19,14 @@ const extendWith = (extensions, options) => {
     (alreadyExtended, nextExtension) => ({
       ...alreadyExtended,
       [nextExtension]: (...args) => {
-        extensions[nextExtension]({ mockNetwork }, args)
+        extensions[nextExtension](
+          {
+            addResponses: responses => {
+              options.responses = [...options.responses, ...responses]
+            },
+          },
+          args,
+        )
         return wrap(options)
       },
     }),
@@ -27,6 +42,10 @@ const wrap = options => {
     return wrap({ Component: options })
   }
 
+  if (!options.responses) {
+    return wrap({ ...options, responses: [] })
+  }
+
   const { extend, portal, history } = getConfig()
   const extensions = extendWith(extend, options)
 
@@ -35,12 +54,15 @@ const wrap = options => {
     withPortalAt: portalRootId =>
       wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
-    withNetwork: responses => wrap({ ...options, responses, hasNetwork: true }),
+    withNetwork: (responses = []) =>
+      wrap({
+        ...options,
+        responses: [...options.responses, ...responses],
+      }),
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
       const {
-        hasNetwork,
         hasMocks,
         responses,
         hasPortal,
@@ -49,12 +71,10 @@ const wrap = options => {
         hasPath,
       } = options
 
-      if (hasNetwork) {
-        mockNetwork(responses)
-      }
-
       if (hasMocks) {
         mockFetch(responses)
+      } else {
+        mockNetwork(responses)
       }
 
       if (hasPortal) {

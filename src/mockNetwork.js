@@ -17,21 +17,21 @@ async function getNormalizedRequestBody(request) {
   }
 }
 
-const createResponse = async ({ responseBody, status = 200, headers }) => (
+const createResponse = async ({ responseBody, status = 200, headers }) =>
   Promise.resolve({
     json: () => Promise.resolve(responseBody),
     status,
     ok: status >= 200 && status <= 299,
     headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
   })
-)
 
 function mockNetwork(responses = []) {
-  const listOfResponses = responses.length > 0 ? responses : [ responses ]
-
+  const listOfResponses = responses.length > 0 ? responses : [responses]
   global.fetch.mockImplementation(async request => {
     const normalizedRequestBody = await getNormalizedRequestBody(request)
-    const responseMatchingRequest = listOfResponses.find(getRequestMatcher(request, normalizedRequestBody))
+    const responseMatchingRequest = listOfResponses.find(
+      getRequestMatcher(request, normalizedRequestBody),
+    )
 
     if (!responseMatchingRequest) {
       return createResponse({})
@@ -42,7 +42,9 @@ function mockNetwork(responses = []) {
       return createResponse(responseMatchingRequest)
     }
 
-    const responseNotYetReturned = multipleResponses.find(({ hasBeenReturned }) => !hasBeenReturned)
+    const responseNotYetReturned = multipleResponses.find(
+      ({ hasBeenReturned }) => !hasBeenReturned,
+    )
     if (!responseNotYetReturned) return
 
     responseNotYetReturned.hasBeenReturned = true
