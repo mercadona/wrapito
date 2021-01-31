@@ -3,6 +3,13 @@ import { wrap, configure } from '../src/index'
 
 import { MyComponentWithNetwork } from './components.mock'
 
+it('should have network by default', async () => {
+  configure({ mount: render })
+  wrap(MyComponentWithNetwork).mount()
+
+  expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
+})
+
 it('should have network', async () => {
   jest.spyOn(console, 'warn')
   configure({ mount: render })
