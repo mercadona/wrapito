@@ -17,13 +17,11 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
-  const comparableExpectedBody = Object.entries(expectedBody).sort().join()
+  const anyRequestMatch = receivedRequestsBodies
+  .map(request => JSON.stringify(expectedBody) === JSON.stringify(request))
+  .every((requestCompare => requestCompare === false))
 
-  const comparableTargetRequestsBodies = receivedRequestsBodies.map(request =>
-    Object.entries(request).sort().join(),
-  )
-
-  return !comparableTargetRequestsBodies.includes(comparableExpectedBody)
+  return anyRequestMatch
 }
 
 const empty = requests => requests.length === 0
