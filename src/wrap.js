@@ -54,11 +54,13 @@ const wrap = options => {
     withPortalAt: portalRootId =>
       wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
-    withNetwork: (responses = []) =>
-      wrap({
+    withNetwork: (responses = []) => {
+      const listOfResponses = Array.isArray(responses) ? responses : [responses]
+      return wrap({
         ...options,
-        responses: [...options.responses, ...responses],
-      }),
+        responses: [...options.responses, ...listOfResponses ],
+      })
+    },
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
