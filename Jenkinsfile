@@ -129,7 +129,11 @@ pipeline {
                         failingTarget: [methodCoverage: 0, conditionalCoverage: 0, statementCoverage: 0]     // optional, default is none
                     ])
                 }
-                slack.finalNotify('#logistics_events', tester.testStatuses())
+                if (env.TAG_NAME) {
+                    slack.finalNotify('#frontend', tester.testStatuses())
+                } else {
+                    slack.finalNotify('#logistics_events', tester.testStatuses())
+                }
             }
         }
     }
