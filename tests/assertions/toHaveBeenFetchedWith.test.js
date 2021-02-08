@@ -101,7 +101,7 @@ describe('toHaveBeenFetchedWith', () => {
       })
     })
 
-    xit('should allow to specify the body elements in different order', async () => {
+    it('should allow to specify the body elements in different order', async () => {
       const path = '//some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
@@ -140,9 +140,9 @@ describe('toHaveBeenFetchedWith', () => {
       })
 
       expect(message()).toBe(
-        `Fetch body does not match, expected ${JSON.stringify(
+        `Fetch body does not match, expected ${ JSON.stringify(
           expectedBody,
-        )} received ${JSON.stringify([receivedBody])}`,
+        ) } received ${ JSON.stringify([receivedBody]) }`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
@@ -188,7 +188,7 @@ describe('toHaveBeenFetchedWith', () => {
           two: {
             levels: ['Hello'],
           },
-        },),
+        }),
       })
 
       await fetch(request)

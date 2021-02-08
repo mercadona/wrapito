@@ -1,3 +1,5 @@
+import deepEqual from 'deep-equal'
+
 const findRequestsByPath = path =>
   fetch.mock.calls.filter(call => call[0].url.includes(path))
 
@@ -18,8 +20,8 @@ const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   if (!expectedBody) return false
 
   const anyRequestMatch = receivedRequestsBodies
-  .map(request => JSON.stringify(expectedBody) === JSON.stringify(request))
-  .every((requestCompare => requestCompare === false))
+    .map(request => deepEqual(expectedBody, request))
+    .every(requestCompare => requestCompare === false)
 
   return anyRequestMatch
 }
@@ -30,7 +32,7 @@ const toHaveBeenFetchedWith = (path, options) => {
   const targetRequests = findRequestsByPath(path)
 
   if (empty(targetRequests)) {
-    return { pass: false, message: () => `${path} ain't got called` }
+    return { pass: false, message: () => `${ path } ain't got called` }
   }
 
   const receivedRequestsMethods = getRequestsMethods(targetRequests)
@@ -40,7 +42,7 @@ const toHaveBeenFetchedWith = (path, options) => {
     return {
       pass: false,
       message: () =>
-        `Fetch method does not match, expected ${expectedMethod} received ${receivedRequestsMethods}`,
+        `Fetch method does not match, expected ${ expectedMethod } received ${ receivedRequestsMethods }`,
     }
   }
 
@@ -51,9 +53,9 @@ const toHaveBeenFetchedWith = (path, options) => {
     return {
       pass: false,
       message: () =>
-        `Fetch body does not match, expected ${JSON.stringify(
+        `Fetch body does not match, expected ${ JSON.stringify(
           expectedBody,
-        )} received ${JSON.stringify(receivedRequestsBodies)}`,
+        ) } received ${ JSON.stringify(receivedRequestsBodies) }`,
     }
   }
 
