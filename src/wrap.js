@@ -21,8 +21,11 @@ const extendWith = (extensions, options) => {
       [nextExtension]: (...args) => {
         extensions[nextExtension](
           {
-            addResponses: responses => {
-              options.responses = [...options.responses, ...responses]
+            addResponses: (responses = []) => {
+              const responsesToAdd = Array.isArray(responses)
+                ? responses
+                : [responses]
+              options.responses = [...options.responses, ...responsesToAdd]
             },
           },
           args,
@@ -58,7 +61,7 @@ const wrap = options => {
       const listOfResponses = Array.isArray(responses) ? responses : [responses]
       return wrap({
         ...options,
-        responses: [...options.responses, ...listOfResponses ],
+        responses: [...options.responses, ...listOfResponses],
       })
     },
     ...extensions,
