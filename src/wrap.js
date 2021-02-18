@@ -22,8 +22,9 @@ const extendWith = (extensions, options) => {
         extensions[nextExtension](
           {
             addResponses: (responses = []) => {
-              const responsesToAdd =
-                responses.length > 0 ? responses : [responses]
+              const responsesToAdd = Array.isArray(responses)
+                ? responses
+                : [responses]
               options.responses = [...options.responses, ...responsesToAdd]
             },
           },
