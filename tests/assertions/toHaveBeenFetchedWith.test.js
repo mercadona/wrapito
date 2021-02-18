@@ -1,5 +1,4 @@
 import { assertions } from '../../src'
-import 'whatwg-fetch'
 
 expect.extend(assertions)
 
