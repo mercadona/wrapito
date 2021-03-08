@@ -86,13 +86,11 @@ describe('toHaveBeenFetchedWith', () => {
       await fetch(firstRequest)
       await fetch(secondRequest)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      expect(path).toHaveBeenFetchedWith({
         body: {
-          age: 32,
+          name: 'some name',
         },
       })
-
-      expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
         body: {
           age: 32,
