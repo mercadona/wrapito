@@ -44,3 +44,36 @@ it('should have network without responses', async () => {
 
   expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
 })
+
+it('should not resolve a request with delay', async () => {
+  configure({ mount: render })
+  jest.useFakeTimers()
+  wrap(MyComponentWithNetwork)
+    .withNetwork([
+      {
+        path: '/path/',
+        host: 'my-host',
+        responseBody: 'SUCCESS',
+      },
+      {
+        path: '/path/with/response/',
+        host: 'my-host',
+        responseBody: '15',
+        delay: 500,
+      },
+    ])
+    .mount()
+
+  await screen.findByText('MyComponentWithNetwork')
+  jest.advanceTimersByTime(200)
+  await screen.findByText('SUCCESS')
+
+  expect(screen.getByText('SUCCESS')).toBeInTheDocument()
+  expect(screen.queryByText('15')).not.toBeInTheDocument()
+
+  jest.advanceTimersByTime(500)
+  await screen.findByText('15')
+
+  expect(screen.getByText('15')).toBeInTheDocument()
+  jest.useRealTimers()
+})
