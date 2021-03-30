@@ -17,24 +17,15 @@ async function getNormalizedRequestBody(request) {
   }
 }
 
-const createResponse = async ({ responseBody, status = 200, headers, delay }) => {
-  if (delay) {
-    return new Promise(resolve => setTimeout(() => {
-      return resolve({
-        json: () => Promise.resolve(responseBody),
-        status,
-        ok: status >= 200 && status <= 299,
-        headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-      })
-    }, delay))
-  }
-
-  return Promise.resolve({
-    json: () => Promise.resolve(responseBody),
-    status,
-    ok: status >= 200 && status <= 299,
-    headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-  })
+const createResponse = async ({ responseBody, status = 200, headers, delay = 0 }) => {
+  return new Promise(resolve => setTimeout(() => {
+    return resolve({
+      json: () => Promise.resolve(responseBody),
+      status,
+      ok: status >= 200 && status <= 299,
+      headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
+    })
+  }, delay))
 }
 
 function mockNetwork(responses = []) {

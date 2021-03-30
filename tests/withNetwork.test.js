@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, wait } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithNetwork } from './components.mock'
@@ -49,16 +49,23 @@ it('should not resolve a request with delay', async () => {
   configure({ mount: render })
   jest.useFakeTimers()
   wrap(MyComponentWithNetwork)
-    .withNetwork(
+    .withNetwork([
+      {
+        path: '/path/',
+        host: 'my-host',
+        responseBody: 'SUCCESS',
+      },
       {
         path: '/path/with/response/',
         host: 'my-host',
         responseBody: '15',
         delay: 500,
       },
-    )
+    ])
     .mount()
 
+  await screen.findByText('MyComponentWithNetwork')
+  jest.advanceTimersByTime(200)
   await screen.findByText('SUCCESS')
 
   expect(screen.getByText('SUCCESS')).toBeInTheDocument()
