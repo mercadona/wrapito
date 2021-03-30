@@ -212,6 +212,7 @@ export const MyComponentWithNetwork = () => {
 
   return (
     <div>
+      <div>MyComponentWithNetwork</div>
       <div>{status}</div>
       <div>{quantity}</div>
     </div>
