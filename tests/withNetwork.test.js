@@ -1,4 +1,4 @@
-import { render, screen, wait } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithNetwork } from './components.mock'
