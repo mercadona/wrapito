@@ -1,4 +1,4 @@
-import { render, screen, wait } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
 import { MyComponentWithNetwork } from './components.mock'
@@ -59,13 +59,14 @@ it('should not resolve a request with delay', async () => {
     )
     .mount()
 
-  await wait()
-  const delayedResponseBeforeTime = screen.queryByText('15')
-  jest.advanceTimersByTime(500)
-  await wait()
+  await screen.findByText('SUCCESS')
 
-  expect(delayedResponseBeforeTime).not.toBeInTheDocument()
-  const delayedResponseAfterTime = screen.getByText('15')
-  expect(delayedResponseAfterTime).toBeInTheDocument()
+  expect(screen.getByText('SUCCESS')).toBeInTheDocument()
+  expect(screen.queryByText('15')).not.toBeInTheDocument()
+
+  jest.advanceTimersByTime(500)
+  await screen.findByText('15')
+
+  expect(screen.getByText('15')).toBeInTheDocument()
   jest.useRealTimers()
 })
