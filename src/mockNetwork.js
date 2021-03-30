@@ -17,14 +17,18 @@ async function getNormalizedRequestBody(request) {
   }
 }
 
-const createResponse = async ({ responseBody, status = 200, headers, delay = 0 }) => {
+const createResponse = async ({ responseBody, status = 200, headers, delay }) => {
+  const response = {
+    json: () => Promise.resolve(responseBody),
+    status,
+    ok: status >= 200 && status <= 299,
+    headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
+  }
+
+  if (!delay) return Promise.resolve(response)
+
   return new Promise(resolve => setTimeout(() => {
-    return resolve({
-      json: () => Promise.resolve(responseBody),
-      status,
-      ok: status >= 200 && status <= 299,
-      headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-    })
+    return resolve(response)
   }, delay))
 }
 
