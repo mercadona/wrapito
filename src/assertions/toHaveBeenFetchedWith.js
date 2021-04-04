@@ -1,4 +1,32 @@
 import deepEqual from 'deep-equal'
+import { green, red } from 'chalk'
+
+const emptyErrorMessage = (path) => ({
+  pass: false,
+  message: () => `🌯 Burrito: ${path} ain't got called`,
+})
+
+const methodDoesNotMatchErrorMessage = (expected, received) => ({
+  pass: false,
+  message: () =>
+    `🌯 Burrito: Fetch method does not match, expected ${expected} received ${received}`,
+})
+
+const bodyDoesNotMatchErrorMessage = (expected, received) => ({
+  pass: false,
+  message: () =>
+    `🌯 Burrito: Fetch body does not match.
+Expected:
+${green(JSON.stringify(expected, null, ' '))}
+
+Received:
+${red(JSON.stringify(received, null, ' '))}`,
+})
+
+const successMessage = () => ({
+  pass: true,
+  message: () => undefined,
+})
 
 const findRequestsByPath = path =>
   fetch.mock.calls.filter(call => call[0].url.includes(path))
@@ -32,34 +60,24 @@ const toHaveBeenFetchedWith = (path, options) => {
   const targetRequests = findRequestsByPath(path)
 
   if (empty(targetRequests)) {
-    return { pass: false, message: () => `${ path } ain't got called` }
+    return emptyErrorMessage(path)
   }
 
   const receivedRequestsMethods = getRequestsMethods(targetRequests)
   const expectedMethod = options?.method
 
   if (methodDoesNotMatch(expectedMethod, receivedRequestsMethods)) {
-    return {
-      pass: false,
-      message: () =>
-        `Fetch method does not match, expected ${ expectedMethod } received ${ receivedRequestsMethods }`,
-    }
+    return methodDoesNotMatchErrorMessage(expectedMethod, receivedRequestsMethods)
   }
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
-    return {
-      pass: false,
-      message: () =>
-        `Fetch body does not match, expected ${ JSON.stringify(
-          expectedBody,
-        ) } received ${ JSON.stringify(receivedRequestsBodies) }`,
-    }
+    return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
   }
 
-  return { message: () => undefined, pass: true }
+  return successMessage()
 }
 
 export { toHaveBeenFetchedWith }

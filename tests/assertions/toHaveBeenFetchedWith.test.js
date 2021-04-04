@@ -1,4 +1,5 @@
 import { assertions } from '../../src'
+import { green, red } from 'chalk'
 
 expect.extend(assertions)
 
@@ -21,7 +22,7 @@ describe('toHaveBeenFetchedWith', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe("/some/unknown ain't got called")
+    expect(message()).toBe("🌯 Burrito: /some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
@@ -137,9 +138,12 @@ describe('toHaveBeenFetchedWith', () => {
       })
 
       expect(message()).toBe(
-        `Fetch body does not match, expected ${ JSON.stringify(
-          expectedBody,
-        ) } received ${ JSON.stringify([receivedBody]) }`,
+        `🌯 Burrito: Fetch body does not match.
+Expected:
+${green(JSON.stringify(expectedBody, null, ' '))}
+
+Received:
+${red(JSON.stringify([receivedBody], null, ' '))}`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
@@ -226,7 +230,7 @@ describe('toHaveBeenFetchedWith', () => {
       })
 
       expect(message()).toBe(
-        'Fetch method does not match, expected POST received PUT',
+        '🌯 Burrito: Fetch method does not match, expected POST received PUT',
       )
       expect(path).not.toHaveBeenFetchedWith({
         method: 'POST',
