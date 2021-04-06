@@ -80,4 +80,9 @@ const toHaveBeenFetchedWith = (path, options) => {
   return successMessage()
 }
 
-export { toHaveBeenFetchedWith }
+const toHaveBeenFetched = (path) => {
+  const requests = findRequestsByPath(path)
+  return !requests.length ? emptyErrorMessage(path) : successMessage()
+}
+
+export { toHaveBeenFetchedWith, toHaveBeenFetched }
