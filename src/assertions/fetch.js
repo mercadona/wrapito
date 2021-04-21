@@ -6,6 +6,11 @@ const emptyErrorMessage = (path) => ({
   message: () => `🌯 Burrito: ${path} ain't got called`,
 })
 
+const fetchLengthErrorMessage = (path, expectLength, currentLength) => ({
+  pass: false,
+  message: () => `🌯 Burrito: ${path} is called ${currentLength} times, you expected ${expectLength} times`,
+})
+
 const methodDoesNotMatchErrorMessage = (expected, received) => ({
   pass: false,
   message: () =>
@@ -85,4 +90,11 @@ const toHaveBeenFetched = (path) => {
   return !requests.length ? emptyErrorMessage(path) : successMessage()
 }
 
-export { toHaveBeenFetchedWith, toHaveBeenFetched }
+const toHaveBeenFetchedTimes = (path, expectedLength) => {
+  const requests = findRequestsByPath(path)
+  return requests.length !== expectedLength
+    ? fetchLengthErrorMessage(path, expectedLength, requests.length)
+    : successMessage()
+}
+
+export { toHaveBeenFetchedWith, toHaveBeenFetched, toHaveBeenFetchedTimes }
