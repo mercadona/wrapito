@@ -8,15 +8,6 @@ afterEach(() => {
   global.fetch.mockRestore()
 })
 
-async function getNormalizedRequestBody(request) {
-  try {
-    const normalizedRequestBody = await request.json()
-    return normalizedRequestBody
-  } catch (error) {
-    return null
-  }
-}
-
 const createResponse = async ({ responseBody, status = 200, headers, delay }) => {
   const response = {
     json: () => Promise.resolve(responseBody),
@@ -35,9 +26,8 @@ const createResponse = async ({ responseBody, status = 200, headers, delay }) =>
 function mockNetwork(responses = []) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
   global.fetch.mockImplementation(async request => {
-    const normalizedRequestBody = await getNormalizedRequestBody(request)
     const responseMatchingRequest = listOfResponses.find(
-      getRequestMatcher(request, normalizedRequestBody),
+      getRequestMatcher(request),
     )
 
     if (!responseMatchingRequest) {
