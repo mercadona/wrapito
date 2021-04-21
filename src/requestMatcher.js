@@ -18,7 +18,7 @@ const getRequestMatcher = (request) => (mockedRequest) => {
   const requestHash = hash({
     url: isQueryParamsSensitive ? request.url : request.url.split('?')[0],
     method: request.method,
-    requestBody: hasBody ? JSON.parse(request._bodyInit): undefined,
+    requestBody: hasBody ? JSON.parse(request._bodyInit) : undefined,
   })
   const mockedRequestHash = hash({
     url: isQueryParamsSensitive ? url : url.split('?')[0],
