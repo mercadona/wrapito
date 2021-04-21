@@ -251,6 +251,24 @@ expect(responses).toMatchNetworkRequests()
 As there's an http request that is mocked but is not gonna be used in the code, it will make the test fail and log all the requests that are mocked but not being used in the code.
 In the other hand, it can be used to do the opposite, there could be that a request is being done in the code, but not being mocked in the tests.
 
+#### toHaveBeenFetchedTimes
+This assertion is to check how many times an API url is called
+```
+import { wrap, assertions } from '@mercadona/mo.library.burrito'
+
+expect.extend(assertions)
+
+const responses = [
+  { path: '/path/to/get/quantity/' },
+]
+
+wrap(MyComponentMakingHttpCalls)
+    .withNetwork(responses)
+    .mount()
+
+expect('/path/to/get/quantity/').toHaveBeenFetchedTimes(1)
+```
+
 ## 🔧 Development
 
 In order to test the library in a project without releasing the library:
