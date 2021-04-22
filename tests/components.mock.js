@@ -266,7 +266,14 @@ export const MyComponentWithPost = () => {
   const login = async () => {
     const request = new Request('my-host/path/to/login/', {
       method: 'POST',
-      body: JSON.stringify({ username: 'Fran', password: 'secret' }),
+      body: JSON.stringify({
+        bar: 'bar',
+        foo: 'foo',
+        user: {
+          username: 'Fran',
+          password: 'secret',
+        },
+      }),
     })
     const response = await fetch(request)
     const username = await response.json()

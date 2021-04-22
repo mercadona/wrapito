@@ -107,7 +107,14 @@ it('should match a request regardless the body order', async () => {
     path: '/path/to/login/',
     host: 'my-host',
     method: 'post',
-    requestBody: { username: "Fran", password: "secret" },
+    requestBody: {
+      foo: "foo",
+      bar: "bar",
+      user: {
+        password: "secret",
+        username: "Fran",
+      }
+    },
     responseBody: 'Fran',
   }]).mount()
 
