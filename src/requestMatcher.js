@@ -1,34 +1,32 @@
-import deepEqual from 'deep-equal'
+import hash from 'object-hash'
 
 import { getConfig } from './config'
 
-const matchesRequestMethod = (request, method) => request.method.toLowerCase() === method
-const matchesRequestUrl = (request, url, catchParams) => {
-  const handleQueryParams = getConfig().handleQueryParams
-  if (!handleQueryParams || catchParams) return request.url === url
+const getRequestMatcher = (request) => (mockedRequest) => {
+  const {
+    method = 'GET',
+    path,
+    host = getConfig().defaultHost,
+    requestBody = undefined,
+    catchParams,
+  } = mockedRequest
 
-  const requestUrlWithoutQueryParams = request.url.split('?')[0]
-  const urlWithoutQueryParams = url.split('?')[0]
-  return requestUrlWithoutQueryParams === urlWithoutQueryParams
-}
-const matchesRequestBody = (normalizedRequestBody, requestBody) => {
-  return deepEqual(normalizedRequestBody, requestBody)
-}
-
-const getRequestMatcher = (request, normalizedRequestBody) => ({
-  method = 'get',
-  path,
-  host = getConfig().defaultHost,
-  requestBody = null,
-  catchParams,
-}) => {
   const url = host + path
+  const isQueryParamsSensitive = !getConfig().handleQueryParams || catchParams
 
-  return (
-    matchesRequestMethod(request, method) &&
-    matchesRequestUrl(request, url, catchParams) &&
-    matchesRequestBody(normalizedRequestBody, requestBody)
-  )
+  const hasBody = !!request._bodyInit
+  const requestHash = hash({
+    url: isQueryParamsSensitive ? request.url : request.url.split('?')[0],
+    method: request.method,
+    requestBody: hasBody ? JSON.parse(request._bodyInit) : undefined,
+  })
+  const mockedRequestHash = hash({
+    url: isQueryParamsSensitive ? url : url.split('?')[0],
+    method: method.toUpperCase(),
+    requestBody: requestBody,
+  })
+
+  return requestHash === mockedRequestHash
 }
 
 export { getRequestMatcher }
