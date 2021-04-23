@@ -254,3 +254,36 @@ export const MyComponentWithLogin = () => {
   if (status === 'LOGOUT') return <span>Logged out as {username}</span>
   return <span>Not logged</span>
 }
+
+export const MyComponentWithPost = () => {
+  const [username, setUser] = useState(null)
+  const [status, setStatus] = useState(null)
+
+  useEffect(() => {
+    login()
+  }, [])
+
+  const login = async () => {
+    const request = new Request('my-host/path/to/login/', {
+      method: 'POST',
+      body: JSON.stringify({
+        bar: 'bar',
+        foo: 'foo',
+        user: {
+          username: 'Fran',
+          password: 'secret',
+        },
+      }),
+    })
+    const response = await fetch(request)
+    const username = await response.json()
+    setUser(username)
+    setStatus('LOGIN')
+  }
+
+  if (status === 'LOGIN') {
+    return <span>Logged in as {username}</span>
+  }
+
+  return <span>Not logged</span>
+}

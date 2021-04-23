@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
-import { MyComponentWithNetwork } from './components.mock'
+import { MyComponentWithNetwork, MyComponentWithPost } from './components.mock'
 
 it('should have network by default', async () => {
   configure({ mount: render })
@@ -99,4 +99,24 @@ it('should resolve all the responses waiting for an unrelated text', async () =>
 
   expect(screen.getByText('SUCCESS')).toBeInTheDocument()
   expect(screen.getByText('15')).toBeInTheDocument()
+})
+
+it('should match a request regardless the body order', async () => {
+  configure({ mount: render })
+  wrap(MyComponentWithPost).withNetwork([{
+    path: '/path/to/login/',
+    host: 'my-host',
+    method: 'post',
+    requestBody: {
+      foo: "foo",
+      bar: "bar",
+      user: {
+        password: "secret",
+        username: "Fran",
+      }
+    },
+    responseBody: 'Fran',
+  }]).mount()
+
+  expect(await screen.findByText('Logged in as Fran')).toBeInTheDocument()
 })
