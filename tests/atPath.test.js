@@ -1,7 +1,13 @@
 import { wrap, configure } from '../src'
 import { render, fireEvent, screen } from '@testing-library/react'
 
-import { MyAppWithRouting, MyComponent, history, myFakeModule } from './components.mock'
+import {
+  MyAppWithRouting,
+  MyAppWithBrowserRouting,
+  MyComponent,
+  history,
+  myFakeModule,
+} from './components.mock'
 
 configure({ mount: render })
 
@@ -52,4 +58,13 @@ it('should render an app with a routing logic between pages', () => {
   fireEvent.click(getByText('Go to categories'))
 
   expect(container).toHaveTextContent('Categories')
+})
+
+it('should render an app with browser routing given an specific path without history', () => {
+  configure({ history: null })
+  wrap(MyAppWithBrowserRouting)
+    .atPath('/categories')
+    .mount()
+
+  expect(screen.getByText('Categories')).toBeInTheDocument()
 })
