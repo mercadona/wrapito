@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { Router, Switch, Route } from 'react-router-dom'
+import { Router, BrowserRouter, Switch, Route } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
@@ -116,6 +116,22 @@ export const MyAppWithRouting = () => {
         />
       </Switch>
     </Router>
+  )
+}
+
+export const MyAppWithBrowserRouting = () => {
+  return (
+    <BrowserRouter>
+      <Switch>
+        <Route key="home" path="/" component={ Home } exact={ true } />
+        <Route
+          key="categories"
+          path="/categories"
+          component={ Categories }
+          exact={ true }
+        />
+      </Switch>
+    </BrowserRouter>
   )
 }
 
