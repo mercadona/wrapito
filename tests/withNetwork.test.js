@@ -1,7 +1,11 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
-import { MyComponentWithNetwork, MyComponentWithPost } from './components.mock'
+import {
+  MyComponentWithNetwork,
+  MyComponentWithPost,
+  MyComponentWithFeedback,
+} from './components.mock'
 
 it('should have network by default', async () => {
   configure({ mount: render })
@@ -28,9 +32,11 @@ it('should have network with an object of requests', async () => {
   jest.spyOn(console, 'warn')
   configure({ mount: render })
   wrap(MyComponentWithNetwork)
-    .withNetwork(
-      { path: '/path/with/response/', host: 'my-host', responseBody: '15' },
-    )
+    .withNetwork({
+      path: '/path/with/response/',
+      host: 'my-host',
+      responseBody: '15',
+    })
     .mount()
 
   expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
@@ -103,20 +109,47 @@ it('should resolve all the responses waiting for an unrelated text', async () =>
 
 it('should match a request regardless the body order', async () => {
   configure({ mount: render })
-  wrap(MyComponentWithPost).withNetwork([{
-    path: '/path/to/login/',
-    host: 'my-host',
-    method: 'post',
-    requestBody: {
-      foo: "foo",
-      bar: "bar",
-      user: {
-        password: "secret",
-        username: "Fran",
-      }
-    },
-    responseBody: 'Fran',
-  }]).mount()
+  wrap(MyComponentWithPost)
+    .withNetwork([
+      {
+        path: '/path/to/login/',
+        host: 'my-host',
+        method: 'post',
+        requestBody: {
+          foo: 'foo',
+          bar: 'bar',
+          user: {
+            password: 'secret',
+            username: 'Fran',
+          },
+        },
+        responseBody: 'Fran',
+      },
+    ])
+    .mount()
 
   expect(await screen.findByText('Logged in as Fran')).toBeInTheDocument()
+})
+
+it('should mock multiple POST responses', async () => {
+  configure({ mount: render })
+  wrap(MyComponentWithFeedback)
+    .withNetwork({
+      host: 'my-host',
+      path: '/path/to/save/',
+      method: 'post',
+      multipleResponses: [
+        { responseBody: { name: 'Fran Perea' } },
+        { responseBody: { name: 'El que lo lea' } },
+      ],
+    })
+    .mount()
+
+  fireEvent.click(screen.getByText('save'))
+
+  expect(await screen.findByText('Fran Perea')).toBeInTheDocument()
+
+  fireEvent.click(screen.getByText('save'))
+
+  expect(await screen.findByText('El que lo lea')).toBeInTheDocument()
 })
