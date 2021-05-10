@@ -303,3 +303,24 @@ export const MyComponentWithPost = () => {
 
   return <span>Not logged</span>
 }
+
+export const MyComponentWithFeedback = () => {
+  const [feedback, setFeedback] = useState('DEFAULT')
+
+  const save = async () => {
+    const request = new Request('my-host/path/to/save/', {
+      method: 'POST',
+    })
+
+    const response = await fetch(request)
+    const { name } = await response.json()
+    setFeedback(name)
+  }
+
+  return (
+    <div>
+      <button onClick={ save }>save</button>
+      <span>{feedback}</span>
+    </div>
+  )
+}
