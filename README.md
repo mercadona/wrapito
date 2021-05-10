@@ -78,7 +78,7 @@ import { configure } from '@mercadona/mo.library.burrito'
 const { API_HOST, API_VERSION } = process.env
 configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
-In addition, Burrito defaults the `method` to `'get'` and `status` to `200`. This means one can use `withMocks` like this:
+In addition, Burrito defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
 ```
 import { wrap } from '@mercadona/mo.library.burrito'
 
@@ -88,7 +88,7 @@ const responses = {
 }
 
 wrap(MyComponent)
-  .withMocks(responses)
+  .withNetwork(responses)
   .mount()
 ```
 Now, you might need to mock several `http responses` at the same time and that's why you can also pass an array of responses instead if you wish:
@@ -110,117 +110,7 @@ const responses = [
 ]
 
 wrap(MyComponent)
-  .withMocks(responses)
-  .mount()
-```
-
-There might be cases where one request is called several times and we want it to return different responses. An example of this could be an app that shows a list of products that may be updated over time and for this propose the app has a refresh button that will request the list again in order to update its content.
-
-Well, it can be solved by specifying the response as multiple using `multipleResponse` as follows:
-
-```
-const responses = {
-  path: '/path/to/get/the/products/list/,
-  multipleResponses: [
-  {
-    responseBody: [
-      { id: 1, name: 'hummus' },
-      { id: 2, name: 'guacamole' },
-    ]
-  },
-  {
-    responseBody: [
-      { id: 1, name: 'hummus' },
-      { id: 2, name: 'guacamole' },
-      { id: 3, name: 'peanut butter' },
-    ]
-   },
-  ],
-}
-```
-
-`multipleResponses` receives an array of responses where one set the `responseBody`, `status` or `headers` for every response.
-
-When `multipleResponses` is present, 🌯 `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
-
-This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
-
-#### withMocks (Deprecated)
-By using this you let your components know what `http requests` will respond. It works matching the request url which is `host` + `path`, the request `method` and the `requestBody`. All three need to match, otherwise it will raise an exception to let you know that one of your components is doing an `http request` that is not being handled.
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-const responses = {
-  host: 'my-host',
-  method: 'get',
-  path: '/path/to/get/a/single/product/,
-  responseBody: { id: 1, name: 'hummus' },
-  status: 200,
-  catchParams: true,
-}
-
-wrap(MyComponent)
-  .withMocks(responses)
-  .mount()
-```
-`host`, `method` and `status` will be the same most of the cases, we don't want to specify them every single time.
-
-By default 🌯 burrito is testing the query params in your responses, but if you want to ignore it you must add the `handleQueryParams` param in the config and to test it you can use the `catchParams` property in the request, like this:
-
-```
-import { configure } from '@mercadona/mo.library.burrito'
-
-configure({ handleQueryParams: true })
-
-wrap(MyComponentUsingQueryParams)
-    .withMocks({
-        path: '/path/with/query/params/?myAwesome=param',
-        responseBody: '15',
-        catchParams: true,
-      })
-    .mount()
-```
-
-While `host` has a default value specified by using the `configure`:
-```
-import { configure } from '@mercadona/mo.library.burrito'
-
-const { API_HOST, API_VERSION } = process.env
-configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
-```
-`method` as a default value of `'get'` and `status` is `200`. This means one can use `withMocks` like this:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-const responses = {
-  path: '/path/to/get/a/single/product/,
-  responseBody: { id: 1, name: 'hummus' },
-}
-
-wrap(MyComponent)
-  .withMocks(responses)
-  .mount()
-```
-Now, you might need to mock several `http responses` at the same time and that's why you can also pass an array of responses instead if you wish:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-const responses = [
-  {
-    path: '/path/to/get/the/products/list/,
-    responseBody: [
-      { id: 1, name: 'hummus' },
-      { id: 2, name: 'guacamole' },
-    ]
-  },
-  {
-    path: '/path/to/get/a/single/product/,
-    responseBody: { id: 1, name: 'hummus' },
-  },
-]
-
-wrap(MyComponent)
-  .withMocks(responses)
+  .withNetwork(responses)
   .mount()
 ```
 
@@ -300,7 +190,7 @@ const responses = {
 
 wrap(PreparationContainer)
   .atPath('/products/1')
-  .withMocks(responses)
+  .withNetwork(responses)
   .withProps()
   .withPortalAt('modal-root')
   .mount()
@@ -316,7 +206,7 @@ import { wrap, assertions } from '@mercadona/mo.library.burrito'
 expect.extend(assertions)
 
 wrap(MyComponentMakingHttpCalls)
-    .withMocks(responses)
+    .withNetwork(responses)
     .mount()
 
 expect('/some/path').toHaveBeenFetchedWith({
@@ -338,7 +228,7 @@ const responses = [
 ]
 
 wrap(MyComponentMakingHttpCalls)
-    .withMocks(responses)
+    .withNetwork(responses)
     .mount()
 
 expect(responses).toMatchNetworkRequests()
