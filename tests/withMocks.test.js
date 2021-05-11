@@ -88,6 +88,22 @@ it('should mock different responses given the same request', async () => {
   )
 })
 
+it('should show the deprecated feature warning', async() => {
+  console.warn = jest.fn()
+  configure({ mount: render })
+  const { container } = wrap(MyComponentMakingHttpCalls)
+    .withMocks({ method: 'get', path: '/path/to/get/quantity/', host: 'my-host', responseBody: '15', status: 200 })
+    .mount()
+
+    expect(container).toHaveTextContent('quantity: 0')
+
+    await wait(() =>
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('withMocks is deprecated. Use withNetwork instead.')
+    )
+  )
+})
+
 it('should not have enough responses specified', async () => {
   configure({ defaultHost: 'my-host', mount: render })
   console.warn = jest.fn()

@@ -1,4 +1,5 @@
 import React from 'react'
+import { yellow } from 'chalk'
 
 import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
@@ -56,7 +57,10 @@ const wrap = options => {
     withProps: props => wrap({ ...options, props }),
     withPortalAt: portalRootId =>
       wrap({ ...options, portalRootId, hasPortal: true }),
-    withMocks: responses => wrap({ ...options, responses, hasMocks: true }),
+    withMocks: responses => {
+      console.warn(yellow('withMocks is deprecated. Use withNetwork instead.'))
+      return wrap({ ...options, responses, hasMocks: true })
+    },
     withNetwork: (responses = []) => {
       const listOfResponses = Array.isArray(responses) ? responses : [responses]
       return wrap({
