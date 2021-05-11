@@ -49,8 +49,13 @@ and add the previous file in `jest.config.json`
 ```
 
 ## 🏰 Builder API
+
+#### withMocks (Deprecated)
+
+It has the same API than the withNetwork builder. The main difference between them is that withMocks will fail if a given request, done by the production code, is not set up in the `responses object`.
+
 #### withNetwork
-By using this you let your components know what `http requests` will respond. It works matching the request url which is `host` + `path`, the request `method` and the `requestBody`. All three need to match, otherwise it will raise an exception.
+By using this feature you can configure the responses for your `http requests`. If your component is making a request that is not set up in the `responses object`, it will not be validated and it will return an empty response with code 200.
 
 ```
 import { wrap } from '@mercadona/mo.library.burrito'
@@ -68,8 +73,6 @@ wrap(MyComponent)
   .withNetwork(responses)
   .mount()
 ```
-
-If your component is making a request that is not set up in the configuration object, it will not being validated and will return a response with code 200.
 
 You can specify the default `host` via configuration:
 ```
