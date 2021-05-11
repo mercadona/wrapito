@@ -85,7 +85,9 @@ it('should not warn when all the responses are being used', async () => {
 
   await wait(() => {
     highlightNotUtilizedResponses()
-    expect(consoleWarn).not.toHaveBeenCalled()
+    expect(consoleWarn).not.toHaveBeenCalledWith(
+      expect.stringContaining('the following responses are not being used')
+    )
   })
 })
 
@@ -103,6 +105,8 @@ it('should not warn when all the multiple responses are being used', async () =>
 
   await wait(() => {
     highlightNotUtilizedResponses()
-    expect(consoleWarn).not.toHaveBeenCalled()
+    expect(consoleWarn).not.toHaveBeenCalledWith(
+      expect.stringContaining('the following responses are not being used')
+    )
   })
 })
