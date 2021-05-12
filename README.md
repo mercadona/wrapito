@@ -218,28 +218,6 @@ expect('/some/path').toHaveBeenFetchedWith({
 })
 ```
 
-#### toMatchNetWorkRequests
-When mounting a component that does http calls, it might be useful to check if these requests are matching the mocks we are passing in the test. To do so, it will be necessary to use `expect.extend()` from `jest`:
-```
-import { wrap, assertions } from '@mercadona/mo.library.burrito'
-
-expect.extend(assertions)
-
-const responses = [
-  { path: '/path/to/get/quantity/', responseBody: '15' },
-  { path: '/path/to/endpoint/not/being/used/', responseBody: { value: 'I am not being used' } },
-]
-
-wrap(MyComponentMakingHttpCalls)
-    .withNetwork(responses)
-    .mount()
-
-expect(responses).toMatchNetworkRequests()
-```
-
-As there's an http request that is mocked but is not gonna be used in the code, it will make the test fail and log all the requests that are mocked but not being used in the code.
-In the other hand, it can be used to do the opposite, there could be that a request is being done in the code, but not being mocked in the tests.
-
 #### toHaveBeenFetchedTimes
 This assertion is to check how many times an API url is called
 ```
