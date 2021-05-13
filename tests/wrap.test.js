@@ -1,13 +1,19 @@
-import { render, cleanup } from '@testing-library/react'
+import { render, cleanup } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 import { getConfig } from '../src/config'
-import { MyComponent, MyComponentWithProps, MyComponentWithPortal } from './components.mock'
+import {
+  MyComponent,
+  MyComponentWithProps,
+  MyComponentWithPortal,
+} from './components.mock'
 
 const portalRootId = 'portal-root-id'
 
 const removePortals = portalRootId => {
   const portal = document.getElementById(portalRootId)
-  if (!portal) { return }
+  if (!portal) {
+    return
+  }
   document.body.removeChild(portal)
 }
 
@@ -40,22 +46,13 @@ it('should have an element where to place a portal defined in the config', () =>
   expect(document.body).toHaveTextContent(childrenText)
 })
 
-it('should have an element where to place a portal', () => {
-  const childrenText = 'I am a portal'
-  const props = { children: childrenText }
-
-  wrap(MyComponentWithPortal).withProps(props).withPortalAt(portalRootId).mount()
-
-  expect(document.body).toHaveTextContent(childrenText)
-})
-
 it('should have unique portals', () => {
-  configure({ mount: render })
+  configure({ mount: render, portal: portalRootId })
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
 
-  wrap(MyComponentWithPortal).withProps(props).withPortalAt(portalRootId).mount()
-  wrap(MyComponentWithPortal).withProps(props).withPortalAt(portalRootId).mount()
+  wrap(MyComponentWithPortal).withProps(props).mount()
+  wrap(MyComponentWithPortal).withProps(props).mount()
 
   expect(document.querySelectorAll(`#${ portalRootId }`)).toHaveLength(1)
 })
