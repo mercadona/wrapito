@@ -1,12 +1,14 @@
 import { getRequestMatcher } from './requestMatcher'
 
+const matchesCurrentRequest = getRequestMatcher
+
 const setupRequestDebugger = async mockedRequests => {
   global.fetch.mockImplementation(async request => {
-    const isMatchingRequest = mockedRequests.find(mockedRequest =>
-      getRequestMatcher(request)(mockedRequest),
+    const requestHasBeenMocked = mockedRequests.some(
+      matchesCurrentRequest(request),
     )
 
-    if (!isMatchingRequest) {
+    if (!requestHasBeenMocked) {
       console.warn('The following request are not being handled:')
       console.warn(request.url)
       console.warn(request.method)
