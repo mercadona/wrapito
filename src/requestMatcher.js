@@ -2,7 +2,7 @@ import hash from 'object-hash'
 
 import { getConfig } from './config'
 
-const getRequestMatcher = (request) => (mockedRequest) => {
+const getRequestMatcher = request => mockedRequest => {
   const {
     method = 'GET',
     path,
