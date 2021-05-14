@@ -10,16 +10,19 @@ afterEach(() => {
   console.warn.mockRestore()
 })
 
+const mockedUrl = 'my-host/mocked'
+const notMockedUrl = 'my-host/not-mocked'
+
 const DummyComponent = () => {
   useEffect(() => {
     async function fetchData() {
-      const request = new Request('/non/used/request/path')
-      await fetch(request)
-      const request2 = new Request('my-host/request1/path', {
+      const nonMockedRequest = new Request(notMockedUrl)
+      await fetch(nonMockedRequest)
+      const mockedRequest = new Request(mockedUrl, {
         method: 'POST',
         body: JSON.stringify({ id: 15 }),
       })
-      await fetch(request2)
+      await fetch(mockedRequest)
     }
     fetchData()
   }, [])
@@ -27,12 +30,12 @@ const DummyComponent = () => {
   return <div>Ciao!</div>
 }
 
-it('should warn about a request not being used', async () => {
+it('should warn about the code making a request that has not being mocked', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
     .withNetwork({
-      path: '/request1/path',
+      path: '/mocked',
       host: 'my-host',
       responseBody: '15',
     })
@@ -44,19 +47,19 @@ it('should warn about a request not being used', async () => {
       expect.stringContaining('The following request is not being handled:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('url: /non/used/request/path'),
+      expect.stringContaining(`url: ${notMockedUrl}`),
     )
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('method: GET'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('body:'))
   })
 })
 
-it('should not warn about a request being used', async () => {
+it('should not warn about the code making a request that has being mocked', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
     .withNetwork({
-      path: '/request1/path',
+      path: '/mocked',
       host: 'my-host',
       method: 'post',
       requestBody: { id: 15 },
@@ -66,7 +69,7 @@ it('should not warn about a request being used', async () => {
 
   await wait(() => {
     expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('url: my-host/request1/path'),
+      expect.stringContaining(`url: ${mockedUrl}`),
     )
     expect(consoleWarn).not.toHaveBeenCalledWith(
       expect.stringContaining('method: POST'),

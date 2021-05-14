@@ -69,7 +69,7 @@ const wrap = options => {
     },
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
-    debugRequests: () => wrap({ ...options, wantsToDebugRequest: true }),
+    debugRequests: () => wrap({ ...options, hasDebugRequests: true }),
     mount: () => {
       const { hasMocks, responses, path, hasPath } = options
       const {
@@ -77,7 +77,7 @@ const wrap = options => {
         responses,
         path,
         hasPath,
-        wantsToDebugRequest,
+        hasDebugRequests,
       } = options
 
       if (hasMocks) {
@@ -98,7 +98,7 @@ const wrap = options => {
         window.history.replaceState(null, null, path)
       }
 
-      if (wantsToDebugRequest) {
+      if (hasDebugRequests) {
         setupRequestDebugger(responses)
       }
 
