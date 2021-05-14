@@ -99,7 +99,7 @@ const wrap = options => {
       }
 
       if (wantsToDebugRequest) {
-        setupRequestDebugger()
+        setupRequestDebugger(responses)
       }
 
       return mount(options)

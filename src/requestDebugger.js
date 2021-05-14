@@ -1,5 +1,10 @@
 const setupRequestDebugger = () => {
-  console.warn('your code is doing this requests, my-host/path/to/get/quantity/, get')
+  global.fetch.mockImplementation(async request => {
+    console.warn('your code is doing this requests')
+    console.warn(request.url)
+    console.warn(request.method)
+    console.warn(`body: ${request._bodyInit}`)
+  })
 }
 
 export { setupRequestDebugger }

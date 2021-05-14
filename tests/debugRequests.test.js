@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import { render, wait, cleanup } from '@testing-library/react'
 import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
 import { MyComponentMakingHttpCalls } from './components.mock'
@@ -9,20 +10,33 @@ afterEach(() => {
   console.warn.mockRestore()
 })
 
+const DummyComponent = () => {
+  useEffect(() => {
+    async function fetchData() {
+      const request = new Request('path/to/request1')
+      await fetch(request)
+    }
+    fetchData()
+  }, [])
+
+  return <div>Ciao!</div>
+}
+
 it('should warn all the used requests', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
-  wrap(MyComponentMakingHttpCalls)
-    .debugRequests()
-    .mount()
+  wrap(DummyComponent).debugRequests().mount()
 
   await wait(() => {
     expect(consoleWarn).toHaveBeenCalledWith(
       expect.stringContaining('your code is doing this requests'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('my-host/path/to/get/quantity/'),
+      expect.stringContaining('path/to/request1'),
     )
-    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('get'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('GET'))
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining("body:"),
+    )
   })
 })
