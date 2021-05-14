@@ -44,9 +44,9 @@ it('should warn about the request not being used', async () => {
       expect.stringContaining('The following request are not being handled:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('/non/used/request/path'),
+      expect.stringContaining('url: /non/used/request/path'),
     )
-    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('GET'))
+    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('method: GET'))
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('body:'))
   })
 })
@@ -66,10 +66,10 @@ it('should not warn about the request being used', async () => {
 
   await wait(() => {
     expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('my-host/request1/path'),
+      expect.stringContaining('url: my-host/request1/path'),
     )
     expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('POST'),
+      expect.stringContaining('method: POST'),
     )
     expect(consoleWarn).not.toHaveBeenCalledWith(
       expect.stringContaining('body: 15'),

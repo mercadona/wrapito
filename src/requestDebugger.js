@@ -10,8 +10,8 @@ const setupRequestDebugger = async mockedRequests => {
 
     if (!requestHasBeenMocked) {
       console.warn('The following request are not being handled:')
-      console.warn(request.url)
-      console.warn(request.method)
+      console.warn(`url: ${request.url}`)
+      console.warn(`method: ${request.method}`)
       console.warn(`body: ${request._bodyInit}`)
     }
   })
