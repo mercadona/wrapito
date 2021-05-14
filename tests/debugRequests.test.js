@@ -27,7 +27,7 @@ const DummyComponent = () => {
   return <div>Ciao!</div>
 }
 
-it('should warn about the request not being used', async () => {
+it('should warn about a request not being used', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
@@ -41,7 +41,7 @@ it('should warn about the request not being used', async () => {
 
   await wait(() => {
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('The following request are not being handled:'),
+      expect.stringContaining('The following request is not being handled:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
       expect.stringContaining('url: /non/used/request/path'),
@@ -51,7 +51,7 @@ it('should warn about the request not being used', async () => {
   })
 })
 
-it('should not warn about the request being used', async () => {
+it('should not warn about a request being used', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
