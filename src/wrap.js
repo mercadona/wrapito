@@ -55,8 +55,6 @@ const wrap = options => {
 
   return {
     withProps: props => wrap({ ...options, props }),
-    withPortalAt: portalRootId =>
-      wrap({ ...options, portalRootId, hasPortal: true }),
     withMocks: responses => {
       console.warn(yellow('withMocks is deprecated. Use withNetwork instead.'))
       return wrap({ ...options, responses, hasMocks: true })
@@ -71,23 +69,12 @@ const wrap = options => {
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
     mount: () => {
-      const {
-        hasMocks,
-        responses,
-        hasPortal,
-        portalRootId,
-        path,
-        hasPath,
-      } = options
+      const { hasMocks, responses, path, hasPath } = options
 
       if (hasMocks) {
         mockFetch(responses)
       } else {
         mockNetwork(responses)
-      }
-
-      if (hasPortal) {
-        setupPortal(portalRootId)
       }
 
       if (portal) {

@@ -48,6 +48,18 @@ and add the previous file in `jest.config.json`
   ],
 ```
 
+If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where it will be added:
+
+```
+import { render } from '@testing-library/react'
+import { configure } from '@mercadona/mo.library.burrito'
+
+configure({
+  mount: render,
+  portal: 'modal-root',
+})
+```
+
 ## 🏰 Builder API
 
 #### withMocks (Deprecated)
@@ -170,16 +182,6 @@ wrap(MyComponent)
   .mount()
 ```
 
-#### withPortalAt
-If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where it will be added:
-```
-import { wrap } from '@mercadona/mo.library.burrito'
-
-wrap(PreparationContainer)
-  .withPortalAt('modal-root')
-  .mount()
-```
-
 #### composing
 As it is basically a builder, all the above functions can be used at the same time and these will be composed underneath:
 ```
@@ -195,7 +197,6 @@ wrap(PreparationContainer)
   .atPath('/products/1')
   .withNetwork(responses)
   .withProps()
-  .withPortalAt('modal-root')
   .mount()
 ```
 
