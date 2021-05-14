@@ -23,7 +23,7 @@ const createResponse = async ({ responseBody, status = 200, headers, delay }) =>
   }, delay))
 }
 
-function mockNetwork(responses = []) {
+function mockNetwork(responses = [], debug = false) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
   global.fetch.mockImplementation(async request => {
     const responseMatchingRequest = listOfResponses.find(
@@ -31,6 +31,13 @@ function mockNetwork(responses = []) {
     )
 
     if (!responseMatchingRequest) {
+      if (debug) {
+        console.warn('The following request is not being handled:')
+        console.warn(`url: ${request.url}`)
+        console.warn(`method: ${request.method}`)
+        console.warn(`body: ${request._bodyInit}`)
+      }
+
       return createResponse({})
     }
 

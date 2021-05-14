@@ -22,7 +22,8 @@ const DummyComponent = () => {
         method: 'POST',
         body: JSON.stringify({ id: 15 }),
       })
-      await fetch(mockedRequest)
+      const mockedResponse = await fetch(mockedRequest)
+      mockedResponse.json()
     }
     fetchData()
   }, [])
@@ -49,8 +50,28 @@ it('should warn about the code making a request that has not being mocked', asyn
     expect(consoleWarn).toHaveBeenCalledWith(
       expect.stringContaining(`url: ${notMockedUrl}`),
     )
-    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('method: GET'))
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining('method: GET'),
+    )
     expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('body:'))
+  })
+})
+
+it('should not warn if the debugRequests feature is not used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+  wrap(DummyComponent)
+    .withNetwork({
+      path: '/mocked',
+      host: 'my-host',
+      responseBody: '15',
+    })
+    .mount()
+
+  await wait(() => {
+    expect(consoleWarn).not.toHaveBeenCalledWith(
+      expect.stringContaining('The following request is not being handled:'),
+    )
   })
 })
 
