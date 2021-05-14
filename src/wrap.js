@@ -4,6 +4,7 @@ import { yellow } from 'chalk'
 import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
+import { setupRequestDebugger } from './requestDebugger'
 
 beforeEach(() => {
   global.fetch = jest.fn()
@@ -68,8 +69,16 @@ const wrap = options => {
     },
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
+    debugRequests: () => wrap({ ...options, wantsToDebugRequest: true }),
     mount: () => {
       const { hasMocks, responses, path, hasPath } = options
+      const {
+        hasMocks,
+        responses,
+        path,
+        hasPath,
+        wantsToDebugRequest,
+      } = options
 
       if (hasMocks) {
         mockFetch(responses)
@@ -87,6 +96,10 @@ const wrap = options => {
 
       if (hasPath && !history) {
         window.history.replaceState(null, null, path)
+      }
+
+      if (wantsToDebugRequest) {
+        setupRequestDebugger()
       }
 
       return mount(options)
