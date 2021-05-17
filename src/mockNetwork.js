@@ -31,7 +31,7 @@ const createResponse = async ({
   )
 }
 
-const print = request => {
+const printRequest = request => {
   return console.warn(`
 ${white.bold.bgRed('burrito')} ${redBright.bold(
     'cannot find any mock matching:',
@@ -51,7 +51,7 @@ function mockNetwork(responses = [], debug = false) {
 
     if (!responseMatchingRequest) {
       if (debug) {
-        print(request)
+        printRequest(request)
       }
 
       return createResponse({})
