@@ -31,16 +31,16 @@ const createResponse = async ({
   )
 }
 
-const print = request =>
-  console.warn(`
+const print = request => {
+  return console.warn(`
 ${white.bold.bgRed('burrito')} ${redBright.bold(
     'cannot find any mock matching:',
   )}
-
-  URL: ${greenBright(request.url)}
-  METHOD: ${greenBright(request.method.toLowerCase())}
-  REQUEST BODY: ${greenBright(request._bodyInit)}
-    `)
+  URL: ${request.url}
+  METHOD: ${request.method.toLowerCase()}
+  REQUEST BODY: ${request._bodyInit}
+ `)
+}
 
 function mockNetwork(responses = [], debug = false) {
   const listOfResponses = responses.length > 0 ? responses : [responses]

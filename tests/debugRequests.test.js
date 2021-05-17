@@ -50,13 +50,13 @@ it('should warn about the code making a request that has not being mocked', asyn
       expect.stringContaining('cannot find any mock matching:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('my-host/not-mocked'),
+      expect.stringContaining('URL: my-host/not-mocked'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('get'),
+      expect.stringContaining('METHOD: get'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('REQUEST BODY: '),
+      expect.stringContaining('REQUEST BODY: undefined'),
     )
   })
 })
