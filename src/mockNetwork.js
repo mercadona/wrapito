@@ -36,9 +36,9 @@ const print = request => {
 ${white.bold.bgRed('burrito')} ${redBright.bold(
     'cannot find any mock matching:',
   )}
-  URL: ${request.url}
-  METHOD: ${request.method.toLowerCase()}
-  REQUEST BODY: ${request._bodyInit}
+  ${greenBright(`URL: ${request.url}`)}
+  ${greenBright(`METHOD: ${request.method.toLowerCase()}`)}
+  ${greenBright(`REQUEST BODY: ${request._bodyInit}`)}
  `)
 }
 
