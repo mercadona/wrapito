@@ -70,7 +70,6 @@ const wrap = options => {
     atPath: path => wrap({ ...options, path, hasPath: true }),
     debugRequests: () => wrap({ ...options, debug: true }),
     mount: () => {
-      const { hasMocks, responses, path, hasPath } = options
       const {
         hasMocks,
         responses,
