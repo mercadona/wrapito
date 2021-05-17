@@ -1,3 +1,4 @@
+import { white, redBright, greenBright } from 'chalk'
 import { getRequestMatcher } from './requestMatcher'
 
 beforeEach(() => {
@@ -8,7 +9,12 @@ afterEach(() => {
   global.fetch.mockRestore()
 })
 
-const createResponse = async ({ responseBody, status = 200, headers, delay }) => {
+const createResponse = async ({
+  responseBody,
+  status = 200,
+  headers,
+  delay,
+}) => {
   const response = {
     json: () => Promise.resolve(responseBody),
     status,
@@ -18,10 +24,23 @@ const createResponse = async ({ responseBody, status = 200, headers, delay }) =>
 
   if (!delay) return Promise.resolve(response)
 
-  return new Promise(resolve => setTimeout(() => {
-    return resolve(response)
-  }, delay))
+  return new Promise(resolve =>
+    setTimeout(() => {
+      return resolve(response)
+    }, delay),
+  )
 }
+
+const print = request =>
+  console.warn(`
+${white.bold.bgRed('burrito')} ${redBright.bold(
+    'cannot find any mock matching:',
+  )}
+
+  URL: ${greenBright(request.url)}
+  METHOD: ${greenBright(request.method.toLowerCase())}
+  REQUEST BODY: ${greenBright(request._bodyInit)}
+    `)
 
 function mockNetwork(responses = [], debug = false) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
@@ -32,10 +51,7 @@ function mockNetwork(responses = [], debug = false) {
 
     if (!responseMatchingRequest) {
       if (debug) {
-        console.warn('The following request is not being handled:')
-        console.warn(`url: ${request.url}`)
-        console.warn(`method: ${request.method}`)
-        console.warn(`body: ${request._bodyInit}`)
+        print(request)
       }
 
       return createResponse({})

@@ -38,6 +38,8 @@ it('should warn about the code making a request that has not being mocked', asyn
     .withNetwork({
       path: '/mocked',
       host: 'my-host',
+      method: 'post',
+      requestBody: { id: 15 },
       responseBody: '15',
     })
     .debugRequests()
@@ -45,15 +47,17 @@ it('should warn about the code making a request that has not being mocked', asyn
 
   await wait(() => {
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('The following request is not being handled:'),
+      expect.stringContaining('cannot find any mock matching:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining(`url: ${notMockedUrl}`),
+      expect.stringContaining('my-host/not-mocked'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('method: GET'),
+      expect.stringContaining('get'),
     )
-    expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('body:'))
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining('REQUEST BODY: '),
+    )
   })
 })
 
