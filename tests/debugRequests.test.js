@@ -68,13 +68,15 @@ it('should not warn if the debugRequests feature is not used', async () => {
     .withNetwork({
       path: '/mocked',
       host: 'my-host',
+      method: 'post',
+      requestBody: { id: 15 },
       responseBody: '15',
     })
     .mount()
 
   await wait(() => {
     expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('The following request is not being handled:'),
+      expect.stringContaining('cannot find any mock matching:'),
     )
   })
 })
