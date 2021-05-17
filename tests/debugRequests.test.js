@@ -10,20 +10,17 @@ afterEach(() => {
   console.warn.mockRestore()
 })
 
-const mockedUrl = 'my-host/mocked'
-const notMockedUrl = 'my-host/not-mocked'
-
 const DummyComponent = () => {
   useEffect(() => {
     async function fetchData() {
-      const nonMockedRequest = new Request(notMockedUrl)
-      await fetch(nonMockedRequest)
-      const mockedRequest = new Request(mockedUrl, {
-        method: 'POST',
-        body: JSON.stringify({ id: 15 }),
-      })
-      const mockedResponse = await fetch(mockedRequest)
-      mockedResponse.json()
+      await fetch(new Request('my-host/request1'))
+
+      await fetch(
+        new Request('my-host/request2', {
+          method: 'POST',
+          body: JSON.stringify({ id: 15 }),
+        }),
+      )
     }
     fetchData()
   }, [])
@@ -36,11 +33,8 @@ it('should warn about the code making a request that has not being mocked', asyn
 
   wrap(DummyComponent)
     .withNetwork({
-      path: '/mocked',
+      path: '/request1',
       host: 'my-host',
-      method: 'post',
-      requestBody: { id: 15 },
-      responseBody: '15',
     })
     .debugRequests()
     .mount()
@@ -50,13 +44,13 @@ it('should warn about the code making a request that has not being mocked', asyn
       expect.stringContaining('cannot find any mock matching:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('URL: my-host/not-mocked'),
+      expect.stringContaining('URL: my-host/request2'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('METHOD: get'),
+      expect.stringContaining('METHOD: post'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('REQUEST BODY: undefined'),
+      expect.stringContaining('REQUEST BODY: {"id":15}'),
     )
   })
 })
@@ -66,11 +60,8 @@ it('should not warn if the debugRequests feature is not used', async () => {
 
   wrap(DummyComponent)
     .withNetwork({
-      path: '/mocked',
+      path: '/request1',
       host: 'my-host',
-      method: 'post',
-      requestBody: { id: 15 },
-      responseBody: '15',
     })
     .mount()
 
@@ -81,21 +72,21 @@ it('should not warn if the debugRequests feature is not used', async () => {
   })
 })
 
-it('should not warn about the code making a request that has being mocked', async () => {
+it('should not warn if all the requests are being mocked', async () => {
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
     .withNetwork([
       {
-        path: '/mocked',
+        path: '/request1',
+        host: 'my-host',
+        method: 'get',
+      },
+      {
+        path: '/request2',
         host: 'my-host',
         method: 'post',
         requestBody: { id: 15 },
-      },
-      {
-        path: '/not-mocked',
-        host: 'my-host',
-        method: 'get',
       },
     ])
     .debugRequests()
