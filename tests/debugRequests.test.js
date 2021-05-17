@@ -85,24 +85,25 @@ it('should not warn about the code making a request that has being mocked', asyn
   const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
 
   wrap(DummyComponent)
-    .withNetwork({
-      path: '/mocked',
-      host: 'my-host',
-      method: 'post',
-      requestBody: { id: 15 },
-    })
+    .withNetwork([
+      {
+        path: '/mocked',
+        host: 'my-host',
+        method: 'post',
+        requestBody: { id: 15 },
+      },
+      {
+        path: '/not-mocked',
+        host: 'my-host',
+        method: 'get',
+      },
+    ])
     .debugRequests()
     .mount()
 
   await wait(() => {
     expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining(`url: ${mockedUrl}`),
-    )
-    expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('method: POST'),
-    )
-    expect(consoleWarn).not.toHaveBeenCalledWith(
-      expect.stringContaining('body: 15'),
+      expect.stringContaining('cannot find any mock matching:'),
     )
   })
 })
