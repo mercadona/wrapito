@@ -68,13 +68,20 @@ const wrap = options => {
     },
     ...extensions,
     atPath: path => wrap({ ...options, path, hasPath: true }),
+    debugRequests: () => wrap({ ...options, debug: true }),
     mount: () => {
-      const { hasMocks, responses, path, hasPath } = options
+      const {
+        hasMocks,
+        responses,
+        path,
+        hasPath,
+        debug,
+      } = options
 
       if (hasMocks) {
         mockFetch(responses)
       } else {
-        mockNetwork(responses)
+        mockNetwork(responses, debug)
       }
 
       if (portal) {
