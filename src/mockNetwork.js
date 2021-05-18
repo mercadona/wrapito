@@ -1,3 +1,4 @@
+import { white, redBright, greenBright } from 'chalk'
 import { getRequestMatcher } from './requestMatcher'
 
 beforeEach(() => {
@@ -8,7 +9,12 @@ afterEach(() => {
   global.fetch.mockRestore()
 })
 
-const createResponse = async ({ responseBody, status = 200, headers, delay }) => {
+const createResponse = async ({
+  responseBody,
+  status = 200,
+  headers,
+  delay,
+}) => {
   const response = {
     json: () => Promise.resolve(responseBody),
     status,
@@ -18,12 +24,25 @@ const createResponse = async ({ responseBody, status = 200, headers, delay }) =>
 
   if (!delay) return Promise.resolve(response)
 
-  return new Promise(resolve => setTimeout(() => {
-    return resolve(response)
-  }, delay))
+  return new Promise(resolve =>
+    setTimeout(() => {
+      return resolve(response)
+    }, delay),
+  )
 }
 
-function mockNetwork(responses = []) {
+const printRequest = request => {
+  return console.warn(`
+${white.bold.bgRed('burrito')} ${redBright.bold(
+    'cannot find any mock matching:',
+  )}
+  ${greenBright(`URL: ${request.url}`)}
+  ${greenBright(`METHOD: ${request.method.toLowerCase()}`)}
+  ${greenBright(`REQUEST BODY: ${request._bodyInit}`)}
+ `)
+}
+
+function mockNetwork(responses = [], debug = false) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
   global.fetch.mockImplementation(async request => {
     const responseMatchingRequest = listOfResponses.find(
@@ -31,6 +50,10 @@ function mockNetwork(responses = []) {
     )
 
     if (!responseMatchingRequest) {
+      if (debug) {
+        printRequest(request)
+      }
+
       return createResponse({})
     }
 
