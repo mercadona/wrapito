@@ -29,7 +29,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## 👣 Initial setup
-Because 🌯burrito doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
+Because 🌯 `burrito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
 
 ```
 import { render } from '@testing-library/react'
@@ -79,6 +79,7 @@ const responses = {
   responseBody: { id: 1, name: 'hummus' },
   status: 200,
   catchParams: true,
+  delay: 500,
 }
 
 wrap(MyComponent)
@@ -93,7 +94,7 @@ import { configure } from '@mercadona/mo.library.burrito'
 const { API_HOST, API_VERSION } = process.env
 configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
-In addition, Burrito defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
+In addition, `burrito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
 ```
 import { wrap } from '@mercadona/mo.library.burrito'
 
@@ -201,13 +202,21 @@ wrap(PreparationContainer)
 ```
 
 ## ✨ Utils
-#### toHaveBeenFetchedWith
+#### toHaveBeenFetched
 Some times checking only the visual side effects in the UI it's not enough. In the case that we want to check if a particular network side effect is happening, this assertion will come in handy.
 
 ```
-import { wrap, assertions } from '@mercadona/mo.library.burrito'
+  wrap(MyComponentMakingHttpCalls)
+  .withNetwork(responses)
+  .mount()
 
-expect.extend(assertions)
+  expect('/some/path').toHaveBeenFetched()
+```
+
+#### toHaveBeenFetchedWith
+This assertion is an extension of `toHaveBeenFetched` but we will use it if we want to check the properties.
+```
+import { wrap, assertions } from '@mercadona/mo.library.burrito'
 
 wrap(MyComponentMakingHttpCalls)
     .withNetwork(responses)
@@ -220,7 +229,7 @@ expect('/some/path').toHaveBeenFetchedWith({
 ```
 
 #### toHaveBeenFetchedTimes
-This assertion is to check how many times an API url is called
+This assertion is to check how many times an API url is called.
 ```
 import { wrap, assertions } from '@mercadona/mo.library.burrito'
 
