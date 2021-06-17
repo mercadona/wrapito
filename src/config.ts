@@ -21,12 +21,12 @@ function configure(newConfig) {
 }
 
 interface History {
-  push: (string) => {},
+  push: (path: string) => {},
 }
 
 interface ConfigType {
   defaultHost: string,
-  mount: (object) => {},
+  mount: (component: object) => {},
   extend?: object,
   portal?: string,
   history?: History,
