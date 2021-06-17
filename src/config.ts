@@ -20,6 +20,18 @@ function configure(newConfig) {
   }
 }
 
-const getConfig = () => ({ ...config })
+interface History {
+  push: (string) => {},
+}
+
+interface ConfigType {
+  defaultHost: string,
+  mount: (object) => {},
+  extend?: object,
+  portal?: string,
+  history?: History,
+}
+
+const getConfig = ():ConfigType => ({ ...config })
 
 export { configure, getConfig }
