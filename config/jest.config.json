@@ -16,7 +16,7 @@
   "testEnvironment": "jsdom",
   "setupFiles": ["<rootDir>/config/polyfills.js"],
   "setupFilesAfterEnv": ["<rootDir>/config/jest.setup.js"],
-  "testMatch": [ "<rootDir>/**/?(*.)(test).js" ],
+  "testMatch": [ "<rootDir>/tests/**/?(*.)(test).js" ],
   "moduleFileExtensions": ["js", "json", "ts", "tsx"],
   "reporters": [ "default", "jest-junit" ]
 }
