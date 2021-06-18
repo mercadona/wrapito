@@ -1,7 +1,5 @@
 import React from 'react'
-import { yellow } from 'chalk'
 
-import { mockFetch } from './mockFetch'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 
@@ -55,10 +53,6 @@ const wrap = options => {
 
   return {
     withProps: props => wrap({ ...options, props }),
-    withMocks: responses => {
-      console.warn(yellow('withMocks is deprecated. Use withNetwork instead.'))
-      return wrap({ ...options, responses, hasMocks: true })
-    },
     withNetwork: (responses = []) => {
       const listOfResponses = Array.isArray(responses) ? responses : [responses]
       return wrap({
@@ -70,19 +64,7 @@ const wrap = options => {
     atPath: path => wrap({ ...options, path, hasPath: true }),
     debugRequests: () => wrap({ ...options, debug: true }),
     mount: () => {
-      const {
-        hasMocks,
-        responses,
-        path,
-        hasPath,
-        debug,
-      } = options
-
-      if (hasMocks) {
-        mockFetch(responses)
-      } else {
-        mockNetwork(responses, debug)
-      }
+      const { responses, path, hasPath, debug } = options
 
       if (portal) {
         setupPortal(portal)
@@ -96,6 +78,7 @@ const wrap = options => {
         window.history.replaceState(null, null, path)
       }
 
+      mockNetwork(responses, debug)
       return mount(options)
     },
   }

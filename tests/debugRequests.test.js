@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { render, cleanup, screen } from '@testing-library/react'
-import { wrap, configure, highlightNotUtilizedResponses } from '../src/index'
-import { MyComponentMakingHttpCalls } from './components.mock'
+import { wrap, configure } from '../src/index'
 
 configure({ defaultHost: 'my-host', mount: render })
 
