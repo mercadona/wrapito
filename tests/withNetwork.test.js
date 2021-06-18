@@ -5,6 +5,7 @@ import {
   MyComponentWithNetwork,
   MyComponentWithPost,
   MyComponentWithFeedback,
+  MyComponentMakingHttpCallsWithQueryParams,
 } from './components.mock'
 
 it('should have network by default', async () => {
@@ -152,4 +153,74 @@ it('should mock multiple POST responses', async () => {
   fireEvent.click(screen.getByText('save'))
 
   expect(await screen.findByText('El que lo lea')).toBeInTheDocument()
+})
+
+it('should not ignore the query params by default', async () => {
+  configure({ mount: render })
+  const { container, findByText } = wrap(
+    MyComponentMakingHttpCallsWithQueryParams,
+  )
+    .withNetwork({
+      path: '/path/with/query/params/?myAwesome=param',
+      responseBody: '15',
+    })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
+})
+
+it('should ignore the query params when is configured', async () => {
+  configure({ mount: render, handleQueryParams: true })
+  const { container, findByText } = wrap(
+    MyComponentMakingHttpCallsWithQueryParams,
+  )
+    .withNetwork({ path: '/path/with/query/params/', responseBody: '15' })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
+})
+
+it('should ignore the query params when is configured and the path have it', async () => {
+  configure({ mount: render, handleQueryParams: true })
+  const { container, findByText } = wrap(
+    MyComponentMakingHttpCallsWithQueryParams,
+  )
+    .withNetwork({
+      path: '/path/with/query/params/?myAwesome=param',
+      responseBody: '15',
+    })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
+})
+
+it('should not ignore the query params when is specified and it is configured', async () => {
+  configure({ mount: render, handleQueryParams: true })
+  const { container, findByText } = wrap(
+    MyComponentMakingHttpCallsWithQueryParams,
+  )
+    .withNetwork({
+      path: '/path/with/query/params/?myAwesome=param',
+      responseBody: '15',
+      catchParams: true,
+    })
+    .mount()
+
+  expect(container).toHaveTextContent('quantity: 0')
+
+  const update = await findByText('quantity: 15')
+
+  expect(update).toBeInTheDocument()
 })
