@@ -157,20 +157,14 @@ it('should mock multiple POST responses', async () => {
 
 it('should not ignore the query params by default', async () => {
   configure({ mount: render })
-  const { container, findByText } = wrap(
-    MyComponentMakingHttpCallsWithQueryParams,
-  )
+  wrap(MyComponentMakingHttpCallsWithQueryParams)
     .withNetwork({
       path: '/path/with/query/params/?myAwesome=param',
       responseBody: '15',
     })
     .mount()
 
-  expect(container).toHaveTextContent('quantity: 0')
-
-  const update = await findByText('quantity: 15')
-
-  expect(update).toBeInTheDocument()
+  expect(await screen.findByText('quantity: 15')).toBeInTheDocument()
 })
 
 it('should ignore the query params when is configured', async () => {
