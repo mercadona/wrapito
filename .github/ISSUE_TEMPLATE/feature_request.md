@@ -4,9 +4,9 @@ about: Suggest a feature to improve 🌯 Burrito.
 ---
 
 ## ✨ Feature proposal
-<!---  A clear description of the feature or enhancement wanted in 🌯 Burrito -->
+<!--- A clear description of the feature or enhancement wanted in 🌯 Burrito -->
 
-## 💪 Motivation
+## 🎯 Motivation
 <!--- Why would you like to see added to 🌯 Burrito? -->
 
 ## 👀 Example
