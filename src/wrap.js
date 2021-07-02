@@ -29,40 +29,40 @@ const extendWith = (extensions, options) => {
           },
           args,
         )
-        return wrap(options)
+        return getWrap(options)
       },
     }),
     {},
   )
 }
 
-const wrap = options => {
-  const isComponent = typeof options === 'function'
-  const isWrappedComponent = typeof options.WrappedComponent === 'function'
+const wrap = Component => {
+  return getWrap({
+    Component,
+    responses: [],
+    props: {},
+    path: '',
+    hasPath: false,
+    debug: false,
+  })
+}
 
-  if (isComponent || isWrappedComponent) {
-    return wrap({ Component: options })
-  }
-
-  if (!options.responses) {
-    return wrap({ ...options, responses: [] })
-  }
-
+const getWrap = options => {
   const { extend, portal, history } = getConfig()
   const extensions = extendWith(extend, options)
 
   return {
-    withProps: props => wrap({ ...options, props }),
+    withProps: props => getWrap({ ...options, props }),
     withNetwork: (responses = []) => {
       const listOfResponses = Array.isArray(responses) ? responses : [responses]
-      return wrap({
+      return getWrap({
         ...options,
         responses: [...options.responses, ...listOfResponses],
       })
     },
     ...extensions,
-    atPath: path => wrap({ ...options, path, hasPath: true }),
-    debugRequests: () => wrap({ ...options, debug: true }),
+    atPath: path => getWrap({ ...options, path, hasPath: true }),
+    debugRequests: () => getWrap({ ...options, debug: true }),
     mount: () => {
       const { responses, path, hasPath, debug } = options
 
@@ -84,7 +84,7 @@ const wrap = options => {
   }
 }
 
-function setupPortal(portalRootId) {
+const setupPortal = portalRootId => {
   if (document.getElementById(portalRootId)) {
     return
   }
@@ -95,6 +95,6 @@ function setupPortal(portalRootId) {
 }
 
 const mount = ({ Component, props }) =>
-  getConfig().mount(<Component { ...props } />)
+  getConfig().mount(<Component {...props} />)
 
 export { wrap }
