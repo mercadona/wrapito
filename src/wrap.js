@@ -21,10 +21,10 @@ const wrap = Component => {
     debug: false,
   }
 
-  return getWrap(options)
+  return wrapWith(options)
 }
 
-const getWrap = options => {
+const wrapWith = options => {
   const { extend, portal, history, mount } = getConfig()
   const extensions = extendWith(extend, options)
 
@@ -56,7 +56,7 @@ const extendWith = (extensions, options) => {
           },
           args,
         )
-        return getWrap(options)
+        return wrapWith(options)
       },
     }),
     {},
@@ -64,7 +64,7 @@ const extendWith = (extensions, options) => {
 }
 
 const getWithProps = options => props => {
-  return getWrap({ ...options, props })
+  return wrapWith({ ...options, props })
 }
 
 const getWithNetwork =
@@ -72,18 +72,18 @@ const getWithNetwork =
   (responses = []) => {
     const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-    return getWrap({
+    return wrapWith({
       ...options,
       responses: [...options.responses, ...listOfResponses],
     })
   }
 
 const getAtPath = options => path => {
-  return getWrap({ ...options, path, hasPath: true })
+  return wrapWith({ ...options, path, hasPath: true })
 }
 
 const getDebugRequest = options => () => {
-  return getWrap({ ...options, debug: true })
+  return wrapWith({ ...options, debug: true })
 }
 
 const getMount = (options, portal, history, mount) => () => {
