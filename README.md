@@ -17,12 +17,12 @@ To give the mounted component context about which path is the current path where
 ## 🔧 Installing
 Using npm:
 
-```
+```sh
 $ npm install @mercadona/mo.library.burrito --registry http://verdaccio.sta.monline
 ```
 
 ## 👩‍💻 Basic usage
-```
+```js
 const MyComponent = () => <span>Just a component</span>
 
 const myWrappedComponent = wrap(MyComponent).mount()
@@ -31,7 +31,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ## 👣 Initial setup
 Because 🌯 `burrito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
 
-```
+```js
 import { render } from '@testing-library/react'
 import { configure } from '@mercadona/mo.library.burrito'
 
@@ -42,7 +42,7 @@ configure({
 
 and add the previous file in `jest.config.json`
 
-```
+```js
   "setupFiles": [
     "<rootDir>/config/jest/setup.burrito.js"
   ],
@@ -50,7 +50,7 @@ and add the previous file in `jest.config.json`
 
 If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where it will be added:
 
-```
+```js
 import { render } from '@testing-library/react'
 import { configure } from '@mercadona/mo.library.burrito'
 
@@ -69,7 +69,7 @@ It has the same API than the withNetwork builder. The main difference between th
 #### withNetwork
 By using this feature you can configure the responses for your `http requests`. If your component is making a request that is not set up in the `responses object`, it will not be validated and it will return an empty response with code 200.
 
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 const responses = {
@@ -88,14 +88,14 @@ wrap(MyComponent)
 ```
 
 You can specify the default `host` via configuration:
-```
+```js
 import { configure } from '@mercadona/mo.library.burrito'
 
 const { API_HOST, API_VERSION } = process.env
 configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
 In addition, `burrito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 const responses = {
@@ -108,7 +108,7 @@ wrap(MyComponent)
   .mount()
 ```
 Now, you might need to mock several `http responses` at the same time and that's why you can also pass an array of responses instead if you wish:
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 const responses = [
@@ -134,7 +134,7 @@ There might be cases where one request is called several times and we want it to
 
 Well, it can be solved by specifying the response as multiple using `multipleResponse` as follows:
 
-```
+```js
 const responses = {
   path: '/path/to/get/the/products/list/,
   multipleResponses: [
@@ -163,7 +163,7 @@ This behaviour differs from using a single response for a given request as singl
 
 #### atPath
 When mounting the whole app, it will be done at the default route passing the default path. But a specific route might need to be mounted and for that reason a path to match that route should be pass here.
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 wrap(MyComponent)
@@ -173,7 +173,7 @@ wrap(MyComponent)
 
 #### withProps
 Pass down the props to the wrapped component:
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 const props = { message: 'MyComponent will receive this as prop' }
@@ -185,7 +185,7 @@ wrap(MyComponent)
 
 #### composing
 As it is basically a builder, all the above functions can be used at the same time and these will be composed underneath:
-```
+```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
 const props = { message: 'MyComponent will receive this as prop' }
@@ -205,7 +205,7 @@ wrap(PreparationContainer)
 #### toHaveBeenFetched
 Some times checking only the visual side effects in the UI it's not enough. In the case that we want to check if a particular network side effect is happening, this assertion will come in handy.
 
-```
+```js
   wrap(MyComponentMakingHttpCalls)
   .withNetwork(responses)
   .mount()
@@ -215,7 +215,7 @@ Some times checking only the visual side effects in the UI it's not enough. In t
 
 #### toHaveBeenFetchedWith
 This assertion is an extension of `toHaveBeenFetched` but we will use it if we want to check the properties.
-```
+```js
 import { wrap, assertions } from '@mercadona/mo.library.burrito'
 
 wrap(MyComponentMakingHttpCalls)
@@ -230,7 +230,7 @@ expect('/some/path').toHaveBeenFetchedWith({
 
 #### toHaveBeenFetchedTimes
 This assertion is to check how many times an API url is called.
-```
+```js
 import { wrap, assertions } from '@mercadona/mo.library.burrito'
 
 expect.extend(assertions)
