@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --ci --coverage --config config/jest.config.json",
     "test:watch": "jest --watch --config config/jest.config.json",
-    "build": "NODE_ENV=production babel src --out-dir dist --source-maps",
+    "build": "NODE_ENV=production tsc",
     "clean": "rm -rf dist",
     "postbuild": "node scripts/copy-publish-files.js",
     "publish-package": "npm run clean && npm run build && npm run postbuild && cd dist && npm publish"
@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/mercadona/mo.library.burrito#readme",
   "dependencies": {
+    "@types/react": "^17.0.11",
     "deep-equal": "^1.0.1",
     "object-hash": "^2.1.1",
     "whatwg-fetch": "^3.5.0"
@@ -50,15 +51,18 @@
     "@babel/preset-react": "^7.10.4",
     "@testing-library/jest-dom": "^4.2.0",
     "@testing-library/react": "^9.3.0",
+    "@types/jest": "^26.0.23",
     "babel-jest": "^24.8.0",
-    "jest": "^24.1.0",
+    "jest": "^27.0.4",
     "jest-junit": "^6.4.0",
-    "react": "^16.13.1",
+    "react": "^17.0.2",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.3"
   },
   "peerDependencies": {
     "jest": "*",

@@ -31,7 +31,7 @@ pipeline {
         BUILD_WORKSPACE = "${env.WORKSPACE.replace(env.JENKINS_JOBS, '/var/jenkins_home/jobs')}"
         DOCKER_BUILD_NETWORK = "$BUILD_ID"+"${env.BRANCH_NAME.replace('/','').replace('_','').replace('-','').toLowerCase()}"+"_test"
         DOCKER_CONTEXT_WORKSPACE = "${env.WORKSPACE.replace('/var/jenkins_home/jobs', env.JENKINS_JOBS)}"
-        NODE_IMAGE = "eu.gcr.io/itg-mimercadona/node:0.3.1"
+        NODE_IMAGE = "eu.gcr.io/itg-mimercadona/node:10.16.0-0.8.0"
     }
 
     stages {

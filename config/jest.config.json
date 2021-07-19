@@ -7,11 +7,16 @@
     "clover"
   ],
   "collectCoverageFrom": [
-    "src/**/*.{js,jsx}"
+    "src/**/*.{js,jsx,ts,tsx}"
   ],
+  "transform": {
+    "^.+\\.(js|jsx)$": "babel-jest",
+    "^.+\\.(ts|tsx)$": "ts-jest"
+  },
+  "testEnvironment": "jsdom",
   "setupFiles": ["<rootDir>/config/polyfills.js"],
   "setupFilesAfterEnv": ["<rootDir>/config/jest.setup.js"],
-  "testMatch": [ "<rootDir>/**/?(*.)(test).js" ],
-  "moduleFileExtensions": ["js", "json"],
+  "testMatch": [ "<rootDir>/tests/**/?(*.)(test).js" ],
+  "moduleFileExtensions": ["js", "json", "ts", "tsx"],
   "reporters": [ "default", "jest-junit" ]
 }
