@@ -1,44 +1,14 @@
 import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
-import { getConfig, Extension, Extensions } from './config'
-
-interface Response {
-  path: string,
-  method?: string,
-  status?: number,
-  host?: string,
-  responseBody?: object,
-  requestBody?: object,
-  multipleResponses?: Response[],
-  catchParams?: boolean,
-  delay?: number,
-}
-
-interface Wrap {
-  withNetwork: (responses: Response[]) => Wrap,
-  atPath: (path: string) => Wrap,
-  withProps: (props: object) => Wrap,
-  debugRequests: () => Wrap,
-  mount: () => object,
-}
-
-interface WrapOptions {
-  // WrappedComponent: object,
-  Component: typeof React.Component,
-  responses: Response[],
-  props: object,
-  path: string,
-  hasPath: boolean,
-  debug: boolean,
-}
+import { getConfig } from './config'
 
 beforeEach(() => {
   global.fetch = jest.fn()
 })
 
 afterEach(() => {
-  (global.fetch as jest.MockedFunction<typeof fetch>).mockRestore()
+  global.fetch.mockRestore()
 })
 
 const wrap = Component => {
