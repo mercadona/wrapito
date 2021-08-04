@@ -9,19 +9,16 @@ import {
   myFakeModule,
 } from './components.mock'
 
-configure({ mount: render })
+beforeEach(() => configure({ mount: render }))
 
 it('should render an app with routing', () => {
-  const { container } = wrap(MyAppWithRouting)
-    .mount()
+  const { container } = wrap(MyAppWithRouting).mount()
 
   expect(container).toHaveTextContent('Home')
 })
 
 it('should render an app without routing with specific url', () => {
-  wrap(MyComponent)
-    .atPath('/?query=query')
-    .mount()
+  wrap(MyComponent).atPath('/?query=query').mount()
 
   expect(screen.getByText('Foo')).toBeInTheDocument()
   expect(window.location.href).toBe('http://localhost/?query=query')
@@ -30,9 +27,7 @@ it('should render an app without routing with specific url', () => {
 it('should render an app with routing given an specific path', () => {
   const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
   configure({ history })
-  const { container } = wrap(MyAppWithRouting)
-    .atPath('/categories')
-    .mount()
+  const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
 
   expect(functionCalledByHomeRoute).not.toHaveBeenCalledWith('HOME')
   expect(container).toHaveTextContent('Categories')
@@ -40,18 +35,14 @@ it('should render an app with routing given an specific path', () => {
 
 it('should render an app with routing given an specific path', () => {
   configure({ history })
-  const { container } = wrap(MyAppWithRouting)
-    .atPath('/')
-    .mount()
+  const { container } = wrap(MyAppWithRouting).atPath('/').mount()
 
   expect(container).toHaveTextContent('Home')
 })
 
 it('should render an app with a routing logic between pages', () => {
   configure({ history })
-  const { container, getByText } = wrap(MyAppWithRouting)
-    .atPath('/')
-    .mount()
+  const { container, getByText } = wrap(MyAppWithRouting).atPath('/').mount()
 
   expect(container).toHaveTextContent('Home')
 
@@ -62,9 +53,8 @@ it('should render an app with a routing logic between pages', () => {
 
 it('should render an app with browser routing given an specific path without history', () => {
   configure({ history: null })
-  wrap(MyAppWithBrowserRouting)
-    .atPath('/categories')
-    .mount()
+  wrap(MyAppWithBrowserRouting).atPath('/categories').mount()
 
   expect(screen.getByText('Categories')).toBeInTheDocument()
 })
+
