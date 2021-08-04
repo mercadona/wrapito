@@ -30,5 +30,5 @@ function configure(newConfig) {
 
 const getConfig = () => ({ ...config })
 
-export { configure, getConfig, resetConfig }
+export { configure, getConfig }
 
