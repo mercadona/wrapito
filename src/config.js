@@ -1,4 +1,6 @@
-import { render } from 'react-dom'
+import { render } from 'react-dom'
+
+beforeEach(resetConfig)
 
 const mount = component => {
   const rootNode = document.body.appendChild(document.createElement('div'))
@@ -8,9 +10,15 @@ const mount = component => {
   return rootNode
 }
 
-let config = {
+const defaultConfig = {
   defaultHost: '',
   mount,
+}
+
+let config = { ...defaultConfig }
+
+function resetConfig() {
+  config = { ...defaultConfig }
 }
 
 function configure(newConfig) {
@@ -23,3 +31,4 @@ function configure(newConfig) {
 const getConfig = () => ({ ...config })
 
 export { configure, getConfig }
+

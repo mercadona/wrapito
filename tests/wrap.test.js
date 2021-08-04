@@ -62,3 +62,10 @@ it('should use a custom mount', () => {
 
   expect(container).toHaveTextContent(expectedText)
 })
+
+it('should reset config to default before every test starts', () => {
+  expect(getConfig()).toEqual({
+    defaultHost: '',
+    mount: expect.any(Function),
+  })
+})
