@@ -9,14 +9,6 @@ import {
 
 const portalRootId = 'portal-root-id'
 
-const defaultMocksConfig = getConfig()
-
-function resetMocksConfig() {
-  configure(defaultMocksConfig)
-}
-
-afterEach(resetMocksConfig)
-
 it('should have props', () => {
   configure({ mount: render })
   const props = { foo: 'bar' }
