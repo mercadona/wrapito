@@ -9,20 +9,10 @@ import {
 
 const portalRootId = 'portal-root-id'
 
-const removePortals = portalRootId => {
-  const portal = document.getElementById(portalRootId)
-  if (!portal) {
-    return
-  }
-  document.body.removeChild(portal)
-}
-
 const defaultMocksConfig = getConfig()
 
 function resetMocksConfig() {
   configure(defaultMocksConfig)
-  cleanup()
-  removePortals(portalRootId)
 }
 
 afterEach(resetMocksConfig)
