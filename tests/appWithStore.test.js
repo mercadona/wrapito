@@ -1,9 +1,9 @@
 import { wrap, configure } from '../src'
-import { render , fireEvent } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 
 import { MyAppWithStore } from './components.mock'
 
-configure({ mount: render })
+beforeEach(() => configure({ mount: render }))
 
 it('should render a simple app', () => {
   const { container } = wrap(MyAppWithStore).mount()
