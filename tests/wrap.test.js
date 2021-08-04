@@ -1,4 +1,4 @@
-import { render, cleanup } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 import { getConfig } from '../src/config'
 import {
