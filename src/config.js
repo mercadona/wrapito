@@ -1,6 +1,6 @@
 import { render } from 'react-dom'
 
-beforeEach(resetConfig)
+afterEach(resetConfig)
 
 const mount = component => {
   const rootNode = document.body.appendChild(document.createElement('div'))
@@ -30,5 +30,5 @@ function configure(newConfig) {
 
 const getConfig = () => ({ ...config })
 
-export { configure, getConfig }
+export { configure, getConfig, resetConfig }
 
