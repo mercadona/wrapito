@@ -1,31 +1,32 @@
 import deepEqual from 'deep-equal'
 import { green, red } from 'chalk'
 
-const emptyErrorMessage = (path) => ({
+const emptyErrorMessage = path => ({
   pass: false,
-  message: () => `🌯 Burrito: ${path} ain't got called`,
+  message: () => `🌯 Wrapito: ${ path } ain't got called`,
 })
 
 const fetchLengthErrorMessage = (path, expectLength, currentLength) => ({
   pass: false,
-  message: () => `🌯 Burrito: ${path} is called ${currentLength} times, you expected ${expectLength} times`,
+  message: () =>
+    `🌯 Wrapito: ${ path } is called ${ currentLength } times, you expected ${ expectLength } times`,
 })
 
 const methodDoesNotMatchErrorMessage = (expected, received) => ({
   pass: false,
   message: () =>
-    `🌯 Burrito: Fetch method does not match, expected ${expected} received ${received}`,
+    `🌯 Wrapito: Fetch method does not match, expected ${ expected } received ${ received }`,
 })
 
 const bodyDoesNotMatchErrorMessage = (expected, received) => ({
   pass: false,
   message: () =>
-    `🌯 Burrito: Fetch body does not match.
+    `🌯 Wrapito: Fetch body does not match.
 Expected:
-${green(JSON.stringify(expected, null, ' '))}
+${ green(JSON.stringify(expected, null, ' ')) }
 
 Received:
-${red(JSON.stringify(received, null, ' '))}`,
+${ red(JSON.stringify(received, null, ' ')) }`,
 })
 
 const successMessage = () => ({
@@ -72,7 +73,10 @@ const toHaveBeenFetchedWith = (path, options) => {
   const expectedMethod = options?.method
 
   if (methodDoesNotMatch(expectedMethod, receivedRequestsMethods)) {
-    return methodDoesNotMatchErrorMessage(expectedMethod, receivedRequestsMethods)
+    return methodDoesNotMatchErrorMessage(
+      expectedMethod,
+      receivedRequestsMethods,
+    )
   }
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
@@ -85,7 +89,7 @@ const toHaveBeenFetchedWith = (path, options) => {
   return successMessage()
 }
 
-const toHaveBeenFetched = (path) => {
+const toHaveBeenFetched = path => {
   const requests = findRequestsByPath(path)
   return !requests.length ? emptyErrorMessage(path) : successMessage()
 }

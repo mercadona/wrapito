@@ -22,7 +22,7 @@ describe('toHaveBeenFetchedWith', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe("🌯 Burrito: /some/unknown ain't got called")
+    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
@@ -138,12 +138,12 @@ describe('toHaveBeenFetchedWith', () => {
       })
 
       expect(message()).toBe(
-        `🌯 Burrito: Fetch body does not match.
+        `🌯 Wrapito: Fetch body does not match.
 Expected:
-${green(JSON.stringify(expectedBody, null, ' '))}
+${ green(JSON.stringify(expectedBody, null, ' ')) }
 
 Received:
-${red(JSON.stringify([receivedBody], null, ' '))}`,
+${ red(JSON.stringify([receivedBody], null, ' ')) }`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
@@ -230,7 +230,7 @@ ${red(JSON.stringify([receivedBody], null, ' '))}`,
       })
 
       expect(message()).toBe(
-        '🌯 Burrito: Fetch method does not match, expected POST received PUT',
+        '🌯 Wrapito: Fetch method does not match, expected POST received PUT',
       )
       expect(path).not.toHaveBeenFetchedWith({
         method: 'POST',

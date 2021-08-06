@@ -20,6 +20,8 @@ describe('toHaveBeenFetchedTimes', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetchedTimes(expectedPath, 2)
 
-    expect(message()).toBe("🌯 Burrito: /some/path/ is called 1 times, you expected 2 times")
+    expect(message()).toBe(
+      '🌯 Wrapito: /some/path/ is called 1 times, you expected 2 times',
+    )
   })
 })

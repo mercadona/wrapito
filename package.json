@@ -1,5 +1,5 @@
 {
-  "name": "@mercadona/mo.library.burrito",
+  "name": "wrapito",
   "version": "0.0.0",
   "description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mercadona/mo.library.burrito.git"
+    "url": "git+https://github.com/mercadona/wrapito.git"
   },
   "keywords": [
     "react",
@@ -26,16 +26,15 @@
     "js",
     "jest",
     "wrap",
-    "burrito",
     "component",
     "mock",
     "fetch",
     "http"
   ],
   "bugs": {
-    "url": "https://github.com/mercadona/mo.library.burrito/issues"
+    "url": "https://github.com/mercadona/wrapito/issues"
   },
-  "homepage": "https://github.com/mercadona/mo.library.burrito#readme",
+  "homepage": "https://github.com/mercadona/wrapito#readme",
   "dependencies": {
     "@types/react": "^17.0.11",
     "deep-equal": "^1.0.1",

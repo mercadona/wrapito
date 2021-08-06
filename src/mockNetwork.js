@@ -33,12 +33,12 @@ const createResponse = async ({
 
 const printRequest = request => {
   return console.warn(`
-${white.bold.bgRed('burrito')} ${redBright.bold(
-    'cannot find any mock matching:',
-  )}
-  ${greenBright(`URL: ${request.url}`)}
-  ${greenBright(`METHOD: ${request.method.toLowerCase()}`)}
-  ${greenBright(`REQUEST BODY: ${request._bodyInit}`)}
+${ white.bold.bgRed('wrapito') } ${ redBright.bold(
+  'cannot find any mock matching:',
+) }
+  ${ greenBright(`URL: ${ request.url }`) }
+  ${ greenBright(`METHOD: ${ request.method.toLowerCase() }`) }
+  ${ greenBright(`REQUEST BODY: ${ request._bodyInit }`) }
  `)
 }
 

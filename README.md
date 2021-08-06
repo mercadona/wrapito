@@ -1,4 +1,4 @@
-# 🌯 mo.library.burrito
+# 🌯 wrapito
 Wrap you tests so that you can test both behaviour and components with less effort.
 
 ## 🎯 Motivation
@@ -18,7 +18,7 @@ To give the mounted component context about which path is the current path where
 Using npm:
 
 ```sh
-$ npm install @mercadona/mo.library.burrito --registry http://verdaccio.sta.monline
+$ npm install wrapito
 ```
 
 ## 👩‍💻 Basic usage
@@ -29,11 +29,11 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## 👣 Initial setup
-Because 🌯 `burrito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
+Because 🌯 `wrapito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `wrapito` a little bit more agnostic. For example `setup.wrapito.js`
 
 ```js
 import { render } from '@testing-library/react'
-import { configure } from '@mercadona/mo.library.burrito'
+import { configure } from 'wrapito'
 
 configure({
   mount: render,
@@ -44,7 +44,7 @@ and add the previous file in `jest.config.json`
 
 ```js
   "setupFiles": [
-    "<rootDir>/config/jest/setup.burrito.js"
+    "<rootDir>/config/jest/setup.wrapito.js"
   ],
 ```
 
@@ -52,7 +52,7 @@ If one or more of your components use a `react portal` in any way, you will need
 
 ```js
 import { render } from '@testing-library/react'
-import { configure } from '@mercadona/mo.library.burrito'
+import { configure } from 'wrapito'
 
 configure({
   mount: render,
@@ -70,7 +70,7 @@ It has the same API than the withNetwork builder. The main difference between th
 By using this feature you can configure the responses for your `http requests`. If your component is making a request that is not set up in the `responses object`, it will not be validated and it will return an empty response with code 200.
 
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 const responses = {
   host: 'my-host',
@@ -89,14 +89,14 @@ wrap(MyComponent)
 
 You can specify the default `host` via configuration:
 ```js
-import { configure } from '@mercadona/mo.library.burrito'
+import { configure } from 'wrapito'
 
 const { API_HOST, API_VERSION } = process.env
 configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
-In addition, `burrito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
+In addition, `wrapito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 const responses = {
   path: '/path/to/get/a/single/product/,
@@ -109,7 +109,7 @@ wrap(MyComponent)
 ```
 Now, you might need to mock several `http responses` at the same time and that's why you can also pass an array of responses instead if you wish:
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 const responses = [
   {
@@ -157,14 +157,14 @@ const responses = {
 
 `multipleResponses` receives an array of responses where one set the `responseBody`, `status` or `headers` for every response.
 
-When `multipleResponses` is present, 🌯 `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
+When `multipleResponses` is present, 🌯 `wrapito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
 
 This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
 
 #### atPath
 When mounting the whole app, it will be done at the default route passing the default path. But a specific route might need to be mounted and for that reason a path to match that route should be pass here.
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 wrap(MyComponent)
   .atPath(`/the/path/to/match/a/route/that/mounts/my/component/3`)
@@ -174,7 +174,7 @@ wrap(MyComponent)
 #### withProps
 Pass down the props to the wrapped component:
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 const props = { message: 'MyComponent will receive this as prop' }
 
@@ -186,7 +186,7 @@ wrap(MyComponent)
 #### composing
 As it is basically a builder, all the above functions can be used at the same time and these will be composed underneath:
 ```js
-import { wrap } from '@mercadona/mo.library.burrito'
+import { wrap } from 'wrapito'
 
 const props = { message: 'MyComponent will receive this as prop' }
 const responses = {
@@ -216,7 +216,7 @@ Some times checking only the visual side effects in the UI it's not enough. In t
 #### toHaveBeenFetchedWith
 This assertion is an extension of `toHaveBeenFetched` but we will use it if we want to check the properties.
 ```js
-import { wrap, assertions } from '@mercadona/mo.library.burrito'
+import { wrap, assertions } from 'wrapito'
 
 wrap(MyComponentMakingHttpCalls)
     .withNetwork(responses)
@@ -231,7 +231,7 @@ expect('/some/path').toHaveBeenFetchedWith({
 #### toHaveBeenFetchedTimes
 This assertion is to check how many times an API url is called.
 ```js
-import { wrap, assertions } from '@mercadona/mo.library.burrito'
+import { wrap, assertions } from 'wrapito'
 
 expect.extend(assertions)
 
@@ -252,4 +252,4 @@ In order to test the library in a project without releasing the library:
 
 - ```npm run build```
 - This will generate a local build in the `dist` folder
-- Copy the content of that folder in `node_modules/@mercadona/mo.library.burrito` in your project
+- Copy the content of that folder in `node_modules/wrapito` in your project
