@@ -21,7 +21,7 @@ describe('toHaveBeenFetched', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetched(expectedPath)
 
-    expect(message()).toBe("🌯 Burrito: /some/unknown ain't got called")
+    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetched()
   })
 })

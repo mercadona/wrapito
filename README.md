@@ -29,7 +29,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 ```
 
 ## 👣 Initial setup
-Because 🌯 `burrito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `burrito` a little bit more agnostic. For example `setup.burrito.js`
+Because 🌯 `wrapito` doesn't want to know anything about how the components are mounted in the project that uses it, we can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference. This way we make `wrapito` a little bit more agnostic. For example `setup.wrapito.js`
 
 ```js
 import { render } from '@testing-library/react'
@@ -44,7 +44,7 @@ and add the previous file in `jest.config.json`
 
 ```js
   "setupFiles": [
-    "<rootDir>/config/jest/setup.burrito.js"
+    "<rootDir>/config/jest/setup.wrapito.js"
   ],
 ```
 
@@ -94,7 +94,7 @@ import { configure } from '@mercadona/mo.library.burrito'
 const { API_HOST, API_VERSION } = process.env
 configure({ defaultHost: `${ API_HOST }${ API_VERSION }` })
 ```
-In addition, `burrito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
+In addition, `wrapito` defaults the `method` to `'get'` and `status` to `200`. This means one can use `withNetwork` like this:
 ```js
 import { wrap } from '@mercadona/mo.library.burrito'
 
@@ -157,7 +157,7 @@ const responses = {
 
 `multipleResponses` receives an array of responses where one set the `responseBody`, `status` or `headers` for every response.
 
-When `multipleResponses` is present, 🌯 `burrito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
+When `multipleResponses` is present, 🌯 `wrapito` will ignore the `responseBody` at the root of the mock and will return one response per request made at the same time that sets the returned response as `hasBeenReturned`, which means it can be returned again, until all the array of responses is returned. In that case an exception will be raised.
 
 This behaviour differs from using a single response for a given request as single response for a given request will return the response no matter how many times the request is called.
 

@@ -3,7 +3,7 @@ import { wrap, configure } from '../src/index'
 
 import { MyComponentWithLogin, MyComponent } from './components.mock'
 
-it('should extend burrito', async () => {
+it('should extend wrapito', async () => {
   const otherCustomExtension = jest.fn()
   const customArgs = { foo: 'bar' }
   configure({
