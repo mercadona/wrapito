@@ -68,7 +68,7 @@ pipeline {
                 }
                 script {
                     // Always we build based on the git commit and the environment is determined by that fact.
-                    sh 'docker run --rm -m=4g -v $JENKINS_JOBS:/var/jenkins_home/jobs --workdir $BUILD_WORKSPACE --name $DOCKER_BUILD_NETWORK-install $NODE_IMAGE npm install --no-optional '
+                    sh 'docker run --rm -m=4g -v $JENKINS_JOBS:/var/jenkins_home/jobs --workdir $BUILD_WORKSPACE --name $DOCKER_BUILD_NETWORK-install $NODE_IMAGE npm install --no-optional'
                 }
             }
         }
