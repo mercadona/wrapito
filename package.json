@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
   "main": "dist/index.js",
+  "license": "MIT",
   "scripts": {
     "test": "jest --ci --coverage --config config/jest.config.json",
     "test:watch": "jest --watch --config config/jest.config.json",
