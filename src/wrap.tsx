@@ -70,14 +70,16 @@ const getWithProps = (options: WrapOptions) => (props: object) => {
   return wrapWith({ ...options, props })
 }
 
-const getWithNetwork = (options: WrapOptions) => (responses: Response[]) => {
-  const listOfResponses = Array.isArray(responses) ? responses : [responses]
+const getWithNetwork =
+  (options: WrapOptions) =>
+  (responses: Response[] = []) => {
+    const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-  return wrapWith({
-    ...options,
-    responses: [...options.responses, ...listOfResponses],
-  })
-}
+    return wrapWith({
+      ...options,
+      responses: [...options.responses, ...listOfResponses],
+    })
+  }
 
 const getAtPath = (options: WrapOptions) => (path: string) => {
   return wrapWith({ ...options, path, hasPath: true })
