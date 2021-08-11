@@ -1,17 +1,18 @@
 import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
-import { getConfig } from './config'
+import { getConfig, Mount } from './config'
+import { BrowserHistory, Response, Wrap, WrapOptions } from './models'
 
 beforeEach(() => {
   global.fetch = jest.fn()
 })
 
 afterEach(() => {
-  global.fetch.mockRestore()
+  ;(global.fetch as jest.MockedFunction<typeof fetch>).mockRestore()
 })
 
-const wrap = Component => {
+const wrap = (Component: typeof React.Component): Wrap => {
   const options = {
     Component,
     responses: [],
@@ -24,7 +25,7 @@ const wrap = Component => {
   return wrapWith(options)
 }
 
-const wrapWith = options => {
+const wrapWith = (options: WrapOptions): Wrap => {
   const { extend, portal, history, mount } = getConfig()
   const extensions = extendWith(extend, options)
 
@@ -33,17 +34,19 @@ const wrapWith = options => {
     withNetwork: getWithNetwork(options),
     atPath: getAtPath(options),
     debugRequests: getDebugRequest(options),
-    mount: getMount(options, portal, history, mount),
+    mount: getMount(options, mount, portal, history),
     ...extensions,
   }
 }
 
+//@ts-ignore
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
   return Object.keys(extensions).reduce(
     (alreadyExtended, nextExtension) => ({
       ...alreadyExtended,
+      //@ts-ignore
       [nextExtension]: (...args) => {
         extensions[nextExtension](
           {
@@ -63,50 +66,55 @@ const extendWith = (extensions, options) => {
   )
 }
 
-const getWithProps = options => props => {
+const getWithProps = (options: WrapOptions) => (props: object) => {
   return wrapWith({ ...options, props })
 }
 
-const getWithNetwork =
-  options =>
-  (responses = []) => {
-    const listOfResponses = Array.isArray(responses) ? responses : [responses]
+const getWithNetwork = (options: WrapOptions) => (responses: Response[]) => {
+  const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-    return wrapWith({
-      ...options,
-      responses: [...options.responses, ...listOfResponses],
-    })
-  }
+  return wrapWith({
+    ...options,
+    responses: [...options.responses, ...listOfResponses],
+  })
+}
 
-const getAtPath = options => path => {
+const getAtPath = (options: WrapOptions) => (path: string) => {
   return wrapWith({ ...options, path, hasPath: true })
 }
 
-const getDebugRequest = options => () => {
+const getDebugRequest = (options: WrapOptions) => () => {
   return wrapWith({ ...options, debug: true })
 }
 
-const getMount = (options, portal, history, mount) => () => {
-  const { Component, props, responses, path, hasPath, debug } = options
+const getMount =
+  (
+    options: WrapOptions,
+    mount: Mount,
+    portal?: string,
+    history?: BrowserHistory,
+  ) =>
+  () => {
+    const { Component, props, responses, path, hasPath, debug } = options
 
-  if (portal) {
-    setupPortal(portal)
+    if (portal) {
+      setupPortal(portal)
+    }
+
+    if (hasPath && history) {
+      history.push(path)
+    }
+
+    if (hasPath && !history) {
+      window.history.replaceState(null, '', path)
+    }
+
+    mockNetwork(responses, debug)
+
+    return mount(<Component {...props} />)
   }
 
-  if (hasPath && history) {
-    history.push(path)
-  }
-
-  if (hasPath && !history) {
-    window.history.replaceState(null, null, path)
-  }
-
-  mockNetwork(responses, debug)
-
-  return mount(<Component {...props} />)
-}
-
-const setupPortal = portalRootId => {
+const setupPortal = (portalRootId: string) => {
   if (document.getElementById(portalRootId)) {
     return
   }
