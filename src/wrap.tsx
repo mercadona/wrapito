@@ -9,7 +9,8 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  ;(global.fetch as jest.MockedFunction<typeof fetch>).mockRestore()
+  const mockedFetch = global.fetch as jest.MockedFunction<typeof fetch>
+  mockedFetch.mockRestore()
 })
 
 const wrap = (Component: typeof React.Component): Wrap => {
