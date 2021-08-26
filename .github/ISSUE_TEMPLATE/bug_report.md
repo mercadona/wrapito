@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug report
-about: Report a bug found while using 🌯 Burrito.
+about: Report a bug found while using 🌯 Wrapito.
 ---
 
 ## 🐛 Bug report
@@ -10,11 +10,11 @@ about: Report a bug found while using 🌯 Burrito.
 <!--- If possible, please create an example that reproduces the issue with the minimal amount of code possible. You can use Codesandbox or similar to reproduce it. -->
 
 ## 🤔 Expected behavior
-<!--- What should 🌯 Burrito be doing? -->
+<!--- What should 🌯 Wrapito be doing? -->
 
-## 🌯 Burrito version
-<!--- If possible, please update 🌯 Burrito to latest version and check if the bug is still present.
-Example: `@mercadona/mo.library.burrito` v6.7.2 -->
+## 🌯 Wrapito version
+<!--- If possible, please update 🌯 Wrapito to latest version and check if the bug is still present.
+Example: `wrapito` v6.7.2 -->
 
 ## 💬 Comments
 <!--- Is it necessary any context for this bug?
