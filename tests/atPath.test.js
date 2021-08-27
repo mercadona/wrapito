@@ -41,6 +41,17 @@ it('should render an app with routing given an specific path using history', () 
   expect(container).toHaveTextContent('Categories')
 })
 
+it('should warn that history config is deprecated', () => {
+  const warn = jest.spyOn(console, 'warn')
+  configure({ history })
+  wrap(MyAppWithRouting).atPath('/categories').mount()
+
+  expect(warn).toHaveBeenCalledWith(
+    'wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.',
+  )
+  configure({ history: null })
+})
+
 it('should render an app with a routing logic between pages', () => {
   configure({ changeRoute: history.push })
   const { container, getByText } = wrap(MyAppWithRouting).atPath('/').mount()

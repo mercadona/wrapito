@@ -106,6 +106,7 @@ const getMount =
     }
 
     if (hasPath && history) {
+      console.warn('wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.')
       history.push(path)
     }
 
