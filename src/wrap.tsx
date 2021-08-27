@@ -108,9 +108,9 @@ const getMount =
       changeRoute(path)
     }
 
-    // if (hasPath && !history) {
-    //   window.history.replaceState(null, '', path)
-    // }
+    if (hasPath && !changeRoute) {
+      window.history.replaceState(null, '', path)
+    }
 
     mockNetwork(responses, debug)
 
