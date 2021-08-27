@@ -2,7 +2,7 @@ import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig, Mount } from './config'
-import { BrowserHistory, Response, Wrap, WrapOptions } from './models'
+import { Response, Wrap, WrapOptions } from './models'
 
 beforeEach(() => {
   global.fetch = jest.fn()
@@ -27,7 +27,7 @@ const wrap = (Component: typeof React.Component): Wrap => {
 }
 
 const wrapWith = (options: WrapOptions): Wrap => {
-  const { extend, portal, history, changeRoute, mount } = getConfig()
+  const { extend, portal, changeRoute, mount } = getConfig()
   const extensions = extendWith(extend, options)
 
   return {
@@ -35,7 +35,7 @@ const wrapWith = (options: WrapOptions): Wrap => {
     withNetwork: getWithNetwork(options),
     atPath: getAtPath(options),
     debugRequests: getDebugRequest(options),
-    mount: getMount(options, mount, portal, changeRoute),
+    mount: getMount(options, mount, changeRoute, portal),
     ...extensions,
   }
 }
@@ -94,8 +94,8 @@ const getMount =
   (
     options: WrapOptions,
     mount: Mount,
+    changeRoute: (path: string) => void,
     portal?: string,
-    changeRoute?: (path: string) => void,
   ) =>
   () => {
     const { Component, props, responses, path, hasPath, debug } = options
@@ -104,12 +104,8 @@ const getMount =
       setupPortal(portal)
     }
 
-    if (hasPath && changeRoute) {
+    if (hasPath) {
       changeRoute(path)
-    }
-
-    if (hasPath && !changeRoute) {
-      window.history.replaceState(null, '', path)
     }
 
     mockNetwork(responses, debug)

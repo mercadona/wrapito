@@ -14,6 +14,7 @@ let config: Config = {
   defaultHost: '',
   extend: {},
   mount,
+  changeRoute: (path: string) => window.history.replaceState(null, '', path)
 }
 
 function configure(newConfig: Config) {

@@ -3,7 +3,6 @@ import { render, fireEvent, screen } from '@testing-library/react'
 
 import {
   MyAppWithRouting,
-  MyAppWithBrowserRouting,
   MyComponent,
   history,
   myFakeModule,
@@ -42,12 +41,5 @@ it('should render an app with a routing logic between pages', () => {
   fireEvent.click(getByText('Go to categories'))
 
   expect(container).toHaveTextContent('Categories')
-})
-
-it('should render an app with browser routing given an specific path without history', () => {
-  configure({ changeRoute: null })
-  wrap(MyAppWithBrowserRouting).atPath('/categories').mount()
-
-  expect(screen.getByText('Categories')).toBeInTheDocument()
 })
 

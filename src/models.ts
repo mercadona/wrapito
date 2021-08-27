@@ -47,13 +47,8 @@ interface Config {
   defaultHost: string
   mount: Mount
   extend: Extensions
+  changeRoute: (path: string) => void
   portal?: string
-  history?: BrowserHistory
-  changeRoute?: (path: string) => void
 }
 
-interface BrowserHistory extends History {
-  push: (path: string) => void
-}
-
-export { Wrap, WrapOptions, Response, Config, Mount, Component, BrowserHistory }
+export { Wrap, WrapOptions, Response, Config, Mount, Component }
