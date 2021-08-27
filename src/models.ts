@@ -48,7 +48,12 @@ interface Config {
   mount: Mount
   extend: Extensions
   changeRoute: (path: string) => void
+  history?: BrowserHistory 
   portal?: string
 }
 
-export { Wrap, WrapOptions, Response, Config, Mount, Component }
+interface BrowserHistory extends History {
+  push: (path: string) => void
+}
+
+export { Wrap, WrapOptions, Response, Config, Mount, Component, BrowserHistory }

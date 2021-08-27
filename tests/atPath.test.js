@@ -23,9 +23,18 @@ it('should render an app without routing with specific url', () => {
   expect(window.location.href).toBe('http://localhost/?query=query')
 })
 
-it('should render an app with routing given an specific path', () => {
+it('should render an app with routing given an specific path using changeRoute', () => {
   const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
   configure({ changeRoute: history.push })
+  const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
+
+  expect(functionCalledByHomeRoute).not.toHaveBeenCalledWith('HOME')
+  expect(container).toHaveTextContent('Categories')
+})
+
+it('should render an app with routing given an specific path using history', () => {
+  const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
+  configure({ history })
   const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
 
   expect(functionCalledByHomeRoute).not.toHaveBeenCalledWith('HOME')
@@ -42,4 +51,3 @@ it('should render an app with a routing logic between pages', () => {
 
   expect(container).toHaveTextContent('Categories')
 })
-
