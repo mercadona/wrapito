@@ -27,7 +27,7 @@ const wrap = (Component: typeof React.Component): Wrap => {
 }
 
 const wrapWith = (options: WrapOptions): Wrap => {
-  const { extend, portal, history, mount } = getConfig()
+  const { extend, portal, changeRoute, history, mount } = getConfig()
   const extensions = extendWith(extend, options)
 
   return {
@@ -35,7 +35,7 @@ const wrapWith = (options: WrapOptions): Wrap => {
     withNetwork: getWithNetwork(options),
     atPath: getAtPath(options),
     debugRequests: getDebugRequest(options),
-    mount: getMount(options, mount, portal, history),
+    mount: getMount(options, mount, changeRoute, history, portal),
     ...extensions,
   }
 }
@@ -94,8 +94,9 @@ const getMount =
   (
     options: WrapOptions,
     mount: Mount,
-    portal?: string,
+    changeRoute: (path: string) => void,
     history?: BrowserHistory,
+    portal?: string,
   ) =>
   () => {
     const { Component, props, responses, path, hasPath, debug } = options
@@ -109,7 +110,7 @@ const getMount =
     }
 
     if (hasPath && !history) {
-      window.history.replaceState(null, '', path)
+      changeRoute(path)
     }
 
     mockNetwork(responses, debug)

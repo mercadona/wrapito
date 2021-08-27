@@ -47,8 +47,9 @@ interface Config {
   defaultHost: string
   mount: Mount
   extend: Extensions
+  changeRoute: (path: string) => void
+  history?: BrowserHistory 
   portal?: string
-  history?: BrowserHistory
 }
 
 interface BrowserHistory extends History {
