@@ -24,9 +24,9 @@ it('should render an app without routing with specific url', () => {
   expect(window.location.href).toBe('http://localhost/?query=query')
 })
 
-it('should render an app with routing given an specific path', () => {
+it.only('should render an app with routing given an specific path', () => {
   const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
-  configure({ history })
+  configure({ changeRoute: history.push })
   const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
 
   expect(functionCalledByHomeRoute).not.toHaveBeenCalledWith('HOME')

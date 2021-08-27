@@ -49,6 +49,7 @@ interface Config {
   extend: Extensions
   portal?: string
   history?: BrowserHistory
+  changeRoute?: (path: string) => void
 }
 
 interface BrowserHistory extends History {
