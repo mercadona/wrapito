@@ -171,6 +171,17 @@ wrap(MyComponent)
   .mount()
 ```
 
+By default it will use the native javascript history API, but you can provide a method to be called for change the app route with [`changeRoute`](#changeRoute):
+```js
+import { configure } from 'wrapito'
+import { history } from 'app.js'
+
+configure({
+  ..configuration,
+  changeRoute: (route) => history.push(route)
+})
+```
+
 #### withProps
 Pass down the props to the wrapped component:
 ```js
