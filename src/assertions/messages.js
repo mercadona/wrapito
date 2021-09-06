@@ -38,6 +38,11 @@ const successMessage = () => ({
   message: () => undefined,
 })
 
+const haveBeenFetchedSuccessMessage = (path) => ({
+  pass: true,
+  message: () => `🌯 Wrapito: ${path} is called`,
+})
+
 export {
   emptyErrorMessage,
   fetchLengthErrorMessage,
@@ -45,4 +50,5 @@ export {
   bodyDoesNotMatchErrorMessage,
   doesNotHaveBodyErrorMessage,
   successMessage,
+  haveBeenFetchedSuccessMessage,
 }
