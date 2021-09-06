@@ -1,38 +1,12 @@
 import deepEqual from 'deep-equal'
-import { green, red } from 'chalk'
-
-const emptyErrorMessage = path => ({
-  pass: false,
-  message: () => `🌯 Wrapito: ${ path } ain't got called`,
-})
-
-const fetchLengthErrorMessage = (path, expectLength, currentLength) => ({
-  pass: false,
-  message: () =>
-    `🌯 Wrapito: ${ path } is called ${ currentLength } times, you expected ${ expectLength } times`,
-})
-
-const methodDoesNotMatchErrorMessage = (expected, received) => ({
-  pass: false,
-  message: () =>
-    `🌯 Wrapito: Fetch method does not match, expected ${ expected } received ${ received }`,
-})
-
-const bodyDoesNotMatchErrorMessage = (expected, received) => ({
-  pass: false,
-  message: () =>
-    `🌯 Wrapito: Fetch body does not match.
-Expected:
-${ green(JSON.stringify(expected, null, ' ')) }
-
-Received:
-${ red(JSON.stringify(received, null, ' ')) }`,
-})
-
-const successMessage = () => ({
-  pass: true,
-  message: () => undefined,
-})
+import {
+  emptyErrorMessage,
+  fetchLengthErrorMessage,
+  methodDoesNotMatchErrorMessage,
+  bodyDoesNotMatchErrorMessage,
+  doesNotHaveBodyErrorMessage,
+  successMessage,
+ } from './messages'
 
 const findRequestsByPath = path =>
   fetch.mock.calls.filter(call => call[0].url.includes(path))
@@ -51,8 +25,6 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
   expectedMethod && !receivedRequestsMethods.includes(expectedMethod)
 
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
-  if (!expectedBody) return false
-
   const anyRequestMatch = receivedRequestsBodies
     .map(request => deepEqual(expectedBody, request))
     .every(requestCompare => requestCompare === false)
@@ -81,6 +53,7 @@ const toHaveBeenFetchedWith = (path, options) => {
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
+  if(!expectedBody) return doesNotHaveBodyErrorMessage()
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
     return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
