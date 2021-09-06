@@ -10,7 +10,7 @@ describe('toHaveBeenFetched', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetched(expectedPath)
 
-    expect(message()).toBeUndefined()
+    expect(message()).toBe('🌯 Wrapito: /some/path/ is called')
     expect(expectedPath).toHaveBeenFetched()
   })
 

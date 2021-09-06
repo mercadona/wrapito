@@ -6,6 +6,7 @@ import {
   bodyDoesNotMatchErrorMessage,
   doesNotHaveBodyErrorMessage,
   successMessage,
+  haveBeenFetchedSuccessMessage,
 } from './messages'
 
 const findRequestsByPath = path =>
@@ -64,7 +65,7 @@ const toHaveBeenFetchedWith = (path, options) => {
 
 const toHaveBeenFetched = path => {
   const requests = findRequestsByPath(path)
-  return !requests.length ? emptyErrorMessage(path) : successMessage()
+  return !requests.length ? emptyErrorMessage(path) : haveBeenFetchedSuccessMessage(path)
 }
 
 const toHaveBeenFetchedTimes = (path, expectedLength) => {
