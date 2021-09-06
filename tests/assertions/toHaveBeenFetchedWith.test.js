@@ -7,12 +7,15 @@ describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
+    const body = {
+      method: 'POST',
+      body: JSON.stringify({ name: 'some name' }),
+    }
 
-    await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
+    await fetch(new Request(path, body))
+    await assertions.toHaveBeenFetchedWith(expectedPath, body)
 
-    expect(message()).toBeUndefined()
-    expect(expectedPath).toHaveBeenFetchedWith()
+    expect(expectedPath).toHaveBeenFetchedWith({ body: { name: 'some name' } })
   })
 
   it('should check that the path has not been called', async () => {
@@ -27,6 +30,16 @@ describe('toHaveBeenFetchedWith', () => {
   })
 
   describe('request body', () => {
+  it('should check that the request has body', async () => {
+    const path = '//some-domain.com/some/path/'
+
+    await fetch(new Request(path))
+    const { message, pass } = await assertions.toHaveBeenFetchedWith(path)
+
+    expect(message()).toBe('🌯 Wrapito: Unable to find body.')
+    expect(pass).toBe(false)
+  })
+
     it('should check that the path has been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
       const request = new Request(path, {
@@ -149,34 +162,22 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
         body: expectedBody,
       })
     })
-
-    it('should allow to leave the body option empty', async () => {
-      const path = '//some-domain.com/some/path/'
-      const request = new Request(path, {
-        method: 'POST',
-        body: JSON.stringify({ surname: 'some surname' }),
-      })
-      await fetch(request)
-
-      const { message } = await assertions.toHaveBeenFetchedWith(path)
-
-      expect(message()).toBeUndefined()
-      expect(path).toHaveBeenFetchedWith()
-    })
   })
 
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
       const path = '//some-domain.com/some/path/'
-      const request = new Request(path, { method: 'POST' })
-      await fetch(request)
+      const body = {method: 'POST'}
 
+      await fetch(new Request(path, body))
       const { message } = await assertions.toHaveBeenFetchedWith(path, {
+        body: {},
         method: 'POST',
       })
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
+        body: {},
         method: 'POST',
       })
     })
@@ -211,11 +212,13 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
       await fetch(putRequest)
 
       const { message } = await assertions.toHaveBeenFetchedWith(path, {
+        body: {},
         method: 'PUT',
       })
 
       expect(message()).toBeUndefined()
       expect(path).toHaveBeenFetchedWith({
+        body: {},
         method: 'PUT',
       })
     })
@@ -242,10 +245,10 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
       const request = new Request(path, { method: 'POST' })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path)
+      const { message } = await assertions.toHaveBeenFetchedWith(path, { body: {}})
 
       expect(message()).toBeUndefined()
-      expect(path).toHaveBeenFetchedWith()
+      expect(path).toHaveBeenFetchedWith({ body: {}})
     })
   })
 })

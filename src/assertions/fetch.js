@@ -29,6 +29,11 @@ Received:
 ${ red(JSON.stringify(received, null, ' ')) }`,
 })
 
+const doesNotHaveBodyErrorMessage = () => ({
+  pass: false,
+  message: () => '🌯 Wrapito: Unable to find body.'
+})
+
 const successMessage = () => ({
   pass: true,
   message: () => undefined,
@@ -51,8 +56,6 @@ const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
   expectedMethod && !receivedRequestsMethods.includes(expectedMethod)
 
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
-  if (!expectedBody) return false
-
   const anyRequestMatch = receivedRequestsBodies
     .map(request => deepEqual(expectedBody, request))
     .every(requestCompare => requestCompare === false)
@@ -81,6 +84,7 @@ const toHaveBeenFetchedWith = (path, options) => {
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
+  if(!expectedBody) return doesNotHaveBodyErrorMessage()
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
     return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
