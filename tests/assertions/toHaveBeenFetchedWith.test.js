@@ -36,7 +36,7 @@ describe('toHaveBeenFetchedWith', () => {
     await fetch(new Request(path))
     const { message, pass } = await assertions.toHaveBeenFetchedWith(path)
 
-    expect(message()).toBe('🌯 Burrito: Unable to find body.')
+    expect(message()).toBe('🌯 Wrapito: Unable to find body.')
     expect(pass).toBe(false)
   })
 
