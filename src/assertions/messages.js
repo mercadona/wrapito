@@ -30,7 +30,7 @@ ${ red(JSON.stringify(received, null, ' ')) }`,
 
 const doesNotHaveBodyErrorMessage = () => ({
   pass: false,
-  message: () => '🌯 Burrito: Unable to find body.'
+  message: () => '🌯 Wrapito: Unable to find body.'
 })
 
 const successMessage = () => ({
