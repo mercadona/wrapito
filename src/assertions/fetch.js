@@ -22,12 +22,27 @@ const getRequestsBodies = requests =>
     return JSON.parse(request[0]._bodyInit)
   })
 
+const getRequestsHeaders = (requests) => {
+  return requests.map(request => request[0].headers)
+}
+
 const methodDoesNotMatch = (expectedMethod, receivedRequestsMethods) =>
   expectedMethod && !receivedRequestsMethods.includes(expectedMethod)
 
 const bodyDoesNotMatch = (expectedBody, receivedRequestsBodies) => {
   const anyRequestMatch = receivedRequestsBodies
     .map(request => deepEqual(expectedBody, request))
+    .every(requestCompare => requestCompare === false)
+
+  return anyRequestMatch
+}
+
+const headersDoesNotMatch = (expectedHeaders, receivedRequestsHeaders) => {
+  /* eslint-disable no-alert, no-console, no-debugger */
+  console.log('expectedHeaders', expectedHeaders)
+  console.log('receivedRequestsHeaders', receivedRequestsHeaders)
+  const anyRequestMatch = receivedRequestsHeaders
+    .map(request => deepEqual(expectedHeaders, request))
     .every(requestCompare => requestCompare === false)
 
   return anyRequestMatch
@@ -60,6 +75,11 @@ const toHaveBeenFetchedWith = (path, options) => {
     return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
   }
 
+  const receivedRequestsHeaders = getRequestsHeaders(targetRequests)
+  const expectedHeaders = options?.headers
+  if (headersDoesNotMatch(expectedHeaders, receivedRequestsHeaders)) {
+    // return { pass: false, message: () => '' }
+  }
   return successMessage()
 }
 

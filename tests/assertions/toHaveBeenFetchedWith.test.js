@@ -251,4 +251,48 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
       expect(path).toHaveBeenFetchedWith({ body: {}})
     })
   })
+
+  describe('request headers', () => {
+    fit('should check that the headers has been called', async () => {
+      const path = '//some-domain.com/some/path/'
+      const expectedPath = '/some/path/'
+      const settings = {
+        method: 'POST',
+        body: JSON.stringify({ name: 'some name' }),
+        headers: new Headers({
+          auth: 'token',
+        }),
+      }
+
+      await fetch(new Request(path, settings))
+      await assertions.toHaveBeenFetchedWith(expectedPath, settings)
+
+      expect(expectedPath).toHaveBeenFetchedWith({
+        body: { name: 'some name' },
+        method: 'POST',
+        headers: { auth: 'token' }
+      })
+    })
+
+    it('should RAMON', async () => {
+      const path = '//some-domain.com/some/path/'
+      const expectedPath = '/some/path/'
+      const settings = {
+        method: 'POST',
+        body: JSON.stringify({ name: 'some name' }),
+        headers: new Headers({
+          auth: 'token',
+        }),
+      }
+
+      await fetch(new Request(path, settings))
+      await assertions.toHaveBeenFetchedWith(expectedPath, settings)
+
+      expect(expectedPath).not.toHaveBeenFetchedWith({
+        body: { name: 'some name' },
+        method: 'POST',
+        headers: { auth: 'token' }
+      })
+    })
+  })
 })
