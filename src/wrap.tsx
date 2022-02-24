@@ -41,6 +41,11 @@ const wrapWith = (options: WrapOptions): Wrap => {
 }
 
 //@ts-ignore
+const addResponses = (options) => (responses) => {
+    options.responses = [...options.responses, ...responses]
+  }
+
+//@ts-ignore
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
@@ -51,12 +56,7 @@ const extendWith = (extensions, options) => {
       [nextExtension]: (...args) => {
         extensions[nextExtension](
           {
-            addResponses: (responses = []) => {
-              const responsesToAdd = Array.isArray(responses)
-                ? responses
-                : [responses]
-              options.responses = [...options.responses, ...responsesToAdd]
-            },
+            addResponses: addResponses(options),
           },
           args,
         )
