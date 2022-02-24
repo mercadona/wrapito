@@ -46,22 +46,24 @@ const addResponses = (options) => (responses) => {
   }
 
 //@ts-ignore
+const applyExtension = (options, args, extensions, extensionName) => {
+  const object = {
+    addResponses: addResponses(options),
+  }
+  const extension = extensions[extensionName]
+  extension(object,args)
+  return wrapWith(options)
+}
+
+//@ts-ignore
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
   return Object.keys(extensions).reduce(
-    (alreadyExtended, nextExtension) => ({
+    (alreadyExtended, extensionName) => ({
       ...alreadyExtended,
       //@ts-ignore
-      [nextExtension]: (...args) => {
-        extensions[nextExtension](
-          {
-            addResponses: addResponses(options),
-          },
-          args,
-        )
-        return wrapWith(options)
-      },
+      [extensionName]: (...args) => applyExtension(options, args, extensions, extensionName),
     }),
     {},
   )
