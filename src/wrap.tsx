@@ -42,31 +42,34 @@ const wrapWith = (options: WrapOptions): Wrap => {
 
 //@ts-ignore
 const addResponses = (options) => (responses) => {
-    options.responses = [...options.responses, ...responses]
-  }
+  options.responses = [...options.responses, ...responses]
+}
 
 //@ts-ignore
-const applyExtension = (options, args, extensions, extensionName) => {
+const applyExtension = (options, args, extension) => {
   const object = {
     addResponses: addResponses(options),
   }
-  const extension = extensions[extensionName]
   extension(object,args)
   return wrapWith(options)
+}
+
+//@ts-ignore
+const longaniza = (extensions, options) => (alreadyExtended, extensionName) => {
+  const extension = extensions[extensionName]
+  return ({
+    ...alreadyExtended,
+    //@ts-ignore
+    [extensionName]: (...args) => applyExtension(options, args, extension),
+  })
 }
 
 //@ts-ignore
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
-  return Object.keys(extensions).reduce(
-    (alreadyExtended, extensionName) => ({
-      ...alreadyExtended,
-      //@ts-ignore
-      [extensionName]: (...args) => applyExtension(options, args, extensions, extensionName),
-    }),
-    {},
-  )
+  const extensionNames = Object.keys(extensions)
+  return extensionNames.reduce(longaniza(extensions, options), {})
 }
 
 const getWithProps = (options: WrapOptions) => (props: object) => {
