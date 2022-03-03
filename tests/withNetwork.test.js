@@ -29,22 +29,6 @@ it('should have network with an array of requests', async () => {
   expect(console.warn).not.toHaveBeenCalled()
 })
 
-it('should have network with an object of requests', async () => {
-  jest.spyOn(console, 'warn')
-  configure({ mount: render })
-  wrap(MyComponentWithNetwork)
-    .withNetwork({
-      path: '/path/with/response/',
-      host: 'my-host',
-      responseBody: '15',
-    })
-    .mount()
-
-  expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
-  expect(await screen.findByText('15')).toBeInTheDocument()
-  expect(console.warn).not.toHaveBeenCalled()
-})
-
 it('should have network without responses', async () => {
   configure({ mount: render })
   wrap(MyComponentWithNetwork).withNetwork().mount()

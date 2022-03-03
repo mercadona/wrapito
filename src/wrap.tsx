@@ -20,7 +20,7 @@ const wrap = (Component: typeof React.Component): Wrap => {
     props: {},
     path: '',
     hasPath: false,
-    debug: false,
+    debug: process.env.npm_config_debugRequests === 'true',
   }
 
   return wrapWith(options)
