@@ -6,6 +6,7 @@ configure({ defaultHost: 'my-host', mount: render })
 
 afterEach(() => {
   cleanup()
+  process.env.npm_config_debugRequests = undefined
   console.warn.mockRestore()
 })
 
@@ -145,5 +146,35 @@ it('should not warn if all the requests are being mocked', async () => {
 
   expect(consoleWarn).not.toHaveBeenCalledWith(
     expect.stringContaining('cannot find any mock matching:'),
+  )
+})
+
+it('should warn about not fetched requests when --debugRequests param is used', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  process.env.npm_config_debugRequests = 'true'
+
+  wrap(GreetingComponent)
+    .withNetwork({
+      path: '/request2',
+      host: 'my-host',
+      method: 'post',
+      requestBody: { id: 2 },
+      responseBody: { name: 'Sam' },
+    })
+    .mount()
+
+  await screen.findByText('Hi Sam!')
+
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('cannot find any mock matching:'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('URL: my-host/request1'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('METHOD: post'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('REQUEST BODY: {"id":1}'),
   )
 })
