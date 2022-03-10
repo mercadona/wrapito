@@ -2,7 +2,15 @@ import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig, Mount } from './config'
-import { BrowserHistory, Response, Wrap, WrapOptions } from './models'
+import {
+  BrowserHistory,
+  Response,
+  Wrap,
+  WrapOptions,
+  WrapExtensionAPI,
+  Extension,
+  Extensions,
+} from './models'
 
 beforeEach(() => {
   global.fetch = jest.fn()
@@ -40,36 +48,39 @@ const wrapWith = (options: WrapOptions): Wrap => {
   }
 }
 
-//@ts-ignore
-const addResponses = (options) => (responses) => {
+const addResponses = (options: WrapOptions) => (responses: Response[]) => {
   options.responses = [...options.responses, ...responses]
 }
 
-//@ts-ignore
-const applyExtension = (options, args, extension) => {
-  const object = {
+const applyExtension = (
+  options: WrapOptions,
+  args: any[],
+  extension: Extension,
+) => {
+  const wrapExtensionAPI: WrapExtensionAPI = {
     addResponses: addResponses(options),
   }
-  extension(object,args)
+  extension(wrapExtensionAPI, args)
   return wrapWith(options)
 }
 
-//@ts-ignore
-const longaniza = (extensions, options) => (alreadyExtended, extensionName) => {
-  const extension = extensions[extensionName]
-  return ({
-    ...alreadyExtended,
-    //@ts-ignore
-    [extensionName]: (...args) => applyExtension(options, args, extension),
-  })
-}
+const buildExtensions =
+  (extensions: Extensions, options: WrapOptions) =>
+  (alreadyExtended: Extensions, extensionName: string): Extensions => {
+    const extension = extensions[extensionName]
+    return {
+      ...alreadyExtended,
+      [extensionName]: (...args: any) =>
+        applyExtension(options, args, extension),
+    }
+  }
 
 //@ts-ignore
 const extendWith = (extensions, options) => {
   if (!extensions) return {}
 
   const extensionNames = Object.keys(extensions)
-  return extensionNames.reduce(longaniza(extensions, options), {})
+  return extensionNames.reduce(buildExtensions(extensions, options), {})
 }
 
 const getWithProps = (options: WrapOptions) => (props: object) => {
