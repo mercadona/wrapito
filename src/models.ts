@@ -30,7 +30,7 @@ interface WrapOptions {
 }
 
 interface WrapExtensionAPI {
-  addResponses: () => void
+  addResponses: (responses: Response[]) => void
 }
 
 type Extension = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap
@@ -48,7 +48,7 @@ interface Config {
   mount: Mount
   extend: Extensions
   changeRoute: (path: string) => void
-  history?: BrowserHistory 
+  history?: BrowserHistory
   portal?: string
 }
 
@@ -56,4 +56,15 @@ interface BrowserHistory extends History {
   push: (path: string) => void
 }
 
-export { Wrap, WrapOptions, Response, Config, Mount, Component, BrowserHistory }
+export {
+  Response,
+  Config,
+  Mount,
+  Component,
+  BrowserHistory,
+  Extension,
+  Extensions,
+  WrapExtensionAPI,
+  Wrap,
+  WrapOptions,
+}

@@ -2,7 +2,15 @@ import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig, Mount } from './config'
-import { BrowserHistory, Response, Wrap, WrapOptions } from './models'
+import {
+  BrowserHistory,
+  Response,
+  Wrap,
+  WrapOptions,
+  WrapExtensionAPI,
+  Extension,
+  Extensions,
+} from './models'
 
 beforeEach(() => {
   global.fetch = jest.fn()
@@ -40,31 +48,38 @@ const wrapWith = (options: WrapOptions): Wrap => {
   }
 }
 
-//@ts-ignore
-const extendWith = (extensions, options) => {
+const addResponses = (options: WrapOptions) => (responses: Response[]) => {
+  options.responses = [...options.responses, ...responses]
+}
+
+const applyExtension = (
+  options: WrapOptions,
+  args: any[],
+  extension: Extension,
+) => {
+  const wrapExtensionAPI: WrapExtensionAPI = {
+    addResponses: addResponses(options),
+  }
+  extension(wrapExtensionAPI, args)
+  return wrapWith(options)
+}
+
+const buildExtensions =
+  (extensions: Extensions, options: WrapOptions) =>
+  (alreadyExtended: Extensions, extensionName: string): Extensions => {
+    const extension = extensions[extensionName]
+    return {
+      ...alreadyExtended,
+      [extensionName]: (...args: any) =>
+        applyExtension(options, args, extension),
+    }
+  }
+
+const extendWith = (extensions: Extensions, options: WrapOptions) => {
   if (!extensions) return {}
 
-  return Object.keys(extensions).reduce(
-    (alreadyExtended, nextExtension) => ({
-      ...alreadyExtended,
-      //@ts-ignore
-      [nextExtension]: (...args) => {
-        extensions[nextExtension](
-          {
-            addResponses: (responses = []) => {
-              const responsesToAdd = Array.isArray(responses)
-                ? responses
-                : [responses]
-              options.responses = [...options.responses, ...responsesToAdd]
-            },
-          },
-          args,
-        )
-        return wrapWith(options)
-      },
-    }),
-    {},
-  )
+  const extensionNames = Object.keys(extensions)
+  return extensionNames.reduce(buildExtensions(extensions, options), {})
 }
 
 const getWithProps = (options: WrapOptions) => (props: object) => {

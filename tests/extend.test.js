@@ -96,30 +96,4 @@ it('should be composable', async () => {
   expect(await screen.findByText('Logged out as John Doe')).toBeInTheDocument()
 })
 
-it('should not be necessary to explicity pass an array to addResponses', async () => {
-  configure({
-    mount: render,
-    extend: {
-      withLogin: ({ addResponses }, username) =>
-        addResponses({
-          path: '/path/to/login/',
-          host: 'my-host',
-          method: 'post',
-          responseBody: username,
-        }),
-    },
-  })
-  wrap(MyComponentWithLogin).withLogin('Fran Perea').mount()
 
-  expect(await screen.findByText('Logged in as Fran Perea')).toBeInTheDocument()
-})
-
-it('should not throw a exception when passing empty responses', async () => {
-  configure({
-    extend: {
-      withEmptyResponses: ({ addResponses }) => addResponses(),
-    },
-  })
-
-  expect(() => wrap(MyComponent).withEmptyResponses().mount()).not.toThrow()
-})
