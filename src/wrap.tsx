@@ -75,8 +75,7 @@ const buildExtensions =
     }
   }
 
-//@ts-ignore
-const extendWith = (extensions, options) => {
+const extendWith = (extensions: Extensions, options: WrapOptions) => {
   if (!extensions) return {}
 
   const extensionNames = Object.keys(extensions)
