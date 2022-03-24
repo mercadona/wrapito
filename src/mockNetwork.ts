@@ -1,12 +1,20 @@
+// @ts-nocheck
 import { white, redBright, greenBright } from 'chalk'
+import { Response } from './models'
 import { getRequestMatcher } from './requestMatcher'
 
+declare global {
+  interface Window {
+    fetch: jest.Mock
+  }
+}
+
 beforeEach(() => {
-  global.fetch = jest.fn()
+  global.window.fetch = jest.fn()
 })
 
 afterEach(() => {
-  global.fetch.mockRestore()
+  global.window.fetch.mockRestore()
 })
 
 const createResponse = async ({
@@ -33,18 +41,18 @@ const createResponse = async ({
 
 const printRequest = request => {
   return console.warn(`
-${ white.bold.bgRed('wrapito') } ${ redBright.bold(
-  'cannot find any mock matching:',
-) }
-  ${ greenBright(`URL: ${ request.url }`) }
-  ${ greenBright(`METHOD: ${ request.method.toLowerCase() }`) }
-  ${ greenBright(`REQUEST BODY: ${ request._bodyInit }`) }
+${white.bold.bgRed('wrapito')} ${redBright.bold(
+    'cannot find any mock matching:',
+  )}
+  ${greenBright(`URL: ${request.url}`)}
+  ${greenBright(`METHOD: ${request.method.toLowerCase()}`)}
+  ${greenBright(`REQUEST BODY: ${request._bodyInit}`)}
  `)
 }
 
-function mockNetwork(responses = [], debug = false) {
+function mockNetwork(responses: Response[] = [], debug: boolean = false) {
   const listOfResponses = responses.length > 0 ? responses : [responses]
-  global.fetch.mockImplementation(async request => {
+  global.window.fetch.mockImplementation(async request => {
     const responseMatchingRequest = listOfResponses.find(
       getRequestMatcher(request),
     )
