@@ -1,6 +1,5 @@
-// @ts-nocheck
-import { white, redBright, greenBright } from 'chalk'
-import { Response } from './models'
+import chalk from 'chalk'
+import { Response, Request } from './models'
 import { getRequestMatcher } from './requestMatcher'
 
 declare global {
@@ -17,12 +16,23 @@ afterEach(() => {
   global.window.fetch.mockRestore()
 })
 
+const createDefaultResponse = async () => {
+  const response = {
+    json: () => Promise.resolve(),
+    status: 200,
+    ok: true,
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+  }
+
+  return Promise.resolve(response)
+}
+
 const createResponse = async ({
   responseBody,
   status = 200,
   headers,
   delay,
-}) => {
+}: Response) => {
   const response = {
     json: () => Promise.resolve(responseBody),
     status,
@@ -39,45 +49,48 @@ const createResponse = async ({
   )
 }
 
-const printRequest = request => {
+const printRequest = (request: Request) => {
   return console.warn(`
-${white.bold.bgRed('wrapito')} ${redBright.bold(
+${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
     'cannot find any mock matching:',
   )}
-  ${greenBright(`URL: ${request.url}`)}
-  ${greenBright(`METHOD: ${request.method.toLowerCase()}`)}
-  ${greenBright(`REQUEST BODY: ${request._bodyInit}`)}
+  ${chalk.greenBright(`URL: ${request.url}`)}
+  ${chalk.greenBright(`METHOD: ${request.method.toLowerCase()}`)}
+  ${chalk.greenBright(`REQUEST BODY: ${request._bodyInit}`)}
  `)
 }
 
-function mockNetwork(responses: Response[] = [], debug: boolean = false) {
-  const listOfResponses = responses.length > 0 ? responses : [responses]
-  global.window.fetch.mockImplementation(async request => {
-    const responseMatchingRequest = listOfResponses.find(
-      getRequestMatcher(request),
-    )
+const mockFetch = async (responses: Response[], request: Request, debug: boolean) => {
+  const responseMatchingRequest = responses.find(
+    getRequestMatcher(request),
+  )
 
-    if (!responseMatchingRequest) {
-      if (debug) {
-        printRequest(request)
-      }
-
-      return createResponse({})
+  if (!responseMatchingRequest) {
+    if (debug) {
+      printRequest(request)
     }
 
-    const { multipleResponses } = responseMatchingRequest
-    if (!multipleResponses) {
-      return createResponse(responseMatchingRequest)
-    }
+    return createDefaultResponse()
+  }
 
-    const responseNotYetReturned = multipleResponses.find(
-      ({ hasBeenReturned }) => !hasBeenReturned,
-    )
-    if (!responseNotYetReturned) return
+  const { multipleResponses } = responseMatchingRequest
+  if (!multipleResponses) {
+    return createResponse(responseMatchingRequest)
+  }
 
-    responseNotYetReturned.hasBeenReturned = true
-    return createResponse(responseNotYetReturned)
-  })
+  const responseNotYetReturned = multipleResponses.find(
+    (response: Response) => !response.hasBeenReturned,
+  )
+  if (!responseNotYetReturned) return
+
+  responseNotYetReturned.hasBeenReturned = true
+  return createResponse(responseNotYetReturned)
+}
+
+const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
+  const fetch = global.window.fetch
+
+  fetch.mockImplementation(request => mockFetch(responses, request, debug))
 }
 
 export { mockNetwork }
