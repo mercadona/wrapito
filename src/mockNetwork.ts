@@ -27,12 +27,13 @@ const createDefaultResponse = async () => {
   return Promise.resolve(response)
 }
 
-const createResponse = async ({
-  responseBody,
-  status = 200,
-  headers,
-  delay,
-}: Response) => {
+const createResponse = async (mockResponse: Response) => {
+  const {
+    responseBody,
+    status = 200,
+    headers,
+    delay,
+  } = mockResponse
   const response = {
     json: () => Promise.resolve(responseBody),
     status,
