@@ -9,4 +9,6 @@ const updateOptions = (updatedOptions: WrapOptions) => {
   }
 }
 
-export { options, updateOptions }
+const getOptions = () : WrapOptions => ({ ...options })
+
+export { options, updateOptions, getOptions }
