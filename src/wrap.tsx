@@ -21,9 +21,11 @@ afterEach(() => {
   mockedFetch.mockRestore()
 })
 
+let options: WrapOptions
+
 const wrap = (Component: typeof React.Component): Wrap => {
-  const options = {
-    Component,
+  options = {
+    Component: Component,
     responses: [],
     props: {},
     path: '',
@@ -31,83 +33,87 @@ const wrap = (Component: typeof React.Component): Wrap => {
     debug: process.env.npm_config_debugRequests === 'true',
   }
 
-  return wrapWith(options)
+  return wrapWith()
 }
 
-const wrapWith = (options: WrapOptions): Wrap => {
+const wrapWith = (): Wrap => {
   const { extend, portal, changeRoute, history, mount } = getConfig()
-  const extensions = extendWith(extend, options)
+  const extensions = extendWith(extend)
 
   return {
-    withProps: getWithProps(options),
-    withNetwork: getWithNetwork(options),
-    atPath: getAtPath(options),
-    debugRequests: getDebugRequest(options),
-    mount: getMount(options, mount, changeRoute, history, portal),
+    withProps: getWithProps(),
+    withNetwork: getWithNetwork(),
+    atPath: getAtPath(),
+    debugRequests: getDebugRequest(),
+    mount: getMount(mount, changeRoute, history, portal),
     ...extensions,
   }
 }
 
-const addResponses = (options: WrapOptions) => (responses: Response[]) => {
+const addResponses = () => (responses: Response[]) => {
   options.responses = [...options.responses, ...responses]
 }
 
 const applyExtension = (
-  options: WrapOptions,
   args: any[],
   extension: Extension,
 ) => {
   const wrapExtensionAPI: WrapExtensionAPI = {
-    addResponses: addResponses(options),
+    addResponses: addResponses(),
   }
   extension(wrapExtensionAPI, args)
-  return wrapWith(options)
+  return wrapWith()
 }
 
 const buildExtensions =
-  (extensions: Extensions, options: WrapOptions) =>
+  (extensions: Extensions) =>
   (alreadyExtended: Extensions, extensionName: string): Extensions => {
     const extension = extensions[extensionName]
     return {
       ...alreadyExtended,
       [extensionName]: (...args: any) =>
-        applyExtension(options, args, extension),
+        applyExtension(args, extension),
     }
   }
 
-const extendWith = (extensions: Extensions, options: WrapOptions) => {
+const extendWith = (extensions: Extensions) => {
   if (!extensions) return {}
 
   const extensionNames = Object.keys(extensions)
-  return extensionNames.reduce(buildExtensions(extensions, options), {})
+  return extensionNames.reduce(buildExtensions(extensions), {})
 }
 
-const getWithProps = (options: WrapOptions) => (props: object) => {
-  return wrapWith({ ...options, props })
+const getWithProps = () => (props: object) => {
+  options = { ...options, props }
+  return wrapWith()
 }
 
 const getWithNetwork =
-  (options: WrapOptions) =>
+  () =>
   (responses: Response[] = []) => {
     const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-    return wrapWith({
+    options = {
       ...options,
       responses: [...options.responses, ...listOfResponses],
-    })
+    }
+
+    return wrapWith()
   }
 
-const getAtPath = (options: WrapOptions) => (path: string) => {
-  return wrapWith({ ...options, path, hasPath: true })
+const getAtPath = () => (path: string) => {
+  options = { ...options, path, hasPath: true }
+  return wrapWith()
 }
 
-const getDebugRequest = (options: WrapOptions) => () => {
-  return wrapWith({ ...options, debug: true })
+const getDebugRequest = () => () => {
+  options = { ...options, debug: true }
+
+  return wrapWith()
 }
 
 const getMount =
   (
-    options: WrapOptions,
     mount: Mount,
     changeRoute: (path: string) => void,
     history?: BrowserHistory,
