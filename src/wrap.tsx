@@ -49,8 +49,9 @@ const wrapWith = (): Wrap => {
   }
 }
 
-const addResponses = () => (responses: Response[]) => {
-  options.responses = [...options.responses, ...responses]
+const addResponses = () => (newResponses: Response[]) => {
+  const responses = [...options.responses, ...newResponses]
+  updateOptions({ ...options, responses })
 }
 
 const applyExtension = (
