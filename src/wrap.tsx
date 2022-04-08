@@ -2,11 +2,11 @@ import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig, Mount } from './config'
+import { options, updateOptions } from './options'
 import {
   BrowserHistory,
   Response,
   Wrap,
-  WrapOptions,
   WrapExtensionAPI,
   Extension,
   Extensions,
@@ -21,17 +21,16 @@ afterEach(() => {
   mockedFetch.mockRestore()
 })
 
-let options: WrapOptions
 
 const wrap = (Component: typeof React.Component): Wrap => {
-  options = {
+  updateOptions({
     Component: Component,
     responses: [],
     props: {},
     path: '',
     hasPath: false,
     debug: process.env.npm_config_debugRequests === 'true',
-  }
+  })
 
   return wrapWith()
 }
@@ -84,7 +83,7 @@ const extendWith = (extensions: Extensions) => {
 }
 
 const getWithProps = () => (props: object) => {
-  options = { ...options, props }
+  updateOptions({ ...options, props })
   return wrapWith()
 }
 
@@ -93,21 +92,21 @@ const getWithNetwork =
   (responses: Response[] = []) => {
     const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-    options = {
+    updateOptions({
       ...options,
       responses: [...options.responses, ...listOfResponses],
-    }
+    })
 
     return wrapWith()
   }
 
 const getAtPath = () => (path: string) => {
-  options = { ...options, path, hasPath: true }
+  updateOptions({ ...options, path, hasPath: true })
   return wrapWith()
 }
 
 const getDebugRequest = () => () => {
-  options = { ...options, debug: true }
+  updateOptions({ ...options, debug: true })
 
   return wrapWith()
 }
