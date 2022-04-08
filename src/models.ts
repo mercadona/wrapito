@@ -1,19 +1,23 @@
 import React from 'react'
 
-interface Response {
+interface WrapRequest extends Request {
+  _bodyInit: string,
+}
+
+interface WrapResponse extends Response {
   path: string
   method?: string
-  status?: number
   host?: string
   responseBody?: object
   requestBody?: object
-  multipleResponses?: Response[]
+  multipleResponses?: WrapResponse[]
   catchParams?: boolean
   delay?: number
+  hasBeenReturned?: boolean
 }
 
 interface Wrap {
-  withNetwork: (responses: Response[]) => Wrap
+  withNetwork: (responses: WrapResponse[]) => Wrap
   atPath: (path: string) => Wrap
   withProps: (props: object) => Wrap
   debugRequests: () => Wrap
@@ -22,7 +26,7 @@ interface Wrap {
 
 interface WrapOptions {
   Component: typeof React.Component
-  responses: Response[]
+  responses: WrapResponse[]
   props: object
   path: string
   hasPath: boolean
@@ -30,7 +34,7 @@ interface WrapOptions {
 }
 
 interface WrapExtensionAPI {
-  addResponses: (responses: Response[]) => void
+  addResponses: (responses: WrapResponse[]) => void
 }
 
 type Extension = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap
@@ -57,7 +61,8 @@ interface BrowserHistory extends History {
 }
 
 export {
-  Response,
+  WrapRequest as Request,
+  WrapResponse as Response,
   Config,
   Mount,
   Component,
