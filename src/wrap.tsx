@@ -46,38 +46,38 @@ const wrapWith = (): Wrap => {
   }
 }
 
-const addResponses = () => (newResponses: Response[]) => {
+const addResponses = (newResponses: Response[]) => {
   const options = getOptions()
   const responses = [...options.responses, ...newResponses]
+
   updateOptions({ ...options, responses })
 }
 
 const applyExtension = (args: any[], extension: Extension) => {
-  const wrapExtensionAPI: WrapExtensionAPI = {
-    addResponses: addResponses(),
-  }
+  const wrapExtensionAPI: WrapExtensionAPI = { addResponses }
 
   extension(wrapExtensionAPI, args)
 
   return wrapWith()
 }
 
-const buildExtensions =
-  (extensions: Extensions) =>
-  (alreadyExtended: Extensions, extensionName: string): Extensions => {
-    const extension = extensions[extensionName]
-    return {
-      ...alreadyExtended,
-      [extensionName]: (...args: any) => applyExtension(args, extension),
-    }
+const buildExtensions = (
+  alreadyExtended: Extensions,
+  extensionName: string,
+): Extensions => {
+  const { extend: extensions } = getConfig()
+  const extension = extensions[extensionName]
+  return {
+    ...alreadyExtended,
+    [extensionName]: (...args: any) => applyExtension(args, extension),
   }
+}
 
 const extendWith = () => {
   const { extend: extensions } = getConfig()
-  if (!extensions) return {}
-
   const extensionNames = Object.keys(extensions)
-  return extensionNames.reduce(buildExtensions(extensions), {})
+
+  return extensionNames.reduce(buildExtensions, {})
 }
 
 const withProps = (props: object) => {
