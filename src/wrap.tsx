@@ -1,12 +1,11 @@
 import React from 'react'
 
 import { mockNetwork } from './mockNetwork'
-import { getConfig, Mount } from './config'
+import { getConfig } from './config'
+import { updateOptions, getOptions } from './options'
 import {
-  BrowserHistory,
   Response,
   Wrap,
-  WrapOptions,
   WrapExtensionAPI,
   Extension,
   Extensions,
@@ -22,122 +21,121 @@ afterEach(() => {
 })
 
 const wrap = (Component: typeof React.Component): Wrap => {
-  const options = {
-    Component,
+  updateOptions({
+    Component: Component,
     responses: [],
     props: {},
     path: '',
     hasPath: false,
     debug: process.env.npm_config_debugRequests === 'true',
-  }
+  })
 
-  return wrapWith(options)
+  return wrapWith()
 }
 
-const wrapWith = (options: WrapOptions): Wrap => {
-  const { extend, portal, changeRoute, history, mount } = getConfig()
-  const extensions = extendWith(extend, options)
+const wrapWith = (): Wrap => {
+  const extensions = extendWith()
 
   return {
-    withProps: getWithProps(options),
-    withNetwork: getWithNetwork(options),
-    atPath: getAtPath(options),
-    debugRequests: getDebugRequest(options),
-    mount: getMount(options, mount, changeRoute, history, portal),
+    withProps,
+    withNetwork,
+    atPath,
+    debugRequests,
+    mount: getMount,
     ...extensions,
   }
 }
 
-const addResponses = (options: WrapOptions) => (responses: Response[]) => {
-  options.responses = [...options.responses, ...responses]
+const addResponses = (newResponses: Response[]) => {
+  const options = getOptions()
+  const responses = [...options.responses, ...newResponses]
+
+  updateOptions({ ...options, responses })
 }
 
-const applyExtension = (
-  options: WrapOptions,
-  args: any[],
-  extension: Extension,
-) => {
-  const wrapExtensionAPI: WrapExtensionAPI = {
-    addResponses: addResponses(options),
-  }
+const applyExtension = (args: any[], extension: Extension) => {
+  const wrapExtensionAPI: WrapExtensionAPI = { addResponses }
+
   extension(wrapExtensionAPI, args)
-  return wrapWith(options)
+
+  return wrapWith()
 }
 
-const buildExtensions =
-  (extensions: Extensions, options: WrapOptions) =>
-  (alreadyExtended: Extensions, extensionName: string): Extensions => {
-    const extension = extensions[extensionName]
-    return {
-      ...alreadyExtended,
-      [extensionName]: (...args: any) =>
-        applyExtension(options, args, extension),
-    }
+const buildExtensions = (
+  alreadyExtended: Extensions,
+  extensionName: string,
+): Extensions => {
+  const { extend: extensions } = getConfig()
+  const extension = extensions[extensionName]
+  return {
+    ...alreadyExtended,
+    [extensionName]: (...args: any) => applyExtension(args, extension),
   }
+}
 
-const extendWith = (extensions: Extensions, options: WrapOptions) => {
-  if (!extensions) return {}
-
+const extendWith = () => {
+  const { extend: extensions } = getConfig()
   const extensionNames = Object.keys(extensions)
-  return extensionNames.reduce(buildExtensions(extensions, options), {})
+
+  return extensionNames.reduce(buildExtensions, {})
 }
 
-const getWithProps = (options: WrapOptions) => (props: object) => {
-  return wrapWith({ ...options, props })
+const withProps = (props: object) => {
+  const options = getOptions()
+  updateOptions({ ...options, props })
+  return wrapWith()
 }
 
-const getWithNetwork =
-  (options: WrapOptions) =>
-  (responses: Response[] = []) => {
-    const listOfResponses = Array.isArray(responses) ? responses : [responses]
+const withNetwork = (responses: Response[] = []) => {
+  const options = getOptions()
+  const listOfResponses = Array.isArray(responses) ? responses : [responses]
 
-    return wrapWith({
-      ...options,
-      responses: [...options.responses, ...listOfResponses],
-    })
+  updateOptions({
+    ...options,
+    responses: [...options.responses, ...listOfResponses],
+  })
+
+  return wrapWith()
+}
+
+const atPath = (path: string) => {
+  const options = getOptions()
+  updateOptions({ ...options, path, hasPath: true })
+  return wrapWith()
+}
+
+const debugRequests = () => {
+  const options = getOptions()
+  updateOptions({ ...options, debug: true })
+  return wrapWith()
+}
+
+const getMount = () => {
+  const { portal, changeRoute, history, mount } = getConfig()
+  const { Component, props, responses, path, hasPath, debug } = getOptions()
+
+  if (portal) {
+    setupPortal(portal)
   }
 
-const getAtPath = (options: WrapOptions) => (path: string) => {
-  return wrapWith({ ...options, path, hasPath: true })
-}
-
-const getDebugRequest = (options: WrapOptions) => () => {
-  return wrapWith({ ...options, debug: true })
-}
-
-const getMount =
-  (
-    options: WrapOptions,
-    mount: Mount,
-    changeRoute: (path: string) => void,
-    history?: BrowserHistory,
-    portal?: string,
-  ) =>
-  () => {
-    const { Component, props, responses, path, hasPath, debug } = options
-
-    if (portal) {
-      setupPortal(portal)
-    }
-
-    if (hasPath && history) {
-      console.warn(
-        'wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.',
-      )
-      console.warn(
-        'Read about changeRoute in: https://github.com/mercadona/wrapito#changeRoute',
-      )
-      history.push(path)
-    }
-
-    if (hasPath && !history) {
-      changeRoute(path)
-    }
-
-    mockNetwork(responses, debug)
-
-    return mount(<Component {...props} />)
+  if (hasPath && history) {
+    console.warn(
+      'wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.',
+    )
+    console.warn(
+      'Read about changeRoute in: https://github.com/mercadona/wrapito#changeRoute',
+    )
+    history.push(path)
   }
+
+  if (hasPath && !history) {
+    changeRoute(path)
+  }
+
+  mockNetwork(responses, debug)
+
+  return mount(<Component {...props} />)
+}
 
 const setupPortal = (portalRootId: string) => {
   if (document.getElementById(portalRootId)) {
