@@ -9,8 +9,19 @@ import {
   haveBeenFetchedSuccessMessage,
 } from './messages'
 
-const findRequestsByPath = path =>
-  fetch.mock.calls.filter(call => call[0].url.includes(path))
+const findRequestsByPath = expectedPath =>
+  fetch.mock.calls.filter(call => {
+    const callURL = new URL(call[0].url, "https://default.com")
+    const expectedURL = new URL(expectedPath, "https://default.com")
+    const matchPathName = callURL.pathname === expectedURL.pathname
+    const matchSearchParams = callURL.search === expectedURL.search
+
+    if (expectedURL.search) {
+      return matchPathName && matchSearchParams
+    }
+
+    return matchPathName
+  })
 
 const getRequestsMethods = requests =>
   requests.map(request => request[0]?.method)
