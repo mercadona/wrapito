@@ -1,4 +1,5 @@
 import deepEqual from 'deep-equal'
+import { getConfig } from '../config'
 import {
   emptyErrorMessage,
   fetchLengthErrorMessage,
@@ -11,8 +12,10 @@ import {
 
 const findRequestsByPath = expectedPath =>
   fetch.mock.calls.filter(call => {
+    const { defaultHost } = getConfig()
     const callURL = new URL(call[0].url, "https://default.com")
-    const expectedURL = new URL(expectedPath, "https://default.com")
+    const finalExpectedPath = expectedPath.includes(defaultHost) ? expectedPath : defaultHost + expectedPath
+    const expectedURL = new URL(finalExpectedPath, "https://default.com")
     const matchPathName = callURL.pathname === expectedURL.pathname
     const matchSearchParams = callURL.search === expectedURL.search
 
