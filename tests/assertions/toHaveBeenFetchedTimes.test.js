@@ -1,4 +1,4 @@
-import { assertions } from '../../src'
+import { assertions, configure } from '../../src'
 
 expect.extend(assertions)
 
@@ -40,6 +40,32 @@ describe('toHaveBeenFetchedTimes', () => {
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1)
+  })
+
+  it('should match the url when the default host is defined for wrapito', async () => {
+    const DEFAULT_HOST = '/api'
+    configure({ defaultHost: DEFAULT_HOST})
+
+    const path = `//some-domain.com${DEFAULT_HOST}/some/path/`
+    const expectedPath = '/some/path/'
+
+    await fetch(new Request(path))
+
+    expect(expectedPath).toHaveBeenFetchedTimes(1)
+    configure({ defaultHost: ''})
+  })
+
+  it('should match the url when the default host is defined for wrapito and in the expected path', async () => {
+    const DEFAULT_HOST = '/api'
+    configure({ defaultHost: DEFAULT_HOST})
+
+    const path = `//some-domain.com${DEFAULT_HOST}/some/path/`
+    const expectedPath = '/api/some/path/'
+
+    await fetch(new Request(path))
+
+    expect(expectedPath).toHaveBeenFetchedTimes(1)
+    configure({ defaultHost: ''})
   })
 
   it('should check that the path has not been called', async () => {
