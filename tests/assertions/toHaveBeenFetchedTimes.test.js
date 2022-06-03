@@ -52,6 +52,7 @@ describe('toHaveBeenFetchedTimes', () => {
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1)
+    configure({ defaultHost: ''})
   })
 
   it('should match the url when the default host is defined for wrapito and in the expected path', async () => {
