@@ -95,13 +95,8 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   fetch.mockImplementation(request => mockFetch(responses, request, debug))
 }
 
-const printMultipleResponsesWarning = (responses: Response) => {
-  // @ts-ignore
-  const usedResponses = responses.multipleResponses.map(
-    response => response.responseBody,
-  )
-
-  const errorMessage = `Missing response in multiple responses for path ${responses.path} and method ${responses.method}`
+const printMultipleResponsesWarning = (response: Response) => {
+  const errorMessage = `Missing response in the multipleResponses array for path ${response.path} and method ${response.method}.`
   const formatedErrorMessage = chalk.greenBright(errorMessage)
 
   console.warn(formatedErrorMessage)

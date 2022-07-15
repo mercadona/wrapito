@@ -89,12 +89,9 @@ it('should warn about the code making a request that has not being mocked enough
 
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining(
-      'Missing response in multiple responses for path /path/to/save/ and method post',
+      'Missing response in the multipleResponses array for path /path/to/save/ and method post.',
     ),
   )
-  // expect(consoleWarn).toHaveBeenCalledWith(
-  //   expect.stringContaining(`responses: ${multipleResponsesString}`),
-  // )
 })
 
 describe('when no using withNetwork builder', () => {
