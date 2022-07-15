@@ -28,12 +28,7 @@ const createDefaultResponse = async () => {
 }
 
 const createResponse = async (mockResponse: Response) => {
-  const {
-    responseBody,
-    status = 200,
-    headers,
-    delay,
-  } = mockResponse
+  const { responseBody, status = 200, headers, delay } = mockResponse
   const response = {
     json: () => Promise.resolve(responseBody),
     status,
@@ -61,20 +56,12 @@ ${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
  `)
 }
 
-
-const printPerro = (responses: Response) => {
-      // @ts-ignore
-  const usedResponses = responses.multipleResponses.map((response) => response.responseBody)
-  
-  return console.warn(`${chalk.greenBright(`Missing response in multiple responses`)}
-  ${chalk.greenBright(`respones: ${JSON.stringify(usedResponses)}`)}
-}`)
-}
-
-const mockFetch = async (responses: Response[], request: Request, debug: boolean) => {
-  const responseMatchingRequest = responses.find(
-    getRequestMatcher(request),
-  )
+const mockFetch = async (
+  responses: Response[],
+  request: Request,
+  debug: boolean,
+) => {
+  const responseMatchingRequest = responses.find(getRequestMatcher(request))
 
   if (!responseMatchingRequest) {
     if (debug) {
@@ -94,10 +81,10 @@ const mockFetch = async (responses: Response[], request: Request, debug: boolean
   )
 
   if (!responseNotYetReturned) {
-    printPerro(responseMatchingRequest)
+    printMultipleResponsesWarning(responseMatchingRequest)
     return
   }
-  
+
   responseNotYetReturned.hasBeenReturned = true
   return createResponse(responseNotYetReturned)
 }
@@ -106,6 +93,18 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   const fetch = global.window.fetch
 
   fetch.mockImplementation(request => mockFetch(responses, request, debug))
+}
+
+const printMultipleResponsesWarning = (responses: Response) => {
+  // @ts-ignore
+  const usedResponses = responses.multipleResponses.map(
+    response => response.responseBody,
+  )
+
+  const errorMessage = `Missing response in multiple responses for path ${responses.path} and method ${responses.method}`
+  const formatedErrorMessage = chalk.greenBright(errorMessage)
+
+  console.warn(formatedErrorMessage)
 }
 
 export { mockNetwork }

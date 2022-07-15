@@ -76,27 +76,25 @@ it('should warn about the code making a request that has not being mocked enough
       host: 'my-host',
       path: '/path/to/save/',
       method: 'post',
-      multipleResponses: [
-        { responseBody: { name: 'Sam' } },
-      ],
+      multipleResponses: [{ responseBody: { name: 'Sam' } }],
     })
     .debugRequests()
     .mount()
 
-    fireEvent.click(screen.getByText('save'))
-    await screen.findByText('Sam')
+  fireEvent.click(screen.getByText('save'))
+  await screen.findByText('Sam')
 
-    fireEvent.click(screen.getByText('save'))
-    const multipleResponsesString = JSON.stringify([
-      { name: 'Sam' },
-    ])
+  fireEvent.click(screen.getByText('save'))
+  const multipleResponsesString = JSON.stringify([{ name: 'Sam' }])
 
   expect(consoleWarn).toHaveBeenCalledWith(
-    expect.stringContaining('Missing response in multiple responses'),
+    expect.stringContaining(
+      'Missing response in multiple responses for path /path/to/save/ and method post',
+    ),
   )
-  expect(consoleWarn).toHaveBeenCalledWith(
-    expect.stringContaining(`responses: ${multipleResponsesString}`),
-  )  
+  // expect(consoleWarn).toHaveBeenCalledWith(
+  //   expect.stringContaining(`responses: ${multipleResponsesString}`),
+  // )
 })
 
 describe('when no using withNetwork builder', () => {
