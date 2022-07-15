@@ -61,6 +61,16 @@ ${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
  `)
 }
 
+
+const printPerro = (responses: Response) => {
+      // @ts-ignore
+  const usedResponses = responses.multipleResponses.map((response) => response.responseBody)
+  
+  return console.warn(`${chalk.greenBright(`Missing response in multiple responses`)}
+  ${chalk.greenBright(`respones: ${JSON.stringify(usedResponses)}`)}
+}`)
+}
+
 const mockFetch = async (responses: Response[], request: Request, debug: boolean) => {
   const responseMatchingRequest = responses.find(
     getRequestMatcher(request),
@@ -82,8 +92,12 @@ const mockFetch = async (responses: Response[], request: Request, debug: boolean
   const responseNotYetReturned = multipleResponses.find(
     (response: Response) => !response.hasBeenReturned,
   )
-  if (!responseNotYetReturned) return
 
+  if (!responseNotYetReturned) {
+    printPerro(responseMatchingRequest)
+    return
+  }
+  
   responseNotYetReturned.hasBeenReturned = true
   return createResponse(responseNotYetReturned)
 }

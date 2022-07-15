@@ -285,6 +285,7 @@ export const MyComponentWithFeedback = () => {
     })
 
     const response = await fetch(request)
+    if(!response) return
     const { name } = await response.json()
     setFeedback(name)
   }
