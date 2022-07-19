@@ -88,7 +88,7 @@ it('should warn about the code making a request that has not being mocked enough
 
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining(
-      'Missing response in the multipleResponses array for path /path/to/save/ and method post.',
+      '🌯 Wrapito:  Missing response in the multipleResponses array for path /path/to/save/ and method post.',
     ),
   )
 })

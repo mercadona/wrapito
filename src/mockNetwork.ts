@@ -98,7 +98,7 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
 }
 
 const printMultipleResponsesWarning = (response: Response) => {
-  const errorMessage = `Missing response in the multipleResponses array for path ${response.path} and method ${response.method}.`
+  const errorMessage = `🌯 Wrapito:  Missing response in the multipleResponses array for path ${response.path} and method ${response.method}.`
   const formattedErrorMessage = chalk.greenBright(errorMessage)
 
   console.warn(formattedErrorMessage)
