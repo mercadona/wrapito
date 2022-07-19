@@ -81,7 +81,9 @@ const mockFetch = async (
   )
 
   if (!responseNotYetReturned) {
-    printMultipleResponsesWarning(responseMatchingRequest)
+    if (debug) {
+      printMultipleResponsesWarning(responseMatchingRequest)
+    }
     return
   }
 
