@@ -85,7 +85,6 @@ it('should warn about the code making a request that has not being mocked enough
   await screen.findByText('Sam')
 
   fireEvent.click(screen.getByText('save'))
-  const multipleResponsesString = JSON.stringify([{ name: 'Sam' }])
 
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining(
