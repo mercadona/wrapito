@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { render, cleanup, screen } from '@testing-library/react'
+import { render, cleanup, screen, fireEvent } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
+import { MyComponentWithFeedback } from './components.mock'
 
 configure({ defaultHost: 'my-host', mount: render })
 
@@ -64,6 +65,31 @@ it('should warn about the code making a request that has not being mocked', asyn
   )
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining('REQUEST BODY: {"id":1}'),
+  )
+})
+
+it('should warn about the code making a request that has not being mocked enough times', async () => {
+  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  configure({ mount: render })
+  wrap(MyComponentWithFeedback)
+    .withNetwork({
+      host: 'my-host',
+      path: '/path/to/save/',
+      method: 'post',
+      multipleResponses: [{ responseBody: { name: 'Sam' } }],
+    })
+    .debugRequests()
+    .mount()
+
+  fireEvent.click(screen.getByText('save'))
+  await screen.findByText('Sam')
+
+  fireEvent.click(screen.getByText('save'))
+
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining(
+      '🌯 Wrapito:  Missing response in the multipleResponses array for path /path/to/save/ and method post.',
+    ),
   )
 })
 
