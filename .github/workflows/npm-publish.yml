@@ -20,6 +20,11 @@ jobs:
       - run: npm run publish-package
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -28,7 +33,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ''
+          body: ${{steps.github_release.outputs.changelog}}
           draft: false
           prerelease: false
 
