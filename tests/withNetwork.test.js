@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { wrap, configure } from '../src/index'
 
@@ -186,4 +187,15 @@ it('should not ignore the query params when is specified and it is configured', 
     .mount()
 
   expect(await screen.findByText('quantity: 15')).toBeInTheDocument()
+})
+
+it('should handle fetch requests when a string is passed', async () => {
+  configure({ mount: render })
+  wrap(() => <div></div>).withNetwork([
+    { path: '/foo/bar', responseBody: { foo: 'bar'} }
+  ]).mount()
+
+  const response = await fetch('/foo/bar').then((response) => response.json())
+
+  expect(response).toEqual({ foo: 'bar' })
 })
