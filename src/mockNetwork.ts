@@ -94,7 +94,7 @@ const mockFetch = async (
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   const fetch = global.window.fetch
 
-  fetch.mockImplementation(request => {
+  fetch.mockImplementation((request: WrapRequest) => {
     if (typeof request === 'string') {
       const createdRequest = new Request(request, { method: 'GET' })
       return mockFetch(responses, createdRequest, debug)
