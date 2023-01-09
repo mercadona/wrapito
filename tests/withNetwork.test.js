@@ -190,8 +190,10 @@ it('should not ignore the query params when is specified and it is configured', 
 })
 
 it('should handle fetch requests when a string is passed', async () => {
+  const MyComponent = () => null
   configure({ mount: render })
-  wrap(() => <div></div>).withNetwork([
+
+  wrap(MyComponent).withNetwork([
     { path: '/foo/bar', responseBody: { foo: 'bar'} }
   ]).mount()
 
