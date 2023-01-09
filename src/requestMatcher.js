@@ -20,15 +20,6 @@ const getRequestMatcher = request => mockedRequest => {
     requestBody: requestBody,
   })
 
-  if (typeof request === 'string') {
-    const requestHash = hash({
-      url: isQueryParamsSensitive ? request : request.split('?')[0],
-      method: 'GET',
-      requestBody: undefined,
-    })
-    return requestHash === mockedRequestHash
-  }
-
   const hasBody = !!request._bodyInit
   const requestHash = hash({
     url: isQueryParamsSensitive ? request.url : request.url.split('?')[0],
