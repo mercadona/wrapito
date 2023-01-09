@@ -1,3 +1,4 @@
+import axios from 'axios/lib/axios'
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
@@ -14,6 +15,14 @@ export const MyComponentWithProps = props => (
 
 export const MyComponentWithPortal = ({ children }) =>
   createPortal(children, document.getElementById('portal-root-id'))
+
+export const Ramon = () => {
+  useEffect(() => {
+    axios.get('/foo/bar')
+  }, [])
+
+  return null
+}
 
 export class MyComponentMakingHttpCalls extends Component {
   state = {

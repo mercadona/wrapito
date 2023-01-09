@@ -13,6 +13,7 @@ import {
 
 beforeEach(() => {
   global.fetch = jest.fn()
+  global.XMLHttpRequest = jest.fn() as jest.MockedFunction<any>
 })
 
 afterEach(() => {
