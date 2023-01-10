@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { Response, Request } from './models'
+import { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
 
 declare global {
@@ -45,7 +45,7 @@ const createResponse = async (mockResponse: Response) => {
   )
 }
 
-const printRequest = (request: Request) => {
+const printRequest = (request: WrapRequest) => {
   return console.warn(`
 ${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
     'cannot find any mock matching:',
@@ -58,7 +58,7 @@ ${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
 
 const mockFetch = async (
   responses: Response[],
-  request: Request,
+  request: WrapRequest,
   debug: boolean,
 ) => {
   const responseMatchingRequest = responses.find(getRequestMatcher(request))
@@ -94,7 +94,14 @@ const mockFetch = async (
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   const fetch = global.window.fetch
 
-  fetch.mockImplementation(request => mockFetch(responses, request, debug))
+  fetch.mockImplementation((request: WrapRequest) => {
+    if (typeof request === 'string') {
+      const createdRequest = new Request(request, { method: 'GET' })
+      return mockFetch(responses, createdRequest, debug)
+    }
+
+    return mockFetch(responses, request, debug)
+  })
 }
 
 const printMultipleResponsesWarning = (response: Response) => {

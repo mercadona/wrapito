@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface WrapRequest extends Request {
-  _bodyInit: string,
+  _bodyInit?: string
 }
 
 interface WrapResponse extends Response {
@@ -61,7 +61,7 @@ interface BrowserHistory extends History {
 }
 
 export {
-  WrapRequest as Request,
+  WrapRequest,
   WrapResponse as Response,
   Config,
   Mount,
