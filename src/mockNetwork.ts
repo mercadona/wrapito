@@ -11,7 +11,9 @@ declare global {
 
 beforeEach(() => {
   global.window.fetch = jest.fn()
-  global.window.XMLHttpRequest = jest.fn() as jest.MockedFunction<any>
+  global.window.XMLHttpRequest = jest.fn() as jest.MockedClass<
+    typeof global.window.XMLHttpRequest
+  >
 })
 
 afterEach(() => {
