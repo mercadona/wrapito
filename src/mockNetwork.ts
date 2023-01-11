@@ -21,6 +21,45 @@ afterEach(() => {
   global.window.XMLHttpRequest.mockRestore()
 })
 
+class XHRMock {
+  responses: Response[] = []
+  method: string = ''
+  url: string = ''
+  status: number = 200
+  readyState: number = 0
+  response: any | undefined
+  _onreadystatechange: () => void = () => null
+
+  constructor(responses: Response[]) {
+    this.responses = responses
+  }
+
+  open(method: string, url: string) {
+    this.method = method
+    this.url = url
+  }
+
+  send() {
+    const request = {
+      method: this.method,
+      url: this.url,
+    }
+
+    const responseMatchingRequest = this.responses.find(
+      getRequestMatcher(request),
+    )
+
+    this.status = responseMatchingRequest?.status || 200
+    this.response = responseMatchingRequest?.responseBody
+    this.readyState = 4
+    this._onreadystatechange()
+  }
+
+  set onreadystatechange(fn: () => void) {
+    this._onreadystatechange = fn
+  }
+}
+
 const createDefaultResponse = async () => {
   const response = {
     json: () => Promise.resolve(),
@@ -96,32 +135,6 @@ const mockFetch = async (
   return createResponse(responseNotYetReturned)
 }
 
-const mockXHR = (responses: Response[]) => {
-  let _method: string
-  let _url: string
-
-  const xhr: any = {
-    open: (method: string, url: string) => {
-      _method = method
-      _url = url
-    },
-    send: () => {
-      const request = {
-        method: _method,
-        url: _url,
-      }
-
-      const responseMatchingRequest = responses.find(getRequestMatcher(request))
-
-      xhr.status = responseMatchingRequest?.status || 200
-      xhr.response = responseMatchingRequest?.responseBody
-      xhr.readyState = 4
-      xhr.onreadystatechange && xhr.onreadystatechange()
-    },
-  }
-  return xhr
-}
-
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   const fetch = global.window.fetch
 
@@ -135,7 +148,7 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   })
 
   const XMLHttpRequest = global.window.XMLHttpRequest
-  XMLHttpRequest.mockImplementation(() => mockXHR(responses))
+  XMLHttpRequest.mockImplementation(() => new XHRMock(responses))
 }
 
 const printMultipleResponsesWarning = (response: Response) => {
