@@ -189,7 +189,7 @@ it('should not ignore the query params when is specified and it is configured', 
   expect(await screen.findByText('quantity: 15')).toBeInTheDocument()
 })
 
-it('should handle fetch requests when a string is passed', async () => {
+it('should handle fetch deafult requests when a string is passed', async () => {
   const MyComponent = () => null
   configure({ mount: render })
 
@@ -198,6 +198,19 @@ it('should handle fetch requests when a string is passed', async () => {
   ]).mount()
 
   const response = await fetch('/foo/bar').then((response) => response.json())
+
+  expect(response).toEqual({ foo: 'bar' })
+})
+
+it('should handle fetch requests with option when a string is passed', async () => {
+  const MyComponent = () => null
+  configure({ mount: render })
+
+  wrap(MyComponent).withNetwork([
+    { path: '/foo/bar', method: 'POST', responseBody: { foo: 'bar'} }
+  ]).mount()
+
+  const response = await fetch('/foo/bar', { method: 'POST' }).then((response) => response.json())
 
   expect(response).toEqual({ foo: 'bar' })
 })
