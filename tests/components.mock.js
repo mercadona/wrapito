@@ -16,14 +16,6 @@ export const MyComponentWithProps = props => (
 export const MyComponentWithPortal = ({ children }) =>
   createPortal(children, document.getElementById('portal-root-id'))
 
-export const Ramon = () => {
-  useEffect(() => {
-    axios.get('/foo/bar')
-  }, [])
-
-  return null
-}
-
 export class MyComponentMakingHttpCalls extends Component {
   state = {
     quantity: 0,
