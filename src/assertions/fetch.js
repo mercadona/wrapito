@@ -10,12 +10,16 @@ import {
   haveBeenFetchedSuccessMessage,
 } from './messages'
 
-const findRequestsByPath = expectedPath =>
+const findRequestsByPath = (expectedPath, options) =>
   fetch.mock.calls.filter(call => {
-    const { defaultHost } = getConfig()
-    const callURL = new URL(call[0].url, "https://default.com")
-    const finalExpectedPath = expectedPath.includes(defaultHost) ? expectedPath : defaultHost + expectedPath
-    const expectedURL = new URL(finalExpectedPath, "https://default.com")
+    const defaultHost = getConfig().defaultHost || 'https://default.com'
+    const url = call[0] instanceof Request ? call[0].url : call[0]
+    const callURL = new URL(url, defaultHost)
+    const host = options?.host || ''
+    const finalExpectedPath = expectedPath.includes(defaultHost)
+      ? expectedPath
+      : host + expectedPath
+    const expectedURL = new URL(finalExpectedPath, defaultHost)
     const matchPathName = callURL.pathname === expectedURL.pathname
     const matchSearchParams = callURL.search === expectedURL.search
 
@@ -68,7 +72,7 @@ const toHaveBeenFetchedWith = (path, options) => {
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
-  if(!expectedBody) return doesNotHaveBodyErrorMessage()
+  if (!expectedBody) return doesNotHaveBodyErrorMessage()
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
     return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
@@ -77,9 +81,11 @@ const toHaveBeenFetchedWith = (path, options) => {
   return successMessage()
 }
 
-const toHaveBeenFetched = path => {
-  const requests = findRequestsByPath(path)
-  return !requests.length ? emptyErrorMessage(path) : haveBeenFetchedSuccessMessage(path)
+const toHaveBeenFetched = (path, options) => {
+  const requests = findRequestsByPath(path, options)
+  return !requests.length
+    ? emptyErrorMessage(path)
+    : haveBeenFetchedSuccessMessage(path)
 }
 
 const toHaveBeenFetchedTimes = (path, expectedLength) => {
