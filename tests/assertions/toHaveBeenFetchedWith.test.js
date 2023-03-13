@@ -30,15 +30,15 @@ describe('toHaveBeenFetchedWith', () => {
   })
 
   describe('request body', () => {
-  it('should check that the request has body', async () => {
-    const path = '//some-domain.com/some/path/'
+    it('should check that the request has body', async () => {
+      const path = '//some-domain.com/some/path/'
 
-    await fetch(new Request(path))
-    const { message, pass } = await assertions.toHaveBeenFetchedWith(path)
+      await fetch(new Request(path))
+      const { message, pass } = await assertions.toHaveBeenFetchedWith(path)
 
-    expect(message()).toBe('🌯 Wrapito: Unable to find body.')
-    expect(pass).toBe(false)
-  })
+      expect(message()).toBe('🌯 Wrapito: Unable to find body.')
+      expect(pass).toBe(false)
+    })
 
     it('should check that the path has been called with the supplied body', async () => {
       const path = '//some-domain.com/some/path/'
@@ -153,10 +153,10 @@ describe('toHaveBeenFetchedWith', () => {
       expect(message()).toBe(
         `🌯 Wrapito: Fetch body does not match.
 Expected:
-${ green(JSON.stringify(expectedBody, null, ' ')) }
+${green(JSON.stringify(expectedBody, null, ' '))}
 
 Received:
-${ red(JSON.stringify([receivedBody], null, ' ')) }`,
+${red(JSON.stringify([receivedBody], null, ' '))}`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
@@ -167,7 +167,7 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
       const path = '//some-domain.com/some/path/'
-      const body = {method: 'POST'}
+      const body = { method: 'POST' }
 
       await fetch(new Request(path, body))
       const { message } = await assertions.toHaveBeenFetchedWith(path, {
@@ -245,10 +245,12 @@ ${ red(JSON.stringify([receivedBody], null, ' ')) }`,
       const request = new Request(path, { method: 'POST' })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, { body: {}})
+      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+        body: {},
+      })
 
       expect(message()).toBeUndefined()
-      expect(path).toHaveBeenFetchedWith({ body: {}})
+      expect(path).toHaveBeenFetchedWith({ body: {} })
     })
   })
 })
