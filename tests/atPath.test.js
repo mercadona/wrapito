@@ -62,3 +62,10 @@ it('should render an app with a routing logic between pages', () => {
 
   expect(container).toHaveTextContent('Categories')
 })
+
+it('should render an app with a location state', async () =>{
+  configure({ history })
+  wrap(MyAppWithRouting).atPath('/page-using-location-state', {title: "title"}).mount()
+
+  expect(await screen.findByText('title')).toBeInTheDocument()
+}) 

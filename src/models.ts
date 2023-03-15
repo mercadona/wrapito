@@ -18,7 +18,7 @@ interface WrapResponse extends Response {
 
 interface Wrap {
   withNetwork: (responses: WrapResponse[]) => Wrap
-  atPath: (path: string) => Wrap
+  atPath: (path: string, state: object) => Wrap
   withProps: (props: object) => Wrap
   debugRequests: () => Wrap
   mount: () => object
@@ -29,6 +29,7 @@ interface WrapOptions {
   responses: WrapResponse[]
   props: object
   path: string
+  state?: object
   hasPath: boolean
   debug: boolean
 }
@@ -57,7 +58,7 @@ interface Config {
 }
 
 interface BrowserHistory extends History {
-  push: (path: string) => void
+  push: (path: string, state?: object) => void
 }
 
 export {
