@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { Router, BrowserRouter, Switch, Route } from 'react-router-dom'
+import { Router, BrowserRouter, Switch, Route, useLocation } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
@@ -73,6 +73,17 @@ const Categories = () => {
   return <div>Categories</div>
 }
 
+const PageUsingLocationState = () => {
+  const [title, setTitle] = useState()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state) setTitle(location.state.title)
+  },[location.state])
+
+  return <div>{title}</div>
+}
+
 export const history = createBrowserHistory()
 
 export const MyAppWithRouting = () => {
@@ -85,6 +96,12 @@ export const MyAppWithRouting = () => {
           path="/categories"
           component={ Categories }
           exact={ true }
+        />
+        <Route 
+          component={ PageUsingLocationState } 
+          key="page-using-location-state" 
+          path="/page-using-location-state" 
+          exact={true}
         />
       </Switch>
     </Router>
