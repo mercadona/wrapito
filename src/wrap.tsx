@@ -98,9 +98,9 @@ const withNetwork = (responses: Response[] = []) => {
   return wrapWith()
 }
 
-const atPath = (path: string, state: object) => {
+const atPath = (path: string, historyState: object) => {
   const options = getOptions()
-  updateOptions({ ...options, state, path, hasPath: true })
+  updateOptions({ ...options, historyState, path, hasPath: true })
   return wrapWith()
 }
 
@@ -112,7 +112,7 @@ const debugRequests = () => {
 
 const getMount = () => {
   const { portal, changeRoute, history, mount } = getConfig()
-  const { Component, props, responses, path, hasPath, debug, state } = getOptions()
+  const { Component, props, responses, path, hasPath, debug, historyState } = getOptions()
 
   if (portal) {
     setupPortal(portal)
@@ -125,7 +125,7 @@ const getMount = () => {
     console.warn(
       'Read about changeRoute in: https://github.com/mercadona/wrapito#changeRoute',
     )
-    history.push(path, state)
+    history.push(path, historyState)
   }
 
   if (hasPath && !history) {
