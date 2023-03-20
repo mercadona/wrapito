@@ -43,29 +43,31 @@ describe('toHaveBeenFetchedTimes', () => {
   })
 
   it('should match the url when the default host is defined for wrapito', async () => {
-    const DEFAULT_HOST = '/api'
-    configure({ defaultHost: DEFAULT_HOST})
+    const DEFAULT_HOST = 'https://some-domain.com/api'
+    configure({ defaultHost: DEFAULT_HOST })
+    const options = { host: 'https://some-domain.com/api' }
 
-    const path = `//some-domain.com${DEFAULT_HOST}/some/path/`
+    const path = `${DEFAULT_HOST}/some/path/`
     const expectedPath = '/some/path/'
 
     await fetch(new Request(path))
 
-    expect(expectedPath).toHaveBeenFetchedTimes(1)
-    configure({ defaultHost: ''})
+    expect(expectedPath).toHaveBeenFetchedTimes(1, options)
+    configure({ defaultHost: '' })
   })
 
   it('should match the url when the default host is defined for wrapito and in the expected path', async () => {
-    const DEFAULT_HOST = '/api'
-    configure({ defaultHost: DEFAULT_HOST})
+    const DEFAULT_HOST = 'https://some-domain.com'
+    configure({ defaultHost: DEFAULT_HOST })
+    const options = { host: 'https://some-domain.com' }
 
-    const path = `//some-domain.com${DEFAULT_HOST}/some/path/`
+    const path = `${DEFAULT_HOST}/api/some/path/`
     const expectedPath = '/api/some/path/'
 
     await fetch(new Request(path))
 
-    expect(expectedPath).toHaveBeenFetchedTimes(1)
-    configure({ defaultHost: ''})
+    expect(expectedPath).toHaveBeenFetchedTimes(1, options)
+    configure({ defaultHost: '' })
   })
 
   it('should check that the path has not been called', async () => {

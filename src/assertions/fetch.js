@@ -88,8 +88,8 @@ const toHaveBeenFetched = (path, options) => {
     : haveBeenFetchedSuccessMessage(path)
 }
 
-const toHaveBeenFetchedTimes = (path, expectedLength) => {
-  const requests = findRequestsByPath(path)
+const toHaveBeenFetchedTimes = (path, expectedLength, options) => {
+  const requests = findRequestsByPath(path, options)
   return requests.length !== expectedLength
     ? fetchLengthErrorMessage(path, expectedLength, requests.length)
     : successMessage()
