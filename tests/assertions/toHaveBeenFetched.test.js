@@ -25,7 +25,7 @@ describe('toHaveBeenFetched', () => {
     expect(expectedPath).not.toHaveBeenFetched()
   })
 
-  fit('should check that the path has been called without new Request', async () => {
+  it('should check that the path has been called without new Request', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
 
@@ -36,7 +36,7 @@ describe('toHaveBeenFetched', () => {
     expect(expectedPath).toHaveBeenFetched()
   })
 
-  fit('should check that the path has been called with custom host', async () => {
+  it('should check that the path has been called with custom host', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
     configure({
