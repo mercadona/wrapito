@@ -11,15 +11,12 @@ import {
 } from './messages'
 
 const findRequestsByPath = (expectedPath, options) =>
-  fetch.mock.calls.filter(call => {
+  fetch.mock.calls.filter(([call]) => {
     const defaultHost = getConfig().defaultHost || 'https://default.com'
-    const url = call[0] instanceof Request ? call[0].url : call[0]
+    const url = getUrl(call)
     const callURL = new URL(url, defaultHost)
-    const host = options?.host || ''
-    const finalExpectedPath = expectedPath.includes(defaultHost)
-      ? expectedPath
-      : host + expectedPath
-    const expectedURL = new URL(finalExpectedPath, defaultHost)
+    const path = getPath(options?.host, expectedPath, defaultHost)
+    const expectedURL = new URL(path, defaultHost)
     const matchPathName = callURL.pathname === expectedURL.pathname
     const matchSearchParams = callURL.search === expectedURL.search
 
@@ -30,6 +27,10 @@ const findRequestsByPath = (expectedPath, options) =>
     return matchPathName
   })
 
+const getPath = (host = '', expectedPath, defaultHost) =>
+  expectedPath.includes(defaultHost) ? expectedPath : host + expectedPath
+
+const getUrl = call => (call instanceof Request ? call.url : call)
 const getRequestsMethods = requests =>
   requests.map(request => request[0]?.method)
 

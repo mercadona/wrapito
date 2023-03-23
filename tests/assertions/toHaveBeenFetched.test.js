@@ -37,20 +37,16 @@ describe('toHaveBeenFetched', () => {
   })
 
   it('should check that the path has been called with custom host', async () => {
-    const path = '//some-domain.com/some/path/'
+    const path = '//some-perro.com/some/path/'
     const expectedPath = '/some/path/'
     configure({
       defaultHost: 'https://some-domain.com',
     })
-    const options = { host: 'https://some-domain.com' }
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(
-      expectedPath,
-      options,
-    )
+    const { message } = await assertions.toHaveBeenFetched(path)
 
     expect(message()).toBe('🌯 Wrapito: /some/path/ is called')
-    expect(expectedPath).toHaveBeenFetched(options)
+    expect(expectedPath).toHaveBeenFetched()
     configure({ defaultHost: '' })
   })
 })
