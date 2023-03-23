@@ -46,7 +46,7 @@ const successMessage = () => ({
 
 const haveBeenFetchedSuccessMessage = (path, options) => {
   const message = options?.host
-    ? `🌯 Wrapito: ${path} is called with host ${options.host}`
+    ? `🌯 Wrapito: ${options.host}${path} is called`
     : `🌯 Wrapito: ${path} is called`
   return {
     pass: true,

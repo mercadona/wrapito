@@ -49,7 +49,7 @@ describe('toHaveBeenFetched', () => {
     })
 
     expect(message()).toBe(
-      '🌯 Wrapito: /some/path/ is called with host https://other-domain.com',
+      '🌯 Wrapito: https://other-domain.com/some/path/ is called',
     )
     expect(expectedPath).toHaveBeenFetched({ host })
     configure({ defaultHost: '' })
