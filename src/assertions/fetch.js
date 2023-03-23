@@ -16,14 +16,18 @@ const findRequestsByPath = (expectedPath, options) =>
     const url = getUrl(call)
     const callURL = new URL(url, defaultHost)
     const path = getPath(options?.host, expectedPath, defaultHost)
-    const expectedURL = new URL(path, defaultHost)
+    const expectedHost = options?.host || defaultHost
+    const expectedURL = new URL(path, expectedHost)
     const matchPathName = callURL.pathname === expectedURL.pathname
     const matchSearchParams = callURL.search === expectedURL.search
 
+    const matchHost = callURL.host === expectedURL.host
     if (expectedURL.search) {
       return matchPathName && matchSearchParams
     }
-
+    if (options?.host) {
+      return matchPathName && matchHost
+    }
     return matchPathName
   })
 
@@ -85,8 +89,8 @@ const toHaveBeenFetchedWith = (path, options) => {
 const toHaveBeenFetched = (path, options) => {
   const requests = findRequestsByPath(path, options)
   return !requests.length
-    ? emptyErrorMessage(path)
-    : haveBeenFetchedSuccessMessage(path)
+    ? emptyErrorMessage(path, options)
+    : haveBeenFetchedSuccessMessage(path, options)
 }
 
 const toHaveBeenFetchedTimes = (path, expectedLength, options) => {
