@@ -12,8 +12,8 @@ import {
 
 const findRequestsByPath = (expectedPath, options) =>
   fetch.mock.calls.filter(([call]) => {
-    const defaultHost = getConfig().defaultHost || 'https://default.com'
     const url = getUrl(call)
+    const defaultHost = getDefaultHost()
     const callURL = new URL(url, defaultHost)
     const path = getPath(options?.host, expectedPath, defaultHost)
     const expectedHost = options?.host || defaultHost
@@ -30,6 +30,11 @@ const findRequestsByPath = (expectedPath, options) =>
     }
     return matchPathName
   })
+
+const getDefaultHost = () => {
+  const configuredHost = getConfig().defaultHost
+  return configuredHost?.includes('http') ? configuredHost : 'https://default.com'
+}
 
 const getPath = (host = '', expectedPath, defaultHost) =>
   expectedPath.includes(defaultHost) ? expectedPath : host + expectedPath
