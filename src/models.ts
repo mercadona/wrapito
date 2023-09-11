@@ -53,8 +53,11 @@ interface Config {
   mount: Mount
   extend: Extensions
   changeRoute: (path: string) => void
+  isVitestEnv: boolean
+  testRunner: any
   history?: BrowserHistory
   portal?: string
+  hasQueryParams?: boolean
 }
 
 interface BrowserHistory extends History {

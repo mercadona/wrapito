@@ -2,6 +2,8 @@ import { render } from 'react-dom'
 
 import { Component, Config, Mount } from './models'
 
+import { jest } from '@jest/globals'
+
 const mount = (component: Component) => {
   const rootNode = document.body.appendChild(document.createElement('div'))
 
@@ -15,6 +17,8 @@ let config: Config = {
   extend: {},
   mount,
   changeRoute: (path: string) => window.history.replaceState(null, '', path),
+  isVitestEnv: false,
+  testRunner: jest
 }
 
 function configure(newConfig: Config) {

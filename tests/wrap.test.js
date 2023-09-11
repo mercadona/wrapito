@@ -72,3 +72,13 @@ it('should use a custom mount', () => {
 
   expect(container).toHaveTextContent(expectedText)
 })
+
+
+it.only('should use a custom mount', () => {
+  configure({ mount: render, isVitestEnv: true })
+  const expectedText = 'Foo'
+
+  const { container } = wrap(MyComponent).mount()
+
+  expect(container).toHaveTextContent(expectedText)
+})

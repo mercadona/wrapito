@@ -10,14 +10,24 @@ import {
   Extension,
   Extensions,
 } from './models'
+import type { MockedFunction } from 'vitest'
+import jest from 'jest'
+
+const { isVitestEnv, testRunner } = getConfig()
 
 beforeEach(() => {
-  global.fetch = jest.fn()
+    global.fetch = testRunner.fn()
 })
 
 afterEach(() => {
-  const mockedFetch = global.fetch as jest.MockedFunction<typeof fetch>
-  mockedFetch.mockRestore()
+  if (isVitestEnv) {
+      const mockedFetch = global.fetch as MockedFunction<typeof fetch>
+      mockedFetch.mockRestore()
+  } else {
+      // @ts-ignore
+      const mockedFetch = global.fetch as jest.MockedFunction<typeof fetch>
+      mockedFetch.mockRestore()
+  }
 })
 
 const wrap = (Component: typeof React.Component): Wrap => {

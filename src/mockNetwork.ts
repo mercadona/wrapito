@@ -1,18 +1,23 @@
 import chalk from 'chalk'
+import { getConfig } from './config'
 import { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
 
-declare global {
-  interface Window {
-    fetch: jest.Mock
-  }
-}
+const { testRunner } = getConfig()
+
+// declare global {
+//   interface Window {
+//     fetch: testRunner.Mock
+//   }
+// }
 
 beforeEach(() => {
-  global.window.fetch = jest.fn()
+  // @ts-ignore
+  global.window.fetch = testRunner.fn()
 })
 
 afterEach(() => {
+  // @ts-ignore
   global.window.fetch.mockRestore()
 })
 
@@ -93,7 +98,9 @@ const mockFetch = async (
 
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
   const fetch = global.window.fetch
+  console.log(fetch)
 
+  // @ts-ignore
   fetch.mockImplementation((input: WrapRequest, init?: RequestInit) => {
     if (typeof input === 'string') {
       const request = new Request(input, init)
