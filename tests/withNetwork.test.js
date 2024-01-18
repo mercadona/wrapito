@@ -214,3 +214,16 @@ it('should handle fetch requests with option when a string is passed', async () 
 
   expect(response).toEqual({ foo: 'bar' })
 })
+
+it('should handle failed fetch requests', async () => {
+  const MyComponent = () => null
+  configure({ mount: render })
+
+  wrap(MyComponent).withNetwork([
+    { path: '/foo/bar', method: 'POST', responseBody: { foo: 'bar'}, status: 400 }
+  ]).mount()
+
+  const response = await fetch('/foo/bar', { method: 'POST' })
+
+  expect(response.ok).toBeFalsy()
+})
