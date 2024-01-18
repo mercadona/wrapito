@@ -5,16 +5,60 @@ import { getRequestMatcher } from './requestMatcher'
 declare global {
   interface Window {
     fetch: jest.Mock
+    XMLHttpRequest: jest.Mock
   }
 }
 
 beforeEach(() => {
   global.window.fetch = jest.fn()
+  global.window.XMLHttpRequest = jest.fn() as jest.MockedClass<
+    typeof global.window.XMLHttpRequest
+  >
 })
 
 afterEach(() => {
   global.window.fetch.mockRestore()
+  global.window.XMLHttpRequest.mockRestore()
 })
+
+class XHRMock {
+  responses: Response[] = []
+  method: string = ''
+  url: string = ''
+  status: number = 200
+  readyState: number = 0
+  response: any | undefined
+  _onreadystatechange: () => void = () => null
+
+  constructor(responses: Response[]) {
+    this.responses = responses
+  }
+
+  open(method: string, url: string) {
+    this.method = method
+    this.url = url
+  }
+
+  send() {
+    const request = {
+      method: this.method,
+      url: this.url,
+    }
+
+    const responseMatchingRequest = this.responses.find(
+      getRequestMatcher(request),
+    )
+
+    this.status = responseMatchingRequest?.status || 200
+    this.response = responseMatchingRequest?.responseBody
+    this.readyState = 4
+    this._onreadystatechange()
+  }
+
+  set onreadystatechange(fn: () => void) {
+    this._onreadystatechange = fn
+  }
+}
 
 const createDefaultResponse = async () => {
   const response = {
@@ -102,6 +146,9 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
     const request = input
     return mockFetch(responses, request, debug)
   })
+
+  const XMLHttpRequest = global.window.XMLHttpRequest
+  XMLHttpRequest.mockImplementation(() => new XHRMock(responses))
 }
 
 const printMultipleResponsesWarning = (response: Response) => {

@@ -18,5 +18,8 @@
   "setupFilesAfterEnv": ["<rootDir>/config/jest.setup.js"],
   "testMatch": [ "<rootDir>/tests/**/?(*.)(test).js" ],
   "moduleFileExtensions": ["js", "json", "ts", "tsx"],
-  "reporters": [ "default", "jest-junit" ]
+  "reporters": [ "default", "jest-junit" ],
+  "moduleNameMapper": {
+    "axios": "axios/dist/node/axios.cjs"
+  }
 }

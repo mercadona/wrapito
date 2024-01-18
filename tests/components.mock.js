@@ -1,3 +1,4 @@
+import axios from 'axios/lib/axios'
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'

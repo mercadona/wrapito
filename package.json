@@ -53,6 +53,7 @@
     "@types/history": "^4.7.9",
     "@types/jest": "^26.0.23",
     "@types/react": "^17.0.16",
+    "axios": "^1.2.2",
     "babel-jest": "^24.8.0",
     "jest": "^27.0.4",
     "jest-junit": "^6.4.0",
