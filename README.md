@@ -18,7 +18,7 @@ To give the mounted component context about which path is the current path where
 Using npm:
 
 ```sh
-$ npm install wrapito
+$ npm install -D wrapito
 ```
 
 ## 👩‍💻 Basic usage
