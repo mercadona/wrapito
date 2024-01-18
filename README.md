@@ -1,18 +1,21 @@
 # 🌯 wrapito
-Wrap you tests so that you can test both behaviour and components with less effort.
+Wrap your tests so that you can test both behaviour and components with less effort.
 
 ## 🎯 Motivation
-As we are more focused on user interactions than implementation details. In order to test all the user interactions that can be done at a certain point of our app, the upper the component we render in the test, the better.
+As we are more focused on user interactions than implementation details, it's better to test all the possible user interactions at a certain point in our app by rendering the higher-level components.
 
 ## 💡 The idea
 As we test our app we will be in two different scenarios where:
 - We will need to test that the user interactions cause the proper side effects such as making http calls or refreshing the UI.
 - In case we have a components library, we will need to test these by passing the needed props and checking that it returns (renders) the expected result.
 
-In general, if you want to test behaviour, you need to simulate external actions from user or from http responses.
-Most of the existing testing libraries give you control of the user actions and thats why we just ask you to set in the config what is the `render` function of your testing library.
-Unfortunately, there aren't so many options when it comes to manage http requests and responses in the tests.
-To give the mounted component context about which path is the current path where the app should be mounted, what props does the component receive, what http requests will respond with which results or where should the portal be mounted we have used the builder pattern that makes tests much more semantic.
+In general, if you want to test behaviour, you need to simulate external actions from users or from http responses.
+
+Most of the existing testing libraries give you control of the user actions and that's why we only require you to set the `render` function of your testing library in the config.
+
+Unfortunately, there aren't so many options when it comes to managing http requests and responses in tests.
+
+To provide the mounted component with context, we use the builder pattern in our tests. This approach clarifies the current path where the app should be mounted, the props received by the component, the expected results of HTTP requests, and the mounting location for the portal. This makes our tests much more semantic and understandable.
 
 ## 🔧 Installing
 Using npm:
