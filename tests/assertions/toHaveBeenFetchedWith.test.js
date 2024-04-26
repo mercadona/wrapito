@@ -25,7 +25,7 @@ describe('toHaveBeenFetchedWith', () => {
     await fetch(new Request(path))
     const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
+    expect(message()).toBe('🌯 Wrapito: /some/unknown ain\'t got called')
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 

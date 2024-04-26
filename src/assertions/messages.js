@@ -1,4 +1,5 @@
 import { diff } from 'jest-diff'
+
 const emptyErrorMessage = (path, options) => {
   const message = options?.host
     ? `🌯 Wrapito: ${options?.host}${path} ain't got called`
@@ -28,9 +29,9 @@ const bodyDoesNotMatchErrorMessage = (expected, receivedBodies) => {
     .join('\n\n')
 
   return {
-        pass: false,
-  message: () =>
-    `🌯 Wrapito: Fetch body does not match.
+    pass: false,
+    message: () =>
+      `🌯 Wrapito: Fetch body does not match.
 ${diffs}`,
   }
 }
