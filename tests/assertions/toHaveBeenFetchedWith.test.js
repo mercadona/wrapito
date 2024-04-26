@@ -1,5 +1,5 @@
 import { assertions } from '../../src'
-import { green, red } from 'chalk'
+import { diff } from 'jest-diff'
 
 expect.extend(assertions)
 
@@ -152,11 +152,7 @@ describe('toHaveBeenFetchedWith', () => {
 
       expect(message()).toBe(
         `🌯 Wrapito: Fetch body does not match.
-Expected:
-${green(JSON.stringify(expectedBody, null, ' '))}
-
-Received:
-${red(JSON.stringify([receivedBody], null, ' '))}`,
+${diff(expectedBody, receivedBody)}`,
       )
       expect(path).not.toHaveBeenFetchedWith({
         body: expectedBody,
