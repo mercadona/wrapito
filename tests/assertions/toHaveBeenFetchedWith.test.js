@@ -1,5 +1,5 @@
 import { assertions } from '../../src'
-import diff from 'jest-diff'
+import { diff } from 'jest-diff'
 
 expect.extend(assertions)
 

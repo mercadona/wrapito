@@ -1,4 +1,4 @@
-import diff from 'jest-diff'
+import { diff } from 'jest-diff'
 
 const emptyErrorMessage = (path, options) => {
   const message = options?.host
