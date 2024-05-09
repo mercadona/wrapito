@@ -1,4 +1,4 @@
-import { green, red } from 'chalk'
+import { diff } from 'jest-diff'
 
 const emptyErrorMessage = (path, options) => {
   const message = options?.host
@@ -20,19 +20,21 @@ const fetchLengthErrorMessage = (path, expectLength, currentLength) => ({
 const methodDoesNotMatchErrorMessage = (expected, received) => ({
   pass: false,
   message: () =>
-    `🌯 Wrapito: Fetch method does not match, expected ${expected} received ${received}`,
+    `🌯 Wrapito: Fetch method does not match, expected ${expected} received ${received ?? 'none'}`,
 })
 
-const bodyDoesNotMatchErrorMessage = (expected, received) => ({
-  pass: false,
-  message: () =>
-    `🌯 Wrapito: Fetch body does not match.
-Expected:
-${green(JSON.stringify(expected, null, ' '))}
+const bodyDoesNotMatchErrorMessage = (expected, receivedBodies) => {
+  const diffs = receivedBodies
+    .map(received => diff(expected, received))
+    .join('\n\n')
 
-Received:
-${red(JSON.stringify(received, null, ' '))}`,
-})
+  return {
+    pass: false,
+    message: () =>
+      `🌯 Wrapito: Fetch body does not match.
+${diffs}`,
+  }
+}
 
 const doesNotHaveBodyErrorMessage = () => ({
   pass: false,
