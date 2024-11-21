@@ -1,12 +1,21 @@
-import { wrap, configure } from '../src'
+import { wrap, configure } from '../../src'
 import { render, fireEvent, screen } from '@testing-library/react'
+import { vi, expect, beforeAll, afterAll, it } from 'vitest'
 
 import {
   MyAppWithRouting,
   MyComponent,
   history,
   myFakeModule,
-} from './components.mock'
+} from '../components.mock'
+
+const originalWarn = window.console.warn
+
+beforeAll(() => (window.console.warn = vi.fn()))
+
+afterAll(() => {
+  window.console.warn = originalWarn
+})
 
 configure({ mount: render })
 
@@ -20,11 +29,11 @@ it('should render an app without routing with specific url', () => {
   wrap(MyComponent).atPath('/?query=query').mount()
 
   expect(screen.getByText('Foo')).toBeInTheDocument()
-  expect(window.location.href).toBe('http://localhost/?query=query')
+  expect(window.location.href).toBe('http://localhost:3000/?query=query')
 })
 
 it('should render an app with routing given an specific path using changeRoute', () => {
-  const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
+  const functionCalledByHomeRoute = vi.spyOn(myFakeModule, 'myFakeFunction')
   configure({ changeRoute: history.push })
   const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
 
@@ -33,7 +42,7 @@ it('should render an app with routing given an specific path using changeRoute',
 })
 
 it('should render an app with routing given an specific path using history', () => {
-  const functionCalledByHomeRoute = jest.spyOn(myFakeModule, 'myFakeFunction')
+  const functionCalledByHomeRoute = vi.spyOn(myFakeModule, 'myFakeFunction')
   configure({ history })
   const { container } = wrap(MyAppWithRouting).atPath('/categories').mount()
 
@@ -42,7 +51,7 @@ it('should render an app with routing given an specific path using history', () 
 })
 
 it('should warn that history config is deprecated', () => {
-  const warn = jest.spyOn(console, 'warn')
+  const warn = vi.spyOn(console, 'warn')
   configure({ history })
   wrap(MyAppWithRouting).atPath('/categories').mount()
 
@@ -63,9 +72,11 @@ it('should render an app with a routing logic between pages', () => {
   expect(container).toHaveTextContent('Categories')
 })
 
-it('should render an app with a location state', async () =>{
+it('should render an app with a location state', async () => {
   configure({ history })
-  wrap(MyAppWithRouting).atPath('/page-using-location-state', {title: "title"}).mount()
+  wrap(MyAppWithRouting)
+    .atPath('/page-using-location-state', { title: 'title' })
+    .mount()
 
   expect(await screen.findByText('title')).toBeInTheDocument()
-}) 
+})

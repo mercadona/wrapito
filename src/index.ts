@@ -1,3 +1,4 @@
-export { wrap } from './wrap'
-export { configure } from './config'
-export { assertions } from './assertions'
+export * from './wrap'
+export * from './config'
+export * from './matchers'
+export * from './models'

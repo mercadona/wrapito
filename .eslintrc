@@ -1,7 +1,16 @@
 {
-  "extends": ["eslint:recommended", "plugin:react/recommended", "react-app"],
-
+  "plugins": ["prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "react-app",
+    "plugin:prettier/recommended"
+  ],
+  "env": { "node": true, "es6": true, "jest": true },
   "rules": {
+    "prettier/prettier": "error",
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off",
     "no-var": "error",
     "no-empty": "error",
     "block-scoped-var": "error",
@@ -11,27 +20,35 @@
     "no-empty-function": "error",
     "semi": ["error", "never"],
     "comma-dangle": ["error", "always-multiline"],
-    "keyword-spacing": ["error", {
-      "after": true,
-      "before": true
-    }],
+    "keyword-spacing": [
+      "error",
+      {
+        "after": true,
+        "before": true
+      }
+    ],
     "object-curly-spacing": ["error", "always"],
-    "template-curly-spacing": ["error", "always"],
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
-    "object-curly-newline": ["error", {
-      "ObjectExpression": { "consistent": true },
-      "ObjectPattern": { "multiline": true }
-    }],
+    "template-curly-spacing": ["error", "never"],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "ObjectExpression": { "consistent": true },
+        "ObjectPattern": { "multiline": true }
+      }
+    ],
     "max-len": ["error", { "code": 120 }],
-    "indent": ["error", 2],
     "complexity": ["warn", 8],
 
     "react/jsx-curly-spacing": ["error", "always"],
-    "react/jsx-equals-spacing": ["error", "never"],
+    "react/jsx-equals-spacing": ["error", "never"]
   },
   "settings": {
     "react": {

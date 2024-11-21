@@ -1,6 +1,9 @@
+import { RequestOptions } from '../models'
 import { diff } from 'jest-diff'
 
-const emptyErrorMessage = (path, options) => {
+type Body = string | object | undefined
+
+const emptyErrorMessage = (path: string, options?: RequestOptions) => {
   const message = options?.host
     ? `🌯 Wrapito: ${options?.host}${path} ain't got called`
     : `🌯 Wrapito: ${path} ain't got called`
@@ -11,19 +14,31 @@ const emptyErrorMessage = (path, options) => {
   }
 }
 
-const fetchLengthErrorMessage = (path, expectLength, currentLength) => ({
+const fetchLengthErrorMessage = (
+  path: string,
+  expectLength: number,
+  currentLength: number,
+) => ({
   pass: false,
   message: () =>
     `🌯 Wrapito: ${path} is called ${currentLength} times, you expected ${expectLength} times`,
 })
 
-const methodDoesNotMatchErrorMessage = (expected, received) => ({
+const methodDoesNotMatchErrorMessage = (
+  expected: string | undefined,
+  received: string | Array<string>,
+) => ({
   pass: false,
   message: () =>
-    `🌯 Wrapito: Fetch method does not match, expected ${expected} received ${received ?? 'none'}`,
+    `🌯 Wrapito: Fetch method does not match, expected ${expected} received ${
+      received ?? 'none'
+    }`,
 })
 
-const bodyDoesNotMatchErrorMessage = (expected, receivedBodies) => {
+const bodyDoesNotMatchErrorMessage = (
+  expected: Body,
+  receivedBodies: Array<Body>,
+) => {
   const diffs = receivedBodies
     .map(received => diff(expected, received))
     .join('\n\n')
@@ -43,10 +58,13 @@ const doesNotHaveBodyErrorMessage = () => ({
 
 const successMessage = () => ({
   pass: true,
-  message: () => undefined,
+  message: () => 'Test passing',
 })
 
-const haveBeenFetchedSuccessMessage = (path, options) => {
+const haveBeenFetchedSuccessMessage = (
+  path: string,
+  options: { host?: string },
+) => {
   const message = options?.host
     ? `🌯 Wrapito: ${options.host}${path} is called`
     : `🌯 Wrapito: ${path} is called`

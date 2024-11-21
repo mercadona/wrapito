@@ -1,6 +1,6 @@
-import { assertions, configure } from '../../src'
-
-expect.extend(assertions)
+import { configure } from '../../src'
+import { matchers } from '../../src/matchers'
+import { describe, it, expect } from 'vitest'
 
 describe('toHaveBeenFetched', () => {
   it('should check that the path has been called', async () => {
@@ -8,7 +8,7 @@ describe('toHaveBeenFetched', () => {
     const expectedPath = '/some/path/'
 
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(expectedPath)
+    const { message } = matchers.toHaveBeenFetched(expectedPath)
 
     expect(message()).toBe('🌯 Wrapito: /some/path/ is called')
     expect(expectedPath).toHaveBeenFetched()
@@ -19,7 +19,7 @@ describe('toHaveBeenFetched', () => {
     const expectedPath = '/some/unknown'
 
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(expectedPath)
+    const { message } = matchers.toHaveBeenFetched(expectedPath)
 
     expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetched()
@@ -30,7 +30,7 @@ describe('toHaveBeenFetched', () => {
     const expectedPath = '/some/path/'
 
     await fetch(path)
-    const { message } = await assertions.toHaveBeenFetched(expectedPath)
+    const { message } = matchers.toHaveBeenFetched(expectedPath)
 
     expect(message()).toBe('🌯 Wrapito: /some/path/ is called')
     expect(expectedPath).toHaveBeenFetched()
@@ -44,7 +44,7 @@ describe('toHaveBeenFetched', () => {
       defaultHost: 'https://some-domain.com',
     })
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(expectedPath, {
+    const { message } = matchers.toHaveBeenFetched(expectedPath, {
       host,
     })
 
@@ -63,7 +63,7 @@ describe('toHaveBeenFetched', () => {
       defaultHost: '/some-domain.com',
     })
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(expectedPath, {
+    const { message } = matchers.toHaveBeenFetched(expectedPath, {
       host,
     })
 
@@ -82,7 +82,7 @@ describe('toHaveBeenFetched', () => {
       defaultHost: 'https://some-domain.com',
     })
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetched(expectedPath, {
+    const { message } = matchers.toHaveBeenFetched(expectedPath, {
       host,
     })
 

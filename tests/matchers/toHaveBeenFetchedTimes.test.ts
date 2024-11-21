@@ -1,6 +1,6 @@
-import { assertions, configure } from '../../src'
-
-expect.extend(assertions)
+import { configure } from '../../src'
+import { matchers } from '../../src/matchers'
+import { describe, it, expect } from 'vitest'
 
 describe('toHaveBeenFetchedTimes', () => {
   it('should count how many times an url is called', async () => {
@@ -75,7 +75,7 @@ describe('toHaveBeenFetchedTimes', () => {
     const expectedPath = '/some/path/'
 
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetchedTimes(expectedPath, 2)
+    const { message } = matchers.toHaveBeenFetchedTimes(expectedPath, 2)
 
     expect(message()).toBe(
       '🌯 Wrapito: /some/path/ is called 1 times, you expected 2 times',

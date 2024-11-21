@@ -1,4 +1,4 @@
-import { WrapOptions } from "./models";
+import type { WrapOptions } from './models'
 
 let options: WrapOptions
 
@@ -9,6 +9,6 @@ const updateOptions = (updatedOptions: WrapOptions) => {
   }
 }
 
-const getOptions = () : WrapOptions => ({ ...options })
+const getOptions = (): WrapOptions => ({ ...options })
 
 export { options, updateOptions, getOptions }

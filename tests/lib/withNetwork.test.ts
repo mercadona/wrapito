@@ -1,13 +1,13 @@
-import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { wrap, configure } from '../src/index'
+import { wrap, configure } from '../../src/index'
+import { vi, it, expect } from 'vitest'
 
 import {
   MyComponentWithNetwork,
   MyComponentWithPost,
   MyComponentWithFeedback,
   MyComponentMakingHttpCallsWithQueryParams,
-} from './components.mock'
+} from '../components.mock'
 
 it('should have network by default', async () => {
   configure({ mount: render })
@@ -17,7 +17,7 @@ it('should have network by default', async () => {
 })
 
 it('should have network with an array of requests', async () => {
-  jest.spyOn(console, 'warn')
+  vi.spyOn(console, 'warn')
   configure({ mount: render })
   wrap(MyComponentWithNetwork)
     .withNetwork([
@@ -39,7 +39,7 @@ it('should have network without responses', async () => {
 
 it('should resolve a request with delay after the specified time', async () => {
   configure({ mount: render })
-  jest.useFakeTimers()
+  vi.useFakeTimers()
   wrap(MyComponentWithNetwork)
     .withNetwork([
       {
@@ -57,17 +57,17 @@ it('should resolve a request with delay after the specified time', async () => {
     .mount()
 
   await screen.findByText('MyComponentWithNetwork')
-  jest.advanceTimersByTime(200)
+  vi.advanceTimersByTime(200)
   await screen.findByText('SUCCESS')
 
   expect(screen.getByText('SUCCESS')).toBeInTheDocument()
   expect(screen.queryByText('15')).not.toBeInTheDocument()
 
-  jest.advanceTimersByTime(500)
+  vi.advanceTimersByTime(500)
   await screen.findByText('15')
 
   expect(screen.getByText('15')).toBeInTheDocument()
-  jest.useRealTimers()
+  vi.useRealTimers()
 })
 
 it('should resolve all the responses waiting for an unrelated text', async () => {
@@ -100,7 +100,7 @@ it('should match a request regardless the body order', async () => {
       {
         path: '/path/to/login/',
         host: 'my-host',
-        method: 'post',
+        method: 'POST',
         requestBody: {
           foo: 'foo',
           bar: 'bar',
@@ -123,7 +123,7 @@ it('should mock multiple POST responses', async () => {
     .withNetwork({
       host: 'my-host',
       path: '/path/to/save/',
-      method: 'post',
+      method: 'POST',
       multipleResponses: [
         { responseBody: { name: 'Fran Perea' } },
         { responseBody: { name: 'El que lo lea' } },
@@ -193,11 +193,11 @@ it('should handle fetch deafult requests when a string is passed', async () => {
   const MyComponent = () => null
   configure({ mount: render })
 
-  wrap(MyComponent).withNetwork([
-    { path: '/foo/bar', responseBody: { foo: 'bar'} }
-  ]).mount()
+  wrap(MyComponent)
+    .withNetwork([{ path: '/foo/bar', responseBody: { foo: 'bar' } }])
+    .mount()
 
-  const response = await fetch('/foo/bar').then((response) => response.json())
+  const response = await fetch('/foo/bar').then(response => response.json())
 
   expect(response).toEqual({ foo: 'bar' })
 })
@@ -206,11 +206,33 @@ it('should handle fetch requests with option when a string is passed', async () 
   const MyComponent = () => null
   configure({ mount: render })
 
-  wrap(MyComponent).withNetwork([
-    { path: '/foo/bar', method: 'POST', responseBody: { foo: 'bar'} }
-  ]).mount()
+  wrap(MyComponent)
+    .withNetwork([
+      { path: '/foo/bar', method: 'POST', responseBody: { foo: 'bar' } },
+    ])
+    .mount()
 
-  const response = await fetch('/foo/bar', { method: 'POST' }).then((response) => response.json())
+  const response = await fetch('/foo/bar', { method: 'POST' }).then(response =>
+    response.json(),
+  )
 
   expect(response).toEqual({ foo: 'bar' })
+})
+
+it('should return an spy compatible with expect API', async () => {
+  configure({ mount: render })
+
+  wrap(MyComponentWithNetwork)
+    .withNetwork([
+      { path: 'my-host/path/', method: 'POST', responseBody: { foo: 'bar' } },
+      { path: 'my-host/path/with/response/', responseBody: { foo: 'bar' } },
+    ])
+    .mount()
+
+  expect(global.fetch).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      method: 'GET',
+      url: expect.stringContaining('my-host/path/with/response/'),
+    }),
+  )
 })
