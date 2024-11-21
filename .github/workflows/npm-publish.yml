@@ -1,6 +1,6 @@
 # This workflow will run tests using node and then publish a package to NPM when a tag is pushed
 
-name: Publish wrapito-vitest to npm
+name: Publish wrapito to npm
 on:
   push:
     tags:

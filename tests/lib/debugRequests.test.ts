@@ -1,15 +1,7 @@
-import { render, cleanup, screen, fireEvent } from '@testing-library/react'
-import { wrap, configure } from '../../src/index'
-import { MyComponentWithFeedback, GreetingComponent } from '../components.mock'
-import {
-  vi,
-  afterEach,
-  beforeAll,
-  expect,
-  it,
-  describe,
-  afterAll,
-} from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { configure, wrap } from '../../src/index'
+import { GreetingComponent, MyComponentWithFeedback } from '../components.mock'
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 const originalWarn = window.console.warn
 
@@ -63,7 +55,7 @@ it('should warn about the code making a request that has not being mocked enough
     .withNetwork({
       host: 'my-host',
       path: '/path/to/save/',
-      method: 'POST',
+      method: 'post',
       multipleResponses: [{ responseBody: { name: 'Sam' } }],
     })
     .debugRequests()
