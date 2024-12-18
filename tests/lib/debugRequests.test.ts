@@ -1,7 +1,15 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { configure, wrap } from '../../src/index'
 import { GreetingComponent, MyComponentWithFeedback } from '../components.mock'
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
 const originalWarn = window.console.warn
 
@@ -55,7 +63,7 @@ it('should warn about the code making a request that has not being mocked enough
     .withNetwork({
       host: 'my-host',
       path: '/path/to/save/',
-      method: 'post',
+      method: 'POST',
       multipleResponses: [{ responseBody: { name: 'Sam' } }],
     })
     .debugRequests()
@@ -164,6 +172,36 @@ it('should warn about not fetched requests when --debugRequests param is used', 
       path: '/request2',
       host: 'my-host',
       method: 'POST',
+      requestBody: { id: 2 },
+      responseBody: { name: 'Sam' },
+    })
+    .mount()
+
+  await screen.findByText('Hi Sam!')
+
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('cannot find any mock matching:'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('URL: my-host/request1'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('METHOD: post'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('REQUEST BODY: {"id":1}'),
+  )
+})
+
+it('should warn about not fetched requests when --debugRequests param is used with method in lowerCase', async () => {
+  const consoleWarn = vi.spyOn(console, 'warn')
+  process.env.npm_config_debugRequests = 'true'
+
+  wrap(GreetingComponent)
+    .withNetwork({
+      path: '/request2',
+      host: 'my-host',
+      method: 'post',
       requestBody: { id: 2 },
       responseBody: { name: 'Sam' },
     })
