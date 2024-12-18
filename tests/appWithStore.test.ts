@@ -1,5 +1,6 @@
 import { wrap, configure } from '../src'
-import { render , fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
+import { it, expect } from 'vitest'
 
 import { MyAppWithStore } from './components.mock'
 
@@ -26,7 +27,7 @@ it('should render an app using redux middlewares', () => {
 
   expect(container).toHaveTextContent('10')
 
-  fireEvent.click(getByText('-'))
+  fireEvent.click(screen.getByText('-'))
 
   expect(container).toHaveTextContent('9')
 })

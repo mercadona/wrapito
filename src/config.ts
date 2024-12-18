@@ -1,11 +1,11 @@
 import { render } from 'react-dom'
 
-import { Component, Config, Mount } from './models'
+import type { Component, Config, RenderResult } from './models'
 
-const mount = (component: Component) => {
+const mount = (Component: Component): RenderResult => {
   const rootNode = document.body.appendChild(document.createElement('div'))
 
-  render(component, rootNode)
+  render(Component, rootNode)
 
   return rootNode
 }
@@ -17,7 +17,7 @@ let config: Config = {
   changeRoute: (path: string) => window.history.replaceState(null, '', path),
 }
 
-function configure(newConfig: Config) {
+function configure(newConfig: Partial<Config>) {
   config = {
     ...config,
     ...newConfig,
@@ -26,4 +26,4 @@ function configure(newConfig: Config) {
 
 const getConfig = (): Config => ({ ...config })
 
-export { configure, getConfig, Config, Mount }
+export { configure, getConfig, Config, mount }

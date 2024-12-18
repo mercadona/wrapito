@@ -1,19 +1,21 @@
-import { assertions } from '../../src'
+import '../../vitest.d.ts'
+import { matchers } from '../../src/matchers'
+import { describe, it, expect } from 'vitest'
 import { diff } from 'jest-diff'
 
-expect.extend(assertions)
+expect.extend(matchers)
 
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
     const path = '//some-domain.com/some/path/'
     const expectedPath = '/some/path/'
     const body = {
-      method: 'POST',
+      method: 'POST' as const,
       body: JSON.stringify({ name: 'some name' }),
     }
 
     await fetch(new Request(path, body))
-    await assertions.toHaveBeenFetchedWith(expectedPath, body)
+    matchers.toHaveBeenFetchedWith(expectedPath, body)
 
     expect(expectedPath).toHaveBeenFetchedWith({ body: { name: 'some name' } })
   })
@@ -23,9 +25,9 @@ describe('toHaveBeenFetchedWith', () => {
     const expectedPath = '/some/unknown'
 
     await fetch(new Request(path))
-    const { message } = await assertions.toHaveBeenFetchedWith(expectedPath)
+    const { message } = matchers.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe('🌯 Wrapito: /some/unknown ain\'t got called')
+    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
@@ -34,7 +36,7 @@ describe('toHaveBeenFetchedWith', () => {
       const path = '//some-domain.com/some/path/'
 
       await fetch(new Request(path))
-      const { message, pass } = await assertions.toHaveBeenFetchedWith(path)
+      const { message, pass } = matchers.toHaveBeenFetchedWith(path)
 
       expect(message()).toBe('🌯 Wrapito: Unable to find body.')
       expect(pass).toBe(false)
@@ -48,13 +50,13 @@ describe('toHaveBeenFetchedWith', () => {
       })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {
           name: 'some name',
         },
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {
           name: 'some name',
@@ -67,19 +69,22 @@ describe('toHaveBeenFetchedWith', () => {
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'some name' }),
+        //@ts-ignore
         _bodyInit: JSON.stringify({ name: 'some name' }),
       })
 
       await fetch(request)
+
+      //@ts-ignore
       fetch.mock.calls[0][0].json()
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {
           name: 'some name',
         },
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {
           name: 'some name',
@@ -120,14 +125,14 @@ describe('toHaveBeenFetchedWith', () => {
       })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {
           surname: 'surname',
           name: 'name',
         },
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {
           surname: 'surname',
@@ -146,7 +151,7 @@ describe('toHaveBeenFetchedWith', () => {
       })
 
       await fetch(request)
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: expectedBody,
       })
 
@@ -166,12 +171,12 @@ ${diff(expectedBody, receivedBody)}`,
       const body = { method: 'POST' }
 
       await fetch(new Request(path, body))
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
         method: 'POST',
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {},
         method: 'POST',
@@ -207,12 +212,12 @@ ${diff(expectedBody, receivedBody)}`,
       await fetch(postRequest)
       await fetch(putRequest)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
         method: 'PUT',
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {},
         method: 'PUT',
@@ -224,7 +229,7 @@ ${diff(expectedBody, receivedBody)}`,
       const request = new Request(path, { method: 'PUT' })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         method: 'POST',
       })
 
@@ -241,11 +246,11 @@ ${diff(expectedBody, receivedBody)}`,
       const request = new Request(path, { method: 'POST' })
       await fetch(request)
 
-      const { message } = await assertions.toHaveBeenFetchedWith(path, {
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
       })
 
-      expect(message()).toBeUndefined()
+      expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({ body: {} })
     })
   })

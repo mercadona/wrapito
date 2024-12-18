@@ -5,19 +5,26 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - 'v*.*.*-beta*'
+
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm run test
       - run: npm version --no-git-tag-version ${GITHUB_REF##*/}
-      - run: npm run publish-package
+      - name: Publish package
+        run: |
+          if [[ ${{ github.ref }} == *-beta* ]]; then
+            npm run publish-package:beta
+          else
+            npm run publish-package
+          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Build Changelog
@@ -35,5 +42,4 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: ${{steps.github_release.outputs.changelog}}
           draft: false
-          prerelease: false
-
+          prerelease: ${{ contains(github.ref, '-beta') }}

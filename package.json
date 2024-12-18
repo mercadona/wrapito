@@ -1,16 +1,32 @@
 {
   "name": "wrapito",
-  "version": "0.0.0",
+  "version": "10.0.0",
   "description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "scripts": {
-    "test": "jest --ci --coverage --config config/jest.config.json",
-    "test:watch": "jest --watch --config config/jest.config.json",
-    "build": "NODE_ENV=production tsc",
-    "clean": "rm -rf dist",
-    "postbuild": "node scripts/copy-publish-files.js",
-    "publish-package": "npm run clean && npm run build && npm run postbuild && cd dist && npm publish"
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:publish": "npm publish --dry-run",
+    "build:types": "tsc --build",
+    "publish-package": "npm run build && npm publish",
+    "publish-package:beta": "npm run build && npm publish --tag beta",
+    "typecheck": "tsc --noEmit dist/index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -20,70 +36,60 @@
     "react",
     "testing",
     "test",
-    "integration",
     "unit",
     "javascript",
     "dom",
     "js",
-    "jest",
     "wrap",
     "component",
     "mock",
     "fetch",
-    "http"
+    "http",
+    "vitest"
   ],
   "bugs": {
     "url": "https://github.com/mercadona/wrapito/issues"
   },
   "homepage": "https://github.com/mercadona/wrapito#readme",
   "dependencies": {
-    "deep-equal": "^1.0.1",
+    "chalk": "^4.1.2",
+    "deep-equal": "^2.2.3",
     "jest-diff": "^29.7.0",
-    "object-hash": "^2.1.1",
-    "whatwg-fetch": "^3.5.0"
+    "object-hash": "^3.0.0",
+    "rimraf": "^5.0.5",
+    "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.1",
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-transform-runtime": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
-    "@babel/preset-react": "^7.10.4",
-    "@testing-library/jest-dom": "^4.2.0",
-    "@testing-library/react": "^9.3.0",
-    "@types/history": "^4.7.9",
-    "@types/jest": "^26.0.23",
-    "@types/react": "^17.0.16",
-    "babel-jest": "^24.8.0",
-    "jest": "^27.0.4",
-    "jest-junit": "^6.4.0",
-    "react": "^17.0.2",
-    "react-dom": "^16.13.1",
-    "react-redux": "^7.2.1",
-    "react-router-dom": "^5.2.0",
-    "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0",
-    "ts-jest": "^27.0.3",
-    "typescript": "^4.3.3"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^12.1.5",
+    "@types/deep-equal": "^1.0.4",
+    "@types/history": "^4.7.11",
+    "@types/node": "^20.10.5",
+    "@types/object-hash": "^3.0.6",
+    "@types/react": "^17.0.73",
+    "@types/react-dom": "^17.0.25",
+    "@vitest/coverage-istanbul": "^1.1.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^5.1.1",
+    "eslint-plugin-react": "^7.33.2",
+    "jsdom": "^24.0.0",
+    "prettier": "^3.1.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.9",
+    "react-router-dom": "^5.3.4",
+    "redux": "^4.2.1",
+    "redux-thunk": "^2.4.2",
+    "rollup": "^4.9.1",
+    "tinyspy": "^2.2.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
   },
   "peerDependencies": {
-    "chalk": "*",
-    "jest": "*",
     "react": "*",
     "react-dom": "*"
-  },
-  "babel": {
-    "presets": [
-      "@babel/env",
-      "@babel/react"
-    ],
-    "plugins": [
-      "@babel/plugin-transform-runtime",
-      "@babel/proposal-class-properties"
-    ]
-  },
-  "jest-junit": {
-    "suiteName": "jest tests",
-    "output": "results/tests/jest-junit.xml"
   }
 }

@@ -1,51 +1,39 @@
-import React, { useEffect, useState } from 'react'
-import { render, cleanup, screen, fireEvent } from '@testing-library/react'
-import { wrap, configure } from '../src/index'
-import { MyComponentWithFeedback } from './components.mock'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { configure, wrap } from '../../src/index'
+import { GreetingComponent, MyComponentWithFeedback } from '../components.mock'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
-configure({ defaultHost: 'my-host', mount: render })
+const originalWarn = window.console.warn
+
+beforeAll(() => (window.console.warn = vi.fn()))
 
 afterEach(() => {
   cleanup()
   process.env.npm_config_debugRequests = undefined
-  console.warn.mockRestore()
 })
 
-const GreetingComponent = () => {
-  const [name, setName] = useState('')
+afterAll(() => {
+  window.console.warn = originalWarn
+})
 
-  useEffect(() => {
-    async function fetchData() {
-      await fetch(
-        new Request('my-host/request1', {
-          method: 'POST',
-          body: JSON.stringify({ id: 1 }),
-        }),
-      )
-
-      const response = await fetch(
-        new Request('my-host/request2', {
-          method: 'POST',
-          body: JSON.stringify({ id: 2 }),
-        }),
-      )
-      const data = await response.json()
-      setName(data?.name)
-    }
-    fetchData()
-  }, [])
-
-  return <div>Hi {name}!</div>
-}
+configure({ defaultHost: 'my-host', mount: render })
 
 it('should warn about the code making a request that has not being mocked', async () => {
-  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleWarn = vi.spyOn(console, 'warn')
 
   wrap(GreetingComponent)
     .withNetwork({
       path: '/request2',
       host: 'my-host',
-      method: 'post',
+      method: 'POST',
       requestBody: { id: 2 },
       responseBody: { name: 'Sam' },
     })
@@ -69,13 +57,13 @@ it('should warn about the code making a request that has not being mocked', asyn
 })
 
 it('should warn about the code making a request that has not being mocked enough times', async () => {
-  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleWarn = vi.spyOn(console, 'warn')
   configure({ mount: render })
   wrap(MyComponentWithFeedback)
     .withNetwork({
       host: 'my-host',
       path: '/path/to/save/',
-      method: 'post',
+      method: 'POST',
       multipleResponses: [{ responseBody: { name: 'Sam' } }],
     })
     .debugRequests()
@@ -88,14 +76,14 @@ it('should warn about the code making a request that has not being mocked enough
 
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining(
-      '🌯 Wrapito:  Missing response in the multipleResponses array for path /path/to/save/ and method post.',
+      '🌯 Wrapito:  Missing response in the multipleResponses array for path /path/to/save/ and method POST.',
     ),
   )
 })
 
 describe('when no using withNetwork builder', () => {
   it('should warn about all the request being done by the production code', async () => {
-    const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+    const consoleWarn = vi.spyOn(console, 'warn')
 
     wrap(GreetingComponent).debugRequests().mount()
 
@@ -126,13 +114,13 @@ describe('when no using withNetwork builder', () => {
 })
 
 it('should not warn if the debugRequests feature is not used', async () => {
-  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleWarn = vi.spyOn(console, 'warn')
 
   wrap(GreetingComponent)
     .withNetwork({
       path: '/request2',
       host: 'my-host',
-      method: 'post',
+      method: 'POST',
       requestBody: { id: 2 },
       responseBody: { name: 'Sam' },
     })
@@ -146,21 +134,21 @@ it('should not warn if the debugRequests feature is not used', async () => {
 })
 
 it('should not warn if all the requests are being mocked', async () => {
-  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleWarn = vi.spyOn(console, 'warn')
 
   wrap(GreetingComponent)
     .withNetwork([
       {
         path: '/request1',
         host: 'my-host',
-        method: 'post',
+        method: 'POST',
         requestBody: { id: 1 },
         responseBody: { name: 'Joe' },
       },
       {
         path: '/request2',
         host: 'my-host',
-        method: 'post',
+        method: 'POST',
         requestBody: { id: 2 },
         responseBody: { name: 'Sam' },
       },
@@ -176,7 +164,37 @@ it('should not warn if all the requests are being mocked', async () => {
 })
 
 it('should warn about not fetched requests when --debugRequests param is used', async () => {
-  const consoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleWarn = vi.spyOn(console, 'warn')
+  process.env.npm_config_debugRequests = 'true'
+
+  wrap(GreetingComponent)
+    .withNetwork({
+      path: '/request2',
+      host: 'my-host',
+      method: 'POST',
+      requestBody: { id: 2 },
+      responseBody: { name: 'Sam' },
+    })
+    .mount()
+
+  await screen.findByText('Hi Sam!')
+
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('cannot find any mock matching:'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('URL: my-host/request1'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('METHOD: post'),
+  )
+  expect(consoleWarn).toHaveBeenCalledWith(
+    expect.stringContaining('REQUEST BODY: {"id":1}'),
+  )
+})
+
+it('should warn about not fetched requests when --debugRequests param is used with method in lowerCase', async () => {
+  const consoleWarn = vi.spyOn(console, 'warn')
   process.env.npm_config_debugRequests = 'true'
 
   wrap(GreetingComponent)
