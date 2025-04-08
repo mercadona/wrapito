@@ -4,7 +4,7 @@ Wrap you tests so that you can test both behaviour and components with less effo
 
 ## IMPORTANT
 
-This version is only compatible with [vitest](https://vitest.dev/).
+This version is agnostic and compatible with both [jest](https://jestjs.io/) and [vitest](https://vitest.dev/).
 
 ## 🎯 Motivation
 
