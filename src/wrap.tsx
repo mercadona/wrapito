@@ -139,8 +139,9 @@ const getMount = () => {
     changeRoute(path)
   }
 
-  mockNetwork(responses, debug)
+  console.log('props', props)
 
+  mockNetwork(responses, debug)
   return mount(<C {...props} />)
 }
 

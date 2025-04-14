@@ -1,4 +1,4 @@
-import { render, cleanup } from '@testing-library/react'
+import { render, cleanup, screen, waitFor } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import {
@@ -63,7 +63,7 @@ it('should have unique portals', () => {
 it('should use the default mount', () => {
   const expectedText = 'Foo'
   const { textContent } = wrap(MyComponent).mount()
-
+  screen.debug()
   expect(textContent).toBe(expectedText)
 })
 
