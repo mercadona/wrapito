@@ -2,13 +2,11 @@ import { createRoot } from 'react-dom/client'
 import type { Component, Config, RenderResult } from './models'
 
 const mount = (Component: Component): RenderResult => {
-  const el = document.body.appendChild(document.createElement('div'))
-  el.setAttribute('id', 'root')
-  const rootNode = document.getElementById('root') as HTMLElement
+  const rootNode = document.body.appendChild(document.createElement('div'))
 
   const root = createRoot(rootNode)
   root.render(Component)
-  console.log(Component)
+
   return rootNode
 }
 
