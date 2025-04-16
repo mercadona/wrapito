@@ -3,9 +3,9 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   check-tests:
@@ -16,6 +16,6 @@ jobs:
         with:
           node-version: 18
       - run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run test
           npm run build
