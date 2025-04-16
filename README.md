@@ -322,6 +322,8 @@ git push origin v1.0.5
 
 This will run a workflow in github that will publish this version for you.
 
+### Release beta versions
+WARNING: DO NOT MERGE YOUR PR IF YOU WANT TO DO A BETA RELEASE, SINCE THE CHANGES ARE NOT FULLY TRUSTED THEY SHOULD NOT GO TO MASTER
 If you need to release beta versions to test things, you may do so with the -beta tag. E.g:
 
 ```
