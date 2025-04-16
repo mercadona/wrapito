@@ -1,5 +1,5 @@
 import * as React from 'react'
-
+import { act } from 'react'
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { updateOptions, getOptions } from './options'
@@ -141,7 +141,18 @@ const getMount = () => {
 
   mockNetwork(responses, debug)
 
-  return mount(<C {...props} />)
+  return mountWithAct(<C {...props} />)
+}
+
+const mountWithAct = (element: React.ReactElement) => {
+  const { mount } = getConfig()
+  let container
+
+  act(() => {
+    container = mount(element)
+  })
+
+  return container!
 }
 
 const setupPortal = (portalRootId: string) => {

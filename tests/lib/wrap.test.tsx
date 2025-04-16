@@ -1,4 +1,4 @@
-import { render, cleanup } from '@testing-library/react'
+import { render, cleanup, waitFor } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import {
@@ -39,14 +39,16 @@ it('should have props', () => {
   expect(container).toHaveTextContent(props.foo)
 })
 
-it('should have an element where to place a portal defined in the config', () => {
+it('should have an element where to place a portal defined in the config', async () => {
+  configure({ portal: portalRootId })
+
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
-  configure({ portal: 'portal-root-id' })
-
   wrap(MyComponentWithPortal).withProps(props).mount()
 
-  expect(document.body).toHaveTextContent(childrenText)
+  await waitFor(() => {
+    expect(document.body).toHaveTextContent(childrenText)
+  })
 })
 
 it('should have unique portals', () => {
@@ -63,7 +65,6 @@ it('should have unique portals', () => {
 it('should use the default mount', () => {
   const expectedText = 'Foo'
   const { textContent } = wrap(MyComponent).mount()
-
   expect(textContent).toBe(expectedText)
 })
 
