@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Component, Fragment, useState, useEffect, act } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import {
