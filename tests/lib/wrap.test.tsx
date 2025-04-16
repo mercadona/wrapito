@@ -1,4 +1,4 @@
-import { render, cleanup, screen, waitFor } from '@testing-library/react'
+import { render, cleanup, waitFor } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import {
@@ -39,13 +39,12 @@ it('should have props', () => {
   expect(container).toHaveTextContent(props.foo)
 })
 
-it.only('should have an element where to place a portal defined in the config', async () => {
+it('should have an element where to place a portal defined in the config', async () => {
   configure({ portal: portalRootId })
 
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
   wrap(MyComponentWithPortal).withProps(props).mount()
-  screen.debug()
 
   await waitFor(() => {
     expect(document.body).toHaveTextContent(childrenText)

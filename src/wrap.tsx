@@ -140,7 +140,7 @@ const getMount = () => {
   }
 
   mockNetwork(responses, debug)
-  console.log(props)
+
   return mountWithAct(<C {...props} />)
 }
 
