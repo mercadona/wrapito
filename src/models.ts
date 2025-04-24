@@ -80,7 +80,7 @@ export type Mount = (component: Component) => RenderResult
 
 export interface Config {
   defaultHost: string
-  mount: Mount
+  mount?: Mount
   extend: Extensions
   changeRoute: (path: string) => void
   history?: BrowserHistory
