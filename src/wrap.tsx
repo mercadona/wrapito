@@ -141,7 +141,7 @@ const getMount = () => {
 
   mockNetwork(responses, debug)
 
-  return mount?.(<C {...props} />)
+  return mount(<C {...props} />)
 }
 
 const setupPortal = (portalRootId: string) => {

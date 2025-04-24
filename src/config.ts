@@ -1,8 +1,10 @@
+import { render } from '@testing-library/react'
 import type { Config } from './models'
 
 let config: Config = {
   defaultHost: '',
   extend: {},
+  mount: render,
   changeRoute: (path: string) => window.history.replaceState(null, '', path),
 }
 
