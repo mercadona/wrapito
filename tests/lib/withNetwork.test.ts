@@ -38,7 +38,8 @@ it('should have network without responses', async () => {
 })
 
 it('should resolve a request with delay after the specified time', async () => {
-  vi.useFakeTimers({ shouldAdvanceTime: true })
+  configure({ mount: render })
+  vi.useFakeTimers()
   wrap(MyComponentWithNetwork)
     .withNetwork([
       {
