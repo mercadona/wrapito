@@ -13,7 +13,4 @@ export default defineConfig(options => ({
   outExtension: ({ format }) => ({
     js: format === 'cjs' ? '.js' : '.mjs',
   }),
-  esbuildOptions(options) {
-    options.external = ['deep-equal']
-  },
 }))
