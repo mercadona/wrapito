@@ -61,6 +61,12 @@ export const getRequestsBodies = (requests: Array<Array<unknown>>) =>
       return JSON.parse(request._bodyInit)
     })
 
+export const getRequestsHosts = (requests: Array<Array<unknown>>) =>
+  requests
+    .flat(1)
+    .filter(isRequest)
+    .map(request => new URL(request.url, getDefaultHost()).hostname)
+
 export const methodDoesNotMatch = (
   expectedMethod: string | undefined,
   receivedRequestsMethods: Array<string | undefined>,
@@ -73,6 +79,17 @@ export const bodyDoesNotMatch = (
   const anyRequestMatch = receivedRequestsBodies
     .map(request => deepEqual(expectedBody, request))
     .every(requestCompare => requestCompare === false)
+
+  return anyRequestMatch
+}
+
+export const hostDoesNotMatch = (
+  expectedHost: string,
+  receivedRequestsHosts: Array<string>,
+) => {
+  const anyRequestMatch = receivedRequestsHosts.every(
+    requestHost => requestHost !== expectedHost,
+  )
 
   return anyRequestMatch
 }

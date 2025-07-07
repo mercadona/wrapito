@@ -51,6 +51,21 @@ ${diffs}`,
   }
 }
 
+const hostDoesNotMatchErrorMessage = (
+  expected: string,
+  receivedRequestsHosts: Array<string>,
+) => {
+  const receivedDiff = receivedRequestsHosts.find(
+    received => expected !== received,
+  )
+
+  return {
+    pass: false,
+    message: () =>
+      `🌯 Wrapito: Host request does not match, expected ${expected} received ${receivedDiff}`,
+  }
+}
+
 const doesNotHaveBodyErrorMessage = () => ({
   pass: false,
   message: () => '🌯 Wrapito: Unable to find body.',
@@ -79,6 +94,7 @@ export {
   fetchLengthErrorMessage,
   methodDoesNotMatchErrorMessage,
   bodyDoesNotMatchErrorMessage,
+  hostDoesNotMatchErrorMessage,
   doesNotHaveBodyErrorMessage,
   successMessage,
   haveBeenFetchedSuccessMessage,
