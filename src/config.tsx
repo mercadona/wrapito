@@ -1,11 +1,11 @@
-import { render } from 'react-dom'
-
+import { createRoot } from 'react-dom/client'
 import type { Component, Config, RenderResult } from './models'
 
 const mount = (Component: Component): RenderResult => {
   const rootNode = document.body.appendChild(document.createElement('div'))
 
-  render(Component, rootNode)
+  const root = createRoot(rootNode)
+  root.render(Component)
 
   return rootNode
 }
