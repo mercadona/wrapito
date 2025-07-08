@@ -4,6 +4,7 @@ import {
   fetchLengthErrorMessage,
   methodDoesNotMatchErrorMessage,
   bodyDoesNotMatchErrorMessage,
+  hostDoesNotMatchErrorMessage,
   doesNotHaveBodyErrorMessage,
   successMessage,
   haveBeenFetchedSuccessMessage,
@@ -16,6 +17,8 @@ import {
   getRequestsBodies,
   bodyDoesNotMatch,
   methodDoesNotMatch,
+  getRequestsHosts,
+  hostDoesNotMatch,
 } from '../utils'
 
 const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
@@ -37,10 +40,18 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
   const expectedBody = options?.body
+
   if (!expectedBody) return doesNotHaveBodyErrorMessage()
 
   if (bodyDoesNotMatch(expectedBody, receivedRequestsBodies)) {
     return bodyDoesNotMatchErrorMessage(expectedBody, receivedRequestsBodies)
+  }
+
+  const receivedRequestsHosts = getRequestsHosts(targetRequests)
+  const expectedHost = options?.host
+
+  if (expectedHost && hostDoesNotMatch(expectedHost, receivedRequestsHosts)) {
+    return hostDoesNotMatchErrorMessage(expectedHost, receivedRequestsHosts)
   }
 
   return successMessage()
