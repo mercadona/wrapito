@@ -4,7 +4,7 @@ export default defineConfig(options => ({
   entry: {
     index: './src/index.ts',
   },
-  external: ['react'],
+  external: ['react', 'react-dom'],
   outDir: 'dist',
   format: ['cjs', 'esm'],
   tsconfig: './tsconfig.json',
