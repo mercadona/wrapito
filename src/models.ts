@@ -75,7 +75,7 @@ type Extensions = {
 
 type Component = React.ReactElement<any, any>
 
-export type RenderResult = TLRenderResult | HTMLDivElement
+export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
 export interface Config {
