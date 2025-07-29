@@ -1,15 +1,9 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import {
-  Router,
-  BrowserRouter,
-  Switch,
-  Route,
-  useLocation,
-} from 'react-router-dom'
+import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
-import { createStore, applyMiddleware } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 
 export const MyComponent = () => <div>Foo</div>
@@ -342,6 +336,7 @@ export const GreetingComponent = () => {
       const data = await response.json()
       setName(data?.name)
     }
+
     fetchData()
   }, [])
 
