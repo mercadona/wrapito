@@ -4,7 +4,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { applyMiddleware, createStore } from 'redux'
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 
 export const MyComponent = () => <div>Foo</div>
 
