@@ -6,6 +6,21 @@ Wrap you tests so that you can test both behaviour and components with less effo
 
 This version is agnostic and compatible with both [jest](https://jestjs.io/) and [vitest](https://vitest.dev/).
 
+### Note:
+
+From the version 13 wrapito is compatible with the new version of React and requires such versions of dependencies:
+
+```
+"peerDependencies": {
+    "@testing-library/jest-dom": ">=5.16.4",
+    "@testing-library/react": ">=14.0.0",
+    "react-dom": ">=18.0.0",
+    "react": ">=18.0.0"
+  }
+```
+
+If your project uses React <=18.0.0, you can use wrapito <=12, but we extremely recommend to migrate to newest versions, because we are not maintaining legacy dependencies.
+
 ## 🎯 Motivation
 
 As we are more focused on user interactions than implementation details. In order to test all the user interactions that
@@ -21,8 +36,6 @@ As we test our app we will be in two different scenarios where:
   returns (renders) the expected result.
 
 In general, if you want to test behaviour, you need to simulate external actions from user or from http responses.
-Most of the existing testing libraries give you control of the user actions and thats why we just ask you to set in the
-config what is the `render` function of your testing library.
 Unfortunately, there aren't so many options when it comes to manage http requests and responses in the tests.
 To give the mounted component context about which path is the current path where the app should be mounted, what props
 does the component receive, what http requests will respond with which results or where should the portal be mounted we
@@ -46,28 +59,7 @@ const myWrappedComponent = wrap(MyComponent).mount()
 
 ## 👣 Initial setup
 
-Because 🌯 `wrapito` doesn't want to know anything about how the components are mounted in the project that uses it, we
-can specify how we will `mount` our components by passing the rendering/mounting function of our library of preference.
-This way we make `wrapito` a little bit more agnostic. For example `setup.wrapito.js`
-
-```js
-import { render } from '@testing-library/react'
-import { configure } from 'wrapito'
-
-configure({
-  mount: render,
-})
-```
-
-and add the previous file in `jest.config.json`
-
-```js
-  "setupFiles"
-:
-[
-  "<rootDir>/config/jest/setup.wrapito.js"
-],
-```
+In the latest version of 🌯 `wrapito` we removed the option of passing the rendering/mounting function, because the we discovered that it binds us with the version of React. So now you don't need to pass mount function to the config file.
 
 If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where
 it will be added:
@@ -77,7 +69,6 @@ import { render } from '@testing-library/react'
 import { configure } from 'wrapito'
 
 configure({
-  mount: render,
   portal: 'modal-root',
 })
 ```
@@ -92,8 +83,7 @@ given request, done by the production code, is not set up in the `responses obje
 #### withNetwork
 
 By using this feature you can configure the responses for your `http requests`. If your component is making a request
-that is not set up in the `responses object`, it will not be validated and it will return an empty response with code
-200.
+that is not set up in the `responses object`, it will not be validated and it will return an empty response with code 200.
 
 ```js
 import { wrap } from 'wrapito'
@@ -101,16 +91,14 @@ import { wrap } from 'wrapito'
 const responses = {
   host: 'my-host',
   method: 'get',
-  path: '/path/to/get/a/single/product/,
+  path: '/path/to/get/a/single/product/',
   responseBody: { id: 1, name: 'hummus' },
   status: 200,
   catchParams: true,
   delay: 500,
 }
 
-wrap(MyComponent)
-  .withNetwork(responses)
-  .mount()
+wrap(MyComponent).withNetwork(responses).mount()
 ```
 
 You can specify the default `host` via configuration:
@@ -146,21 +134,19 @@ import { wrap } from 'wrapito'
 
 const responses = [
   {
-    path: '/path/to/get/the/products/list/,
+    path: '/path/to/get/the/products/list/',
     responseBody: [
       { id: 1, name: 'hummus' },
       { id: 2, name: 'guacamole' },
-    ]
+    ],
   },
   {
-    path: '/path/to/get/a/single/product/,
+    path: '/path/to/get/a/single/product/',
     responseBody: { id: 1, name: 'hummus' },
   },
 ]
 
-wrap(MyComponent)
-  .withNetwork(responses)
-  .mount()
+wrap(MyComponent).withNetwork(responses).mount()
 ```
 
 There might be cases where one request is called several times and we want it to return different responses. An example
@@ -321,6 +307,10 @@ git push origin v1.0.5
 ```
 
 This will run a workflow in github that will publish this version for you.
+
+### Release beta versions
+
+WARNING: DO NOT MERGE YOUR PR IF YOU WANT TO DO A BETA RELEASE, SINCE THE CHANGES ARE NOT FULLY TRUSTED THEY SHOULD NOT GO TO MASTER
 
 If you need to release beta versions to test things, you may do so with the -beta tag. E.g:
 
