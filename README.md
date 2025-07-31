@@ -59,17 +59,18 @@ const myWrappedComponent = wrap(MyComponent).mount()
 
 ## 👣 Initial setup
 
-In the latest version of 🌯 `wrapito` we removed the option of passing the rendering/mounting function, because the we discovered that it binds us with the version of React. So now you don't need to pass mount function to the config file.
+In the latest version of 🌯 `wrapito` passing the rendering/mounting function is optional, because we use `render` from `@testing-library/react` by default.
 
 If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where
 it will be added:
 
 ```js
-import { render } from '@testing-library/react'
 import { configure } from 'wrapito'
 
 configure({
+  defaultHost,
   portal: 'modal-root',
+  extend: {},
 })
 ```
 
