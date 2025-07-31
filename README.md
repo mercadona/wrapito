@@ -68,10 +68,18 @@ it will be added:
 import { configure } from 'wrapito'
 
 configure({
-  defaultHost,
+  defaultHost: 'your-host-path',
   portal: 'modal-root',
-  extend: {},
+  extend: {
+    /* Here you can group network calls to reuse them in your tests */
+  },
 })
+```
+
+Add this line in your project setup (vite/cra):
+
+```js
+setupFiles: ['./src/setupTests.tsx', 'setup.ts']
 ```
 
 ## 🏰 Builder API
