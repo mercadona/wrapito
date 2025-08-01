@@ -62,7 +62,9 @@ const myWrappedComponent = wrap(MyComponent).mount()
 In the latest version of 🌯 `wrapito` passing the rendering/mounting function is optional, because we use `render` from `@testing-library/react` by default.
 
 If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where
-it will be added:
+it will be added.
+
+To configure wrapito we recommend adding a setupTests.tsx file and adding there all your custom configs and extensions.
 
 ```js
 import { configure } from 'wrapito'
@@ -79,7 +81,7 @@ configure({
 Add this line in your project setup (vite/cra):
 
 ```js
-setupFiles: ['./src/setupTests.tsx', 'setup.ts']
+setupFiles: ['./src/setupTests.tsx']
 ```
 
 ## 🏰 Builder API
