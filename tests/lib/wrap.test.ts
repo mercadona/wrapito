@@ -5,6 +5,7 @@ import {
   MyComponent,
   MyComponentWithProps,
   MyComponentWithPortal,
+  MyComponentWithPortals,
 } from '../components.mock'
 import { it, expect, afterEach } from 'vitest'
 
@@ -47,6 +48,20 @@ it('should have an element where to place a portal defined in the config', () =>
   wrap(MyComponentWithPortal).withProps(props).mount()
 
   expect(document.body).toHaveTextContent(childrenText)
+})
+
+it('should have elements where to place portals defined in the config', () => {
+  const childrenTexts = ['I am a portal 1', 'I am a portal 2']
+  const portalIds = ['portal-root-id1', 'portal-root-id2']
+
+  configure({ portals: portalIds })
+  const props = { children: childrenTexts, portalIds }
+
+  wrap(MyComponentWithPortals).withProps(props).mount()
+
+  childrenTexts.forEach(childrenText => {
+    expect(document.body).toHaveTextContent(childrenText)
+  })
 })
 
 it('should have unique portals', () => {
