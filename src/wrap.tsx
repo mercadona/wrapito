@@ -155,6 +155,7 @@ const setupPortal = (portalRootId: string) => {
 
   const portalRoot = document.createElement('div')
   portalRoot.setAttribute('id', portalRootId)
+  portalRoot.setAttribute('data-testid', portalRootId)
   document.body.appendChild(portalRoot)
 }
 

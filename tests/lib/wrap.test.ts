@@ -1,4 +1,4 @@
-import { render, cleanup } from '@testing-library/react'
+import { render, cleanup, screen } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import {
@@ -73,6 +73,16 @@ it('should have unique portals', () => {
   wrap(MyComponentWithPortal).withProps(props).mount()
 
   expect(document.querySelectorAll(`#${portalRootId}`)).toHaveLength(1)
+})
+
+it('should have data-testid for portal', () => {
+  configure({ mount: render, portal: portalRootId })
+  const childrenText = 'I am a portal'
+  const props = { children: childrenText }
+
+  wrap(MyComponentWithPortal).withProps(props).mount()
+
+  expect(screen.getByTestId(portalRootId)).toBeInTheDocument()
 })
 
 it('should use the default mount', () => {
