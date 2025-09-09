@@ -85,6 +85,7 @@ export interface Config {
   changeRoute: (path: string) => void
   history?: BrowserHistory
   portal?: string
+  portals?: string[]
   handleQueryParams?: boolean
 }
 

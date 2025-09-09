@@ -254,4 +254,44 @@ ${diff(expectedBody, receivedBody)}`,
       expect(path).toHaveBeenFetchedWith({ body: {} })
     })
   })
+
+  describe('request host', () => {
+    it('should check that the path has been called with the supplied host', async () => {
+      const path = '//some-domain.com/some/path/'
+      const expectedHost = 'some-domain.com'
+      const body = {}
+
+      await fetch(new Request(path, body))
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
+        body: {},
+        host: 'some-domain.com',
+      })
+
+      expect(message()).toBe('Test passing')
+      expect(path).toHaveBeenFetchedWith({
+        body: {},
+        host: expectedHost,
+      })
+    })
+
+    it('should check that the path has not been called with the supplied host', async () => {
+      const path = '//some-domain.com/some/path/'
+      const expectedHost = 'another-domain.com'
+      const request = new Request(path)
+      await fetch(request)
+
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
+        body: {},
+        host: 'another-domain.com',
+      })
+
+      expect(message()).toBe(
+        '🌯 Wrapito: Host request does not match, expected another-domain.com received some-domain.com',
+      )
+      expect(path).not.toHaveBeenFetchedWith({
+        body: {},
+        host: expectedHost,
+      })
+    })
+  })
 })

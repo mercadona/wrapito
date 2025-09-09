@@ -115,7 +115,7 @@ const debugRequests = () => {
 }
 
 const getMount = () => {
-  const { portal, changeRoute, history, mount } = getConfig()
+  const { portal, portals, changeRoute, history, mount } = getConfig()
   const { Component, props, responses, path, hasPath, debug, historyState } =
     getOptions()
 
@@ -123,6 +123,10 @@ const getMount = () => {
 
   if (portal) {
     setupPortal(portal)
+  }
+
+  if (portals) {
+    setupPortals(portals)
   }
 
   if (hasPath && history) {
@@ -151,7 +155,14 @@ const setupPortal = (portalRootId: string) => {
 
   const portalRoot = document.createElement('div')
   portalRoot.setAttribute('id', portalRootId)
+  portalRoot.setAttribute('data-testid', portalRootId)
   document.body.appendChild(portalRoot)
+}
+
+const setupPortals = (portalRootIds: string[]) => {
+  portalRootIds.forEach(portal => {
+    setupPortal(portal)
+  })
 }
 
 export { wrap }

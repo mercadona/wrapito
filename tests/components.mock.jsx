@@ -15,6 +15,12 @@ export const MyComponentWithProps = props => (
 export const MyComponentWithPortal = ({ children }) =>
   createPortal(children, document.getElementById('portal-root-id'))
 
+export const MyComponentWithPortals = ({ children, portalIds }) => {
+  return portalIds.map((portalId, index) => {
+    return createPortal(children[index], document.getElementById(portalId))
+  })
+}
+
 export class MyComponentMakingHttpCalls extends Component {
   state = {
     quantity: 0,
