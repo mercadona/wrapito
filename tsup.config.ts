@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig(options => ({
-  entryPoints: {
+  entry: {
     index: './src/index.ts',
   },
   outDir: 'dist',

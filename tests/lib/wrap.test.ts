@@ -32,7 +32,6 @@ afterEach(() => {
 })
 
 it('should have props', () => {
-  configure({ mount: render })
   const props = { foo: 'bar' }
 
   const { container } = wrap(MyComponentWithProps).withProps(props).mount()
@@ -65,7 +64,7 @@ it('should have elements where to place portals defined in the config', () => {
 })
 
 it('should have unique portals', () => {
-  configure({ mount: render, portal: portalRootId })
+  configure({ portal: portalRootId })
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
 
@@ -76,27 +75,11 @@ it('should have unique portals', () => {
 })
 
 it('should have data-testid for portal', () => {
-  configure({ mount: render, portal: portalRootId })
+  configure({ portal: portalRootId })
   const childrenText = 'I am a portal'
   const props = { children: childrenText }
 
   wrap(MyComponentWithPortal).withProps(props).mount()
 
   expect(screen.getByTestId(portalRootId)).toBeInTheDocument()
-})
-
-it('should use the default mount', () => {
-  const expectedText = 'Foo'
-  const { textContent } = wrap(MyComponent).mount()
-
-  expect(textContent).toBe(expectedText)
-})
-
-it('should use a custom mount', () => {
-  configure({ mount: render })
-  const expectedText = 'Foo'
-
-  const { container } = wrap(MyComponent).mount()
-
-  expect(container).toHaveTextContent(expectedText)
 })

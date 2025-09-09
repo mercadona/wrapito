@@ -1,12 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { wrap, configure } from '../../src/index'
-import { vi, it, expect } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { configure, wrap } from '../../src/index'
+import { expect, it, vi } from 'vitest'
 
 import {
+  MyComponentMakingHttpCallsWithQueryParams,
+  MyComponentWithFeedback,
   MyComponentWithNetwork,
   MyComponentWithPost,
-  MyComponentWithFeedback,
-  MyComponentMakingHttpCallsWithQueryParams,
 } from '../components.mock'
 
 it('should have network by default', async () => {
@@ -39,7 +39,7 @@ it('should have network without responses', async () => {
 
 it('should resolve a request with delay after the specified time', async () => {
   configure({ mount: render })
-  vi.useFakeTimers()
+  vi.useFakeTimers({ shouldAdvanceTime: true })
   wrap(MyComponentWithNetwork)
     .withNetwork([
       {

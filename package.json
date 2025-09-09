@@ -60,28 +60,27 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^12.1.5",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
     "@types/deep-equal": "^1.0.4",
     "@types/history": "^4.7.11",
     "@types/node": "^20.10.5",
     "@types/object-hash": "^3.0.6",
-    "@types/react": "^17.0.73",
-    "@types/react-dom": "^17.0.25",
+    "@types/react": "^19.1.8",
     "@vitest/coverage-istanbul": "^1.1.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.1.1",
     "eslint-plugin-react": "^7.33.2",
-    "jsdom": "^24.0.0",
+    "jsdom": "^26.1.0",
     "prettier": "^3.1.1",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.2",
-    "react-redux": "^7.2.9",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^5.3.4",
-    "redux": "^4.2.1",
-    "redux-thunk": "^2.4.2",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
     "rollup": "^4.9.1",
     "tinyspy": "^2.2.1",
     "tsup": "^8.0.1",
@@ -89,7 +88,9 @@
     "vitest": "^1.1.0"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-dom": "*"
+    "@testing-library/jest-dom": ">=5.16.4",
+    "@testing-library/react": ">=14.0.0",
+    "react-dom": ">=18.0.0",
+    "react": ">=18.0.0"
   }
 }
