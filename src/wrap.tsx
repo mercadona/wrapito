@@ -115,7 +115,8 @@ const debugRequests = () => {
 }
 
 const getMount = () => {
-  const { portal, portals, changeRoute, history, mount } = getConfig()
+  const { portal, portals, changeRoute, history, mount, interaction } =
+    getConfig()
   const { Component, props, responses, path, hasPath, debug, historyState } =
     getOptions()
 
@@ -144,6 +145,13 @@ const getMount = () => {
   }
 
   mockNetwork(responses, debug)
+
+  if (interaction) {
+    return {
+      ...mount(<C {...props} />),
+      user: interaction.lib,
+    }
+  }
 
   return mount(<C {...props} />)
 }

@@ -78,6 +78,10 @@ type Component = React.ReactElement<any, any>
 export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
+export interface InteractionOptions<Lib = unknown> {
+  lib: Lib
+}
+
 export interface Config {
   defaultHost: string
   mount: Mount
@@ -87,6 +91,7 @@ export interface Config {
   portal?: string
   portals?: string[]
   handleQueryParams?: boolean
+  interaction?: InteractionOptions
 }
 
 interface BrowserHistory extends History {
