@@ -147,6 +147,15 @@ const getMount = () => {
   mockNetwork(responses, debug)
 
   if (interaction) {
+    if (interaction.setup) {
+      const instance = interaction.setup(interaction.lib)
+
+      return {
+        ...mount(<C {...props} />),
+        user: instance,
+      }
+    }
+
     return {
       ...mount(<C {...props} />),
       user: interaction.lib,
