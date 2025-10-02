@@ -31,6 +31,7 @@ const wrap = (component: unknown): Wrap => {
     props: {},
     path: '',
     hasPath: false,
+    interactionConfig: undefined,
     debug: process.env.npm_config_debugRequests === 'true',
   })
 
