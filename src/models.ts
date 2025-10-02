@@ -49,7 +49,7 @@ export type DefaultLib = unknown
 export type DefaultInstance = unknown
 export type DefaultSetupOptions = unknown
 
-interface InteractionDescriptor<
+export interface InteractionDescriptor<
   Lib = DefaultLib,
   Instance = DefaultInstance,
   SetupOptions = DefaultSetupOptions,
