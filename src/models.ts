@@ -61,6 +61,7 @@ export interface WrapOptions {
   historyState?: object
   hasPath: boolean
   debug: boolean
+  interactionConfig?: object
 }
 
 export interface WrapExtensionAPI {

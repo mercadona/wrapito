@@ -43,6 +43,7 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
+    withInteraction,
     atPath,
     debugRequests,
     mount: getMount,
@@ -87,6 +88,12 @@ const extendWith = () => {
 const withProps = (props: object) => {
   const options = getOptions()
   updateOptions({ ...options, props })
+  return wrapWith()
+}
+
+const withInteraction = (interactionConfig: object) => {
+  const options = getOptions()
+  updateOptions({ ...options, interactionConfig })
   return wrapWith()
 }
 
@@ -148,7 +155,8 @@ const getMount = () => {
 
   if (interaction) {
     if (interaction.setup) {
-      const instance = interaction.setup(interaction.lib)
+      const { interactionConfig } = getOptions()
+      const instance = interaction.setup(interaction.lib, interactionConfig)
 
       return {
         ...mount(<C {...props} />),

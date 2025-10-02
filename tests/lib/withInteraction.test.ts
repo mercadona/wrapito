@@ -50,4 +50,29 @@ describe('Wrapito with interaction', () => {
     expect(user).toBe(expectedInstance)
     expect(setupMock).toHaveBeenCalled()
   })
+
+  it('should execute setup with its own config when provided in withInteraction', () => {
+    const expectedInstance = 'myInstance'
+    const setupMock = vi.fn().mockImplementation(() => expectedInstance)
+
+    const interactionLib = {
+      setup: setupMock,
+    }
+
+    configure({
+      interaction: {
+        lib: interactionLib,
+        setup: (libInstance, config) => libInstance.setup(config),
+      },
+    })
+
+    const localConfig = { myConfig: true }
+
+    const { user } = wrap(MyComponentWithProps)
+      .withInteraction(localConfig)
+      .mount()
+
+    expect(user).toBe(expectedInstance)
+    expect(setupMock).toHaveBeenCalledWith(localConfig)
+  })
 })
