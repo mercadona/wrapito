@@ -80,9 +80,13 @@ type Component = React.ReactElement<any, any>
 export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
-export interface InteractionOptions<Lib = unknown, Setup = unknown> {
+export interface InteractionOptions<
+  Lib = unknown,
+  Instance = unknown,
+  SetupOptions = unknown,
+> {
   lib: Lib
-  setup?: Setup
+  setup?: (lib: Lib, options?: SetupOptions) => Instance
 }
 
 export interface Config {
