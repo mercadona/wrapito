@@ -15,7 +15,16 @@ function resetMocksConfig() {
 afterEach(() => {
   resetMocksConfig()
 })
+
 describe('Wrapito with interaction', () => {
+  it('should not provide a user instance when no interaction is configured', () => {
+    configure(defaultMocksConfig)
+
+    const { user } = wrap(MyComponentWithProps).mount()
+
+    expect(user).not.toBeDefined()
+  })
+
   it('should return user object', () => {
     const myInteractionLib = vi.fn()
 
