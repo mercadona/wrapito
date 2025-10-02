@@ -49,23 +49,24 @@ export type DefaultLib = unknown
 export type DefaultInstance = unknown
 export type DefaultSetupOptions = unknown
 
-export interface Wrap<
+interface InteractionDescriptor<
   Lib = DefaultLib,
   Instance = DefaultInstance,
   SetupOptions = DefaultSetupOptions,
 > {
-  withNetwork: (
-    responses?: NetworkResponses,
-  ) => Wrap<Lib, Instance, SetupOptions>
-  atPath: (
-    path: string,
-    historyState?: object,
-  ) => Wrap<Lib, Instance, SetupOptions>
-  withProps: (props: object) => Wrap<Lib, Instance, SetupOptions>
-  withInteraction: (config: SetupOptions) => Wrap<Lib, Instance, SetupOptions>
-  debugRequests: () => Wrap<Lib, Instance, SetupOptions>
+  Lib?: Lib
+  Instance?: Instance
+  SetupOptions?: SetupOptions
+}
+
+export interface Wrap<I extends InteractionDescriptor = InteractionDescriptor> {
+  withNetwork: (responses?: NetworkResponses) => Wrap<I>
+  atPath: (path: string, historyState?: object) => Wrap<I>
+  withProps: (props: object) => Wrap<I>
+  withInteraction: (config: I['SetupOptions']) => Wrap<I>
+  debugRequests: () => Wrap<I>
   mount: () => RenderResult & {
-    user?: Instance
+    user?: I['Instance']
   }
 }
 
@@ -84,21 +85,13 @@ export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
 }
 
-type Extension<
-  Lib = DefaultLib,
-  Instance = DefaultInstance,
-  SetupOptions = DefaultSetupOptions,
-> = <T>(
+type Extension<I extends InteractionDescriptor = InteractionDescriptor> = <T>(
   extensionAPI: WrapExtensionAPI,
   args: T,
-) => Wrap<Lib, Instance, SetupOptions>
+) => Wrap<I>
 
-type Extensions<
-  Lib = DefaultLib,
-  Instance = DefaultInstance,
-  SetupOptions = DefaultSetupOptions,
-> = {
-  [key: string]: Extension<Lib, Instance, SetupOptions>
+type Extensions<I extends InteractionDescriptor = InteractionDescriptor> = {
+  [key: string]: Extension<I>
 }
 
 type Component = React.ReactElement<any, any>
@@ -107,28 +100,24 @@ export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
 export interface InteractionOptions<
-  Lib = DefaultLib,
-  Instance = DefaultInstance,
-  SetupOptions = DefaultSetupOptions,
+  I extends InteractionDescriptor = InteractionDescriptor,
 > {
-  lib: Lib
-  setup?: (lib: Lib, options?: SetupOptions) => Instance
+  lib: I['Lib']
+  setup?: (lib: I['Lib'], options?: I['SetupOptions']) => I['Instance']
 }
 
 export interface Config<
-  Lib = DefaultLib,
-  Instance = DefaultInstance,
-  SetupOptions = DefaultSetupOptions,
+  I extends InteractionDescriptor = InteractionDescriptor,
 > {
   defaultHost: string
   mount: Mount
-  extend: Extensions
+  extend: Extensions<I>
   changeRoute: (path: string) => void
   history?: BrowserHistory
   portal?: string
   portals?: string[]
   handleQueryParams?: boolean
-  interaction?: InteractionOptions<Lib, Instance, SetupOptions>
+  interaction?: InteractionOptions<I>
 }
 
 interface BrowserHistory extends History {
