@@ -54,7 +54,7 @@ export interface Wrap {
   mount: () => RenderResult
 }
 
-export interface WrapOptions {
+export interface WrapOptions<SetupOptions = unknown> {
   Component: unknown
   responses: WrapResponse[]
   props: object
@@ -62,7 +62,7 @@ export interface WrapOptions {
   historyState?: object
   hasPath: boolean
   debug: boolean
-  interactionConfig?: object
+  interactionConfig?: SetupOptions
 }
 
 export interface WrapExtensionAPI {
@@ -89,7 +89,11 @@ export interface InteractionOptions<
   setup?: (lib: Lib, options?: SetupOptions) => Instance
 }
 
-export interface Config {
+export interface Config<
+  Lib = unknown,
+  Instance = unknown,
+  SetupOptions = unknown,
+> {
   defaultHost: string
   mount: Mount
   extend: Extensions
@@ -98,9 +102,8 @@ export interface Config {
   portal?: string
   portals?: string[]
   handleQueryParams?: boolean
-  interaction?: InteractionOptions
+  interaction?: InteractionOptions<Lib, Instance, SetupOptions>
 }
-
 interface BrowserHistory extends History {
   push: (path: string, historyState?: object) => void
 }
