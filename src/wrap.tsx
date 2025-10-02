@@ -125,8 +125,16 @@ const debugRequests = () => {
 const getMount = () => {
   const { portal, portals, changeRoute, history, mount, interaction } =
     getConfig()
-  const { Component, props, responses, path, hasPath, debug, historyState } =
-    getOptions()
+  const {
+    Component,
+    props,
+    responses,
+    path,
+    hasPath,
+    debug,
+    historyState,
+    interactionConfig,
+  } = getOptions()
 
   const C = Component as React.JSXElementConstructor<unknown>
 
@@ -154,24 +162,20 @@ const getMount = () => {
 
   mockNetwork(responses, debug)
 
-  if (!!interaction) {
-    if (!!interaction.setup) {
-      const { interactionConfig } = getOptions()
-      const instance = interaction.setup(interaction.lib, interactionConfig)
+  const rendered = mount(<C {...props} />)
 
-      return {
-        ...mount(<C {...props} />),
-        user: instance,
-      }
-    }
+  if (!!interaction) {
+    const user = interaction.setup
+      ? interaction.setup(interaction.lib, interactionConfig)
+      : interaction.lib
 
     return {
-      ...mount(<C {...props} />),
-      user: interaction.lib,
+      ...rendered,
+      user: user,
     }
   }
 
-  return mount(<C {...props} />)
+  return rendered
 }
 
 const setupPortal = (portalRootId: string) => {
