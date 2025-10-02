@@ -49,6 +49,7 @@ export interface Wrap {
   withNetwork: (responses?: NetworkResponses) => Wrap
   atPath: (path: string, historyState?: object) => Wrap
   withProps: (props: object) => Wrap
+  withInteraction: (config: object) => Wrap
   debugRequests: () => Wrap
   mount: () => RenderResult
 }
