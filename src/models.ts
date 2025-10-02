@@ -45,16 +45,31 @@ export interface WrapResponse extends Partial<Response> {
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
 
-export interface Wrap {
-  withNetwork: (responses?: NetworkResponses) => Wrap
-  atPath: (path: string, historyState?: object) => Wrap
-  withProps: (props: object) => Wrap
-  withInteraction: (config: object) => Wrap
-  debugRequests: () => Wrap
-  mount: () => RenderResult
+export type DefaultLib = unknown
+export type DefaultInstance = unknown
+export type DefaultSetupOptions = unknown
+
+export interface Wrap<
+  Lib = DefaultLib,
+  Instance = DefaultInstance,
+  SetupOptions = DefaultSetupOptions,
+> {
+  withNetwork: (
+    responses?: NetworkResponses,
+  ) => Wrap<Lib, Instance, SetupOptions>
+  atPath: (
+    path: string,
+    historyState?: object,
+  ) => Wrap<Lib, Instance, SetupOptions>
+  withProps: (props: object) => Wrap<Lib, Instance, SetupOptions>
+  withInteraction: (config: SetupOptions) => Wrap<Lib, Instance, SetupOptions>
+  debugRequests: () => Wrap<Lib, Instance, SetupOptions>
+  mount: () => RenderResult & {
+    user?: Instance
+  }
 }
 
-export interface WrapOptions<SetupOptions = unknown> {
+export interface WrapOptions<SetupOptions = DefaultSetupOptions> {
   Component: unknown
   responses: WrapResponse[]
   props: object
@@ -69,10 +84,21 @@ export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
 }
 
-type Extension = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap
+type Extension<
+  Lib = DefaultLib,
+  Instance = DefaultInstance,
+  SetupOptions = DefaultSetupOptions,
+> = <T>(
+  extensionAPI: WrapExtensionAPI,
+  args: T,
+) => Wrap<Lib, Instance, SetupOptions>
 
-type Extensions = {
-  [key: string]: Extension
+type Extensions<
+  Lib = DefaultLib,
+  Instance = DefaultInstance,
+  SetupOptions = DefaultSetupOptions,
+> = {
+  [key: string]: Extension<Lib, Instance, SetupOptions>
 }
 
 type Component = React.ReactElement<any, any>
@@ -81,18 +107,18 @@ export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
 export interface InteractionOptions<
-  Lib = unknown,
-  Instance = unknown,
-  SetupOptions = unknown,
+  Lib = DefaultLib,
+  Instance = DefaultInstance,
+  SetupOptions = DefaultSetupOptions,
 > {
   lib: Lib
   setup?: (lib: Lib, options?: SetupOptions) => Instance
 }
 
 export interface Config<
-  Lib = unknown,
-  Instance = unknown,
-  SetupOptions = unknown,
+  Lib = DefaultLib,
+  Instance = DefaultInstance,
+  SetupOptions = DefaultSetupOptions,
 > {
   defaultHost: string
   mount: Mount
@@ -104,6 +130,7 @@ export interface Config<
   handleQueryParams?: boolean
   interaction?: InteractionOptions<Lib, Instance, SetupOptions>
 }
+
 interface BrowserHistory extends History {
   push: (path: string, historyState?: object) => void
 }

@@ -92,7 +92,7 @@ const withProps = (props: object) => {
   return wrapWith()
 }
 
-const withInteraction = (interactionConfig: object) => {
+const withInteraction = (interactionConfig: unknown) => {
   const options = getOptions()
   updateOptions({ ...options, interactionConfig })
   return wrapWith()
