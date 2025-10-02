@@ -153,8 +153,8 @@ const getMount = () => {
 
   mockNetwork(responses, debug)
 
-  if (interaction) {
-    if (interaction.setup) {
+  if (!!interaction) {
+    if (!!interaction.setup) {
       const { interactionConfig } = getOptions()
       const instance = interaction.setup(interaction.lib, interactionConfig)
 

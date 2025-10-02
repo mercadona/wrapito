@@ -82,7 +82,7 @@ export type Mount = (component: Component) => RenderResult
 
 export interface InteractionOptions<Lib = unknown, Setup = unknown> {
   lib: Lib
-  setup: Setup
+  setup?: Setup
 }
 
 export interface Config {
