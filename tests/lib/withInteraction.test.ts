@@ -30,7 +30,7 @@ describe('Wrapito with interaction', () => {
 
     configure({
       interaction: {
-        lib: myInteractionLib,
+        userLib: myInteractionLib,
       },
     })
 
@@ -49,8 +49,8 @@ describe('Wrapito with interaction', () => {
 
     configure({
       interaction: {
-        lib: interactionLib,
-        setup: libInstance => libInstance.setup(),
+        userLib: interactionLib,
+        setup: userLib => userLib.setup(),
       },
     })
 
@@ -70,8 +70,8 @@ describe('Wrapito with interaction', () => {
 
     configure({
       interaction: {
-        lib: interactionLib,
-        setup: (libInstance, config) => libInstance.setup(config),
+        userLib: interactionLib,
+        setup: (userLib, config) => userLib.setup(config),
       },
     })
 
@@ -95,8 +95,8 @@ describe('Wrapito with interaction', () => {
 
     configure({
       interaction: {
-        lib: interactionLib,
-        setup: (libInstance, config) => libInstance.setup(config),
+        userLib: interactionLib,
+        setup: (userLib, config) => userLib.setup(config),
       },
     })
 
