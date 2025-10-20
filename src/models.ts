@@ -59,6 +59,11 @@ export interface InteractionDescriptor<
   UserSetupOptions?: UserSetupOptions
 }
 
+type MountResult<UserInteraction extends InteractionDescriptor> =
+  UserInteraction['UserInstance'] extends unknown
+    ? RenderResult
+    : RenderResult & { user: UserInteraction['UserInstance'] }
+
 export interface Wrap<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
@@ -69,9 +74,7 @@ export interface Wrap<
     config: UserInteraction['UserSetupOptions'],
   ) => Wrap<UserInteraction>
   debugRequests: () => Wrap<UserInteraction>
-  mount: () => RenderResult & {
-    user?: UserInteraction['UserInstance']
-  }
+  mount: () => MountResult<UserInteraction>
 }
 
 export interface WrapOptions<SetupOptions = DefaultUserSetupOptions> {
@@ -102,7 +105,9 @@ type Extensions<
 type Component = React.ReactElement<any, any>
 
 export type RenderResult = TLRenderResult
-export type Mount = (component: Component) => RenderResult
+export type Mount<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> = (component: Component) => MountResult<UserInteraction>
 
 export interface InteractionOptions<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
@@ -118,7 +123,7 @@ export interface Config<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
   defaultHost: string
-  mount: Mount
+  mount: Mount<UserInteraction>
   extend: Extensions<UserInteraction>
   changeRoute: (path: string) => void
   history?: BrowserHistory
