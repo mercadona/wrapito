@@ -166,8 +166,8 @@ const getMount = () => {
 
   if (!!interaction) {
     const user = interaction.setup
-      ? interaction.setup(interaction.lib, interactionConfig)
-      : interaction.lib
+      ? interaction.setup(interaction.userLib, interactionConfig)
+      : interaction.userLib
 
     return {
       ...rendered,
