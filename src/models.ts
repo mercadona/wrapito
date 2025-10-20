@@ -45,15 +45,36 @@ export interface WrapResponse extends Partial<Response> {
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
 
-export interface Wrap {
-  withNetwork: (responses?: NetworkResponses) => Wrap
-  atPath: (path: string, historyState?: object) => Wrap
-  withProps: (props: object) => Wrap
-  debugRequests: () => Wrap
-  mount: () => RenderResult
+export type DefaultUserLib = unknown
+export type DefaultUserInstance = unknown
+export type DefaultUserSetupOptions = unknown
+
+export interface InteractionDescriptor<
+  UserLib = DefaultUserLib,
+  UserInstance = DefaultUserInstance,
+  UserSetupOptions = DefaultUserSetupOptions,
+> {
+  UserLib?: UserLib
+  UserInstance?: UserInstance
+  UserSetupOptions?: UserSetupOptions
 }
 
-export interface WrapOptions {
+export interface Wrap<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> {
+  withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
+  atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
+  withProps: (props: object) => Wrap<UserInteraction>
+  withInteraction: (
+    config: UserInteraction['UserSetupOptions'],
+  ) => Wrap<UserInteraction>
+  debugRequests: () => Wrap<UserInteraction>
+  mount: () => RenderResult & {
+    user?: UserInteraction['UserInstance']
+  }
+}
+
+export interface WrapOptions<SetupOptions = DefaultUserSetupOptions> {
   Component: unknown
   responses: WrapResponse[]
   props: object
@@ -61,16 +82,21 @@ export interface WrapOptions {
   historyState?: object
   hasPath: boolean
   debug: boolean
+  interactionConfig?: SetupOptions
 }
 
 export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
 }
 
-type Extension = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap
+type Extension<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction>
 
-type Extensions = {
-  [key: string]: Extension
+type Extensions<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> = {
+  [key: string]: Extension<UserInteraction>
 }
 
 type Component = React.ReactElement<any, any>
@@ -78,15 +104,28 @@ type Component = React.ReactElement<any, any>
 export type RenderResult = TLRenderResult
 export type Mount = (component: Component) => RenderResult
 
-export interface Config {
+export interface InteractionOptions<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> {
+  userLib: UserInteraction['UserLib']
+  setup?: (
+    userLib: UserInteraction['UserLib'],
+    options?: UserInteraction['UserSetupOptions'],
+  ) => UserInteraction['UserInstance']
+}
+
+export interface Config<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> {
   defaultHost: string
   mount: Mount
-  extend: Extensions
+  extend: Extensions<UserInteraction>
   changeRoute: (path: string) => void
   history?: BrowserHistory
   portal?: string
   portals?: string[]
   handleQueryParams?: boolean
+  interaction?: InteractionOptions<UserInteraction>
 }
 
 interface BrowserHistory extends History {

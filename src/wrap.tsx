@@ -31,6 +31,7 @@ const wrap = (component: unknown): Wrap => {
     props: {},
     path: '',
     hasPath: false,
+    interactionConfig: undefined,
     debug: process.env.npm_config_debugRequests === 'true',
   })
 
@@ -43,6 +44,7 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
+    withInteraction,
     atPath,
     debugRequests,
     mount: getMount,
@@ -90,6 +92,12 @@ const withProps = (props: object) => {
   return wrapWith()
 }
 
+const withInteraction = (interactionConfig: unknown) => {
+  const options = getOptions()
+  updateOptions({ ...options, interactionConfig })
+  return wrapWith()
+}
+
 const withNetwork = (responses: Response | Response[] = []) => {
   const options = getOptions()
   const listOfResponses = Array.isArray(responses) ? responses : [responses]
@@ -115,9 +123,18 @@ const debugRequests = () => {
 }
 
 const getMount = () => {
-  const { portal, portals, changeRoute, history, mount } = getConfig()
-  const { Component, props, responses, path, hasPath, debug, historyState } =
-    getOptions()
+  const { portal, portals, changeRoute, history, mount, interaction } =
+    getConfig()
+  const {
+    Component,
+    props,
+    responses,
+    path,
+    hasPath,
+    debug,
+    historyState,
+    interactionConfig,
+  } = getOptions()
 
   const C = Component as React.JSXElementConstructor<unknown>
 
@@ -145,7 +162,20 @@ const getMount = () => {
 
   mockNetwork(responses, debug)
 
-  return mount(<C {...props} />)
+  const rendered = mount(<C {...props} />)
+
+  if (!!interaction) {
+    const user = interaction.setup
+      ? interaction.setup(interaction.userLib, interactionConfig)
+      : interaction.userLib
+
+    return {
+      ...rendered,
+      user: user,
+    }
+  }
+
+  return rendered
 }
 
 const setupPortal = (portalRootId: string) => {

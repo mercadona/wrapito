@@ -1,0 +1,119 @@
+import { cleanup } from '@testing-library/react'
+import { wrap, configure } from '../../src/index'
+import { getConfig } from '../../src/config'
+import { MyComponentWithProps } from '../components.mock'
+import { it, expect, afterEach, vi } from 'vitest'
+import { describe } from 'node:test'
+
+const defaultMocksConfig = getConfig()
+
+function resetMocksConfig() {
+  configure(defaultMocksConfig)
+  cleanup()
+}
+
+afterEach(() => {
+  resetMocksConfig()
+})
+
+describe('Wrapito with interaction', () => {
+  it('should not provide a user instance when no interaction is configured', () => {
+    configure(defaultMocksConfig)
+
+    const { user } = wrap(MyComponentWithProps).mount()
+
+    expect(user).not.toBeDefined()
+  })
+
+  it('should return user object', () => {
+    const myInteractionLib = vi.fn()
+
+    configure({
+      interaction: {
+        userLib: myInteractionLib,
+      },
+    })
+
+    const { user } = wrap(MyComponentWithProps).mount()
+
+    expect(user).toBeDefined()
+  })
+
+  it('should execute the interaction setup function and return the instance', () => {
+    const expectedInstance = 'myInstance'
+    const setupMock = vi.fn().mockImplementation(() => expectedInstance)
+
+    const interactionLib = {
+      setup: setupMock,
+    }
+
+    configure({
+      interaction: {
+        userLib: interactionLib,
+        setup: userLib => userLib.setup(),
+      },
+    })
+
+    const { user } = wrap(MyComponentWithProps).mount()
+
+    expect(user).toBe(expectedInstance)
+    expect(setupMock).toHaveBeenCalled()
+  })
+
+  it('should execute setup with its own config when provided in withInteraction', () => {
+    const expectedInstance = 'myInstance'
+    const setupMock = vi.fn().mockImplementation(() => expectedInstance)
+
+    const interactionLib = {
+      setup: setupMock,
+    }
+
+    configure({
+      interaction: {
+        userLib: interactionLib,
+        setup: (userLib, config) => userLib.setup(config),
+      },
+    })
+
+    const localConfig = { myConfig: true }
+
+    const { user } = wrap(MyComponentWithProps)
+      .withInteraction(localConfig)
+      .mount()
+
+    expect(user).toBe(expectedInstance)
+    expect(setupMock).toHaveBeenCalledWith(localConfig)
+  })
+
+  it('should not leak local withInteraction config to subsequent mounts', () => {
+    const expectedInstance = 'myInstance'
+    const setupMock = vi.fn().mockImplementation(() => expectedInstance)
+
+    const interactionLib = {
+      setup: setupMock,
+    }
+
+    configure({
+      interaction: {
+        userLib: interactionLib,
+        setup: (userLib, config) => userLib.setup(config),
+      },
+    })
+
+    const localConfig = { myConfig: true }
+
+    const { user: firstUser } = wrap(MyComponentWithProps)
+      .withInteraction(localConfig)
+      .mount()
+
+    expect(firstUser).toBe(expectedInstance)
+    expect(setupMock).toHaveBeenCalledWith(localConfig)
+
+    setupMock.mockClear()
+
+    const { user: secondUser } = wrap(MyComponentWithProps).mount()
+
+    expect(secondUser).toBe(expectedInstance)
+    expect(setupMock).toHaveBeenCalledWith(undefined)
+  })
+})
