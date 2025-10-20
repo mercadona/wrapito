@@ -59,7 +59,7 @@ export interface InteractionDescriptor<
   UserSetupOptions: UserSetupOptions
 }
 
-type MountResult<UserInteraction extends InteractionDescriptor> =
+export type MountResult<UserInteraction extends InteractionDescriptor> =
   UserInteraction['UserInstance'] extends unknown
     ? RenderResult
     : RenderResult & { user: UserInteraction['UserInstance'] }
