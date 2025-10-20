@@ -54,9 +54,9 @@ export interface InteractionDescriptor<
   UserInstance = DefaultUserInstance,
   UserSetupOptions = DefaultUserSetupOptions,
 > {
-  UserLib?: UserLib
-  UserInstance?: UserInstance
-  UserSetupOptions?: UserSetupOptions
+  UserLib: UserLib
+  UserInstance: UserInstance
+  UserSetupOptions: UserSetupOptions
 }
 
 type MountResult<UserInteraction extends InteractionDescriptor> =
