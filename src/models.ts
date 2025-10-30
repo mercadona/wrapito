@@ -54,9 +54,9 @@ export interface InteractionDescriptor<
   UserInstance = DefaultUserInstance,
   UserSetupOptions = DefaultUserSetupOptions,
 > {
-  UserLib?: UserLib
-  UserInstance?: UserInstance
-  UserSetupOptions?: UserSetupOptions
+  UserLib: UserLib
+  UserInstance: UserInstance
+  UserSetupOptions: UserSetupOptions
 }
 
 export interface Wrap<
@@ -70,7 +70,7 @@ export interface Wrap<
   ) => Wrap<UserInteraction>
   debugRequests: () => Wrap<UserInteraction>
   mount: () => RenderResult & {
-    user?: UserInteraction['UserInstance']
+    user: UserInteraction['UserInstance']
   }
 }
 

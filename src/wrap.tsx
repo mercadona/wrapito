@@ -175,7 +175,10 @@ const getMount = () => {
     }
   }
 
-  return rendered
+  return {
+    ...rendered,
+    user: undefined,
+  }
 }
 
 const setupPortal = (portalRootId: string) => {
