@@ -70,7 +70,7 @@ export interface Wrap<
   ) => Wrap<UserInteraction>
   debugRequests: () => Wrap<UserInteraction>
   mount: () => RenderResult & {
-    user?: UserInteraction['UserInstance']
+    user: UserInteraction['UserInstance']
   }
 }
 
