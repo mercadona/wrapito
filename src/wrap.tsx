@@ -9,6 +9,7 @@ import type {
   WrapExtensionAPI,
   Extension,
   Extensions,
+  InteractionDescriptor,
 } from './models'
 import { enhancedSpy } from './utils/tinyspyWrapper'
 import { MockInstance } from './utils/types'
@@ -24,7 +25,11 @@ afterEach(() => {
   mockedFetch.mockReset()
 })
 
-const wrap = (component: unknown): Wrap => {
+const wrap = <
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+>(
+  component: unknown,
+): Wrap<UserInteraction> => {
   updateOptions({
     Component: component,
     responses: [],
@@ -38,7 +43,9 @@ const wrap = (component: unknown): Wrap => {
   return wrapWith()
 }
 
-const wrapWith = (): Wrap => {
+const wrapWith = <
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+>(): Wrap<UserInteraction> => {
   const extensions = extendWith()
 
   return {
@@ -49,7 +56,7 @@ const wrapWith = (): Wrap => {
     debugRequests,
     mount: getMount,
     ...extensions,
-  }
+  } as unknown as Wrap<UserInteraction>
 }
 
 const addResponses = (newResponses: Response[]) => {
@@ -92,7 +99,11 @@ const withProps = (props: object) => {
   return wrapWith()
 }
 
-const withInteraction = (interactionConfig: unknown) => {
+const withInteraction = <
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+>(
+  interactionConfig: UserInteraction['UserSetupOptions'],
+) => {
   const options = getOptions()
   updateOptions({ ...options, interactionConfig })
   return wrapWith()
@@ -175,7 +186,7 @@ const getMount = () => {
     }
   }
 
-  return rendered
+  return { ...rendered, user: undefined }
 }
 
 const setupPortal = (portalRootId: string) => {

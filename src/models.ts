@@ -59,9 +59,7 @@ export interface InteractionDescriptor<
   UserSetupOptions?: UserSetupOptions
 }
 
-export interface Wrap<
-  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
-> {
+export interface Wrap<UserInteraction extends InteractionDescriptor> {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>
@@ -70,11 +68,13 @@ export interface Wrap<
   ) => Wrap<UserInteraction>
   debugRequests: () => Wrap<UserInteraction>
   mount: () => RenderResult & {
-    user?: UserInteraction['UserInstance']
+    user: UserInteraction['UserInstance']
   }
 }
 
-export interface WrapOptions<SetupOptions = DefaultUserSetupOptions> {
+export interface WrapOptions<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> {
   Component: unknown
   responses: WrapResponse[]
   props: object
@@ -82,7 +82,7 @@ export interface WrapOptions<SetupOptions = DefaultUserSetupOptions> {
   historyState?: object
   hasPath: boolean
   debug: boolean
-  interactionConfig?: SetupOptions
+  interactionConfig?: UserInteraction['UserSetupOptions']
 }
 
 export interface WrapExtensionAPI {
