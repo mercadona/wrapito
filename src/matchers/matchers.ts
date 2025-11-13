@@ -58,8 +58,6 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
   }
 
   const receivedRequestsHeaders = getRequestHeaders(targetRequests)
-  console.log(receivedRequestsHeaders)
-  console.log(options?.headers)
   const expectedHeaders = options?.headers
 
   if (
