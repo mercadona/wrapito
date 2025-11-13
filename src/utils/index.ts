@@ -67,6 +67,18 @@ export const getRequestsHosts = (requests: Array<Array<unknown>>) =>
     .filter(isRequest)
     .map(request => new URL(request.url, getDefaultHost()).hostname)
 
+export const getRequestHeaders = (requests: Array<Array<unknown>>) =>
+  requests
+    .flat(1)
+    .filter(isRequest)
+    .map(request => {
+      const headersObj: Record<string, string> = {}
+      request.headers.forEach((value, key) => {
+        headersObj[key] = value
+      })
+      return headersObj
+    })
+
 export const methodDoesNotMatch = (
   expectedMethod: string | undefined,
   receivedRequestsMethods: Array<string | undefined>,
@@ -90,6 +102,19 @@ export const hostDoesNotMatch = (
   const anyRequestMatch = receivedRequestsHosts.every(
     requestHost => requestHost !== expectedHost,
   )
+
+  return anyRequestMatch
+}
+
+export const headersDoNotMatch = (
+  expectedHeaders: Record<string, string>,
+  receivedRequestsHeaders: Array<Record<string, string>>,
+) => {
+  const anyRequestMatch = receivedRequestsHeaders.every(receivedHeaders => {
+    return Object.entries(expectedHeaders).some(
+      ([key, value]) => receivedHeaders[key.toLowerCase()] !== value,
+    )
+  })
 
   return anyRequestMatch
 }

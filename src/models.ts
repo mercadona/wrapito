@@ -23,6 +23,7 @@ export interface RequestOptions {
   host?: string
   body?: object | string
   method?: HttpMethod
+  headers?: Record<string, string>
 }
 
 export interface WrapResponse extends Partial<Response> {

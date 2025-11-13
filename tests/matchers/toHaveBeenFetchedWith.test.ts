@@ -294,4 +294,58 @@ ${diff(expectedBody, receivedBody)}`,
       })
     })
   })
+
+  describe('request headers', () => {
+    it('should check that the path has been called with the supplied headers', async () => {
+      const path = '//some-domain.com/some/path/'
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer token',
+      }
+      const body = {
+        method: 'POST' as const,
+        body: JSON.stringify({}),
+        headers,
+      }
+
+      await fetch(new Request(path, body))
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
+        body: {},
+        headers,
+      })
+
+      expect(message()).toBe('Test passing')
+      expect(path).toHaveBeenFetchedWith({
+        body: {},
+        headers,
+      })
+    })
+
+    it('should check that the path has not been called with the supplied headers', async () => {
+      const path = '//some-domain.com/some/path/'
+      const sentHeaders = {
+        'content-type': 'application/json',
+      }
+      const expectedHeaders = {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer token',
+      }
+      const request = new Request(path, { headers: sentHeaders })
+      await fetch(request)
+
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
+        body: {},
+        headers: expectedHeaders,
+      })
+
+      expect(message()).toBe(
+        `🌯 Wrapito: Fetch headers do not match.
+${diff(expectedHeaders, sentHeaders)}`,
+      )
+      expect(path).not.toHaveBeenFetchedWith({
+        body: {},
+        headers: expectedHeaders,
+      })
+    })
+  })
 })

@@ -66,6 +66,22 @@ const hostDoesNotMatchErrorMessage = (
   }
 }
 
+const headersDoNotMatchErrorMessage = (
+  expected: Record<string, string>,
+  receivedRequestsHeaders: Array<Record<string, string>>,
+) => {
+  const diffs = receivedRequestsHeaders
+    .map(received => diff(expected, received))
+    .join('\n\n')
+
+  return {
+    pass: false,
+    message: () =>
+      `🌯 Wrapito: Fetch headers do not match.
+${diffs}`,
+  }
+}
+
 const doesNotHaveBodyErrorMessage = () => ({
   pass: false,
   message: () => '🌯 Wrapito: Unable to find body.',
@@ -98,4 +114,5 @@ export {
   doesNotHaveBodyErrorMessage,
   successMessage,
   haveBeenFetchedSuccessMessage,
+  headersDoNotMatchErrorMessage,
 }
