@@ -8,6 +8,7 @@ import {
   doesNotHaveBodyErrorMessage,
   successMessage,
   haveBeenFetchedSuccessMessage,
+  headersDoNotMatchErrorMessage,
 } from './messages'
 
 import {
@@ -19,6 +20,8 @@ import {
   methodDoesNotMatch,
   getRequestsHosts,
   hostDoesNotMatch,
+  getRequestHeaders,
+  headersDoNotMatch,
 } from '../utils'
 
 const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
@@ -52,6 +55,18 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
 
   if (expectedHost && hostDoesNotMatch(expectedHost, receivedRequestsHosts)) {
     return hostDoesNotMatchErrorMessage(expectedHost, receivedRequestsHosts)
+  }
+
+  const receivedRequestsHeaders = getRequestHeaders(targetRequests)
+  console.log(receivedRequestsHeaders)
+  console.log(options?.headers)
+  const expectedHeaders = options?.headers
+
+  if (
+    expectedHeaders &&
+    headersDoNotMatch(expectedHeaders, receivedRequestsHeaders)
+  ) {
+    return headersDoNotMatchErrorMessage(expectedHeaders, receivedRequestsHeaders)
   }
 
   return successMessage()
