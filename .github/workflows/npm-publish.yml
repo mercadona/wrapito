@@ -29,7 +29,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Build Changelog
         id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
+        uses: mikepenz/release-changelog-builder-action@439f79b5b5428107c7688c1d2b0e8bacc9b8792c #6.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
