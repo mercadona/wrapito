@@ -56,7 +56,6 @@
     "deep-equal": "^2.2.3",
     "jest-diff": "^29.7.0",
     "object-hash": "^3.0.0",
-    "rimraf": "^5.0.5",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
