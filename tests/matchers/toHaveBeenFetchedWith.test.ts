@@ -347,5 +347,30 @@ ${diff(expectedHeaders, sentHeaders)}`,
         headers: expectedHeaders,
       })
     })
+
+    it('should check that the path has been called with the supplied headers in uppercase', async () => {
+      const path = '//some-domain.com/some/path/'
+      const headers = {
+        'CONTENT-TYPE': 'application/json',
+        'AUTHORIZATION': 'Bearer token',
+      }
+      const body = {
+        method: 'POST' as const,
+        body: JSON.stringify({}),
+        headers,
+      }
+
+      await fetch(new Request(path, body))
+      const { message } = matchers.toHaveBeenFetchedWith(path, {
+        body: {},
+        headers,
+      })
+
+      expect(message()).toBe('Test passing')
+      expect(path).toHaveBeenFetchedWith({
+        body: {},
+        headers,
+      })
+    })
   })
 })
