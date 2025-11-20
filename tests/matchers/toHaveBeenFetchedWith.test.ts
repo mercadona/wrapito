@@ -369,7 +369,10 @@ ${diff(expectedHeaders, sentHeaders)}`,
       expect(message()).toBe('Test passing')
       expect(path).toHaveBeenFetchedWith({
         body: {},
-        headers,
+        headers: {
+          'content-type': 'application/json',
+          'authorization': 'Bearer token'
+        },
       })
     })
   })
