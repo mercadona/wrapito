@@ -348,11 +348,11 @@ ${diff(expectedHeaders, sentHeaders)}`,
       })
     })
 
-    it('should check that the path has been called with the supplied headers and is not case sensitive', async () => {
+    it('should check that the path has been called with the supplied headers case insensitive', async () => {
       const path = '//some-domain.com/some/path/'
       const headers = {
-        'CONTENT-TYPE': 'application/json',
-        'AUTHORIZATION': 'Bearer token',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer token',
       }
       const body = {
         method: 'POST' as const,
@@ -370,8 +370,8 @@ ${diff(expectedHeaders, sentHeaders)}`,
       expect(path).toHaveBeenFetchedWith({
         body: {},
         headers: {
-          'content-type': 'application/json',
-          'authorization': 'Bearer token'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer token'
         },
       })
     })
