@@ -348,7 +348,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
       })
     })
 
-    it('should check that the path has been called with the supplied headers in uppercase', async () => {
+    it('should check that the path has been called with the supplied headers and is not case sensitive', async () => {
       const path = '//some-domain.com/some/path/'
       const headers = {
         'CONTENT-TYPE': 'application/json',
