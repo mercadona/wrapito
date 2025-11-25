@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "composite": true,
+  },
+  "extends": "./tsconfig.base.json",
+  "types": [
+    "vitest/globals",
+    "react"
+  ],
+  "include": [
+    "tests/**/*",
+    "vitest.d.ts"
+  ],
+}

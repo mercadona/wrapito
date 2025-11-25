@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "composite": true,
+  },
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "tests/**/*"
+  ],
+  "include": [
+    "src/**/*"
+  ]
+}
