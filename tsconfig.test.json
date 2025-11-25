@@ -8,6 +8,7 @@
     "react"
   ],
   "include": [
+    "src/**/*",
     "tests/**/*",
     "vitest.d.ts"
   ],
