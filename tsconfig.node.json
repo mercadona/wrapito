@@ -3,6 +3,9 @@
     "composite": true,
   },
   "extends": "./tsconfig.json",
+  "types": [
+    "react"
+  ],
   "exclude": [
     "tests/**/*"
   ],
