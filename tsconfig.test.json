@@ -3,13 +3,7 @@
     "composite": true,
   },
   "extends": "./tsconfig.json",
-  "types": [
-    "vitest/globals",
-    "react"
-  ],
   "include": [
-    "src/**/*",
     "tests/**/*",
-    "vitest.d.ts"
   ],
 }
