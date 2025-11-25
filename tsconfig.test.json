@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
   },
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "types": [
     "vitest/globals",
     "react"
