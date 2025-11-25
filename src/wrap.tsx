@@ -1,5 +1,5 @@
 import * as React from 'react'
-import "vitest/globals"
+
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { updateOptions, getOptions } from './options'
@@ -13,11 +13,13 @@ import type {
 import { enhancedSpy } from './utils/tinyspyWrapper'
 import { MockInstance } from './utils/types'
 
+// @ts-expect-error
 beforeEach(() => {
   // @ts-expect-error
   global.fetch = enhancedSpy()
 })
 
+// @ts-expect-error
 afterEach(() => {
   // @ts-expect-error
   const mockedFetch = global.fetch as MockInstance
