@@ -84,7 +84,7 @@
     "tinyspy": "^2.2.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^1.1.0"
+    "vitest": "^4.0.13"
   },
   "peerDependencies": {
     "@testing-library/jest-dom": ">=5.16.4",
