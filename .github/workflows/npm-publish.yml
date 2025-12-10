@@ -22,6 +22,8 @@ jobs:
       - run: npm ci
       - run: npm version --no-git-tag-version ${GITHUB_REF##*/}
       - name: Publish package
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
         run: |
           if [[ ${{ github.ref }} == *-beta* ]]; then
             npm run publish-package:beta
