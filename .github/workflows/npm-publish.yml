@@ -21,7 +21,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm version --no-git-tag-version ${GITHUB_REF##*/}
-      - run: npm run build
       - name: Publish package
         run: |
           if [[ ${{ github.ref }} == *-beta* ]]; then
