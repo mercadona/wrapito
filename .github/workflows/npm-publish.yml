@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
       - run: npm ci
       - run: npm version --no-git-tag-version ${GITHUB_REF##*/}
       - name: Publish package
