@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*.*.*'
       - 'v*.*.*-beta*'
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   publish-npm:
@@ -25,8 +28,6 @@ jobs:
           else
             npm run publish-package
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@439f79b5b5428107c7688c1d2b0e8bacc9b8792c #6.0.1
