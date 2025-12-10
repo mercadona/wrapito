@@ -21,14 +21,13 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm version --no-git-tag-version ${GITHUB_REF##*/}
+      - run: npm run build
       - name: Publish package
-        env:
-          NPM_CONFIG_PROVENANCE: 'true'
         run: |
           if [[ ${{ github.ref }} == *-beta* ]]; then
-            npm run publish-package:beta
+            npm run publish-package:beta --access public
           else
-            npm run publish-package
+            npm run publish-package --access public
           fi
       - name: Build Changelog
         id: github_release
