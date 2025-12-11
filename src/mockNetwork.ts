@@ -1,8 +1,7 @@
 import chalk from 'chalk'
 import type { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
-import { enhancedSpy } from './utils/tinyspyWrapper'
-import type { MockInstance } from '../src/utils/types'
+import { MockInstance } from '@vitest/spy'
 
 declare global {
   interface Window {
@@ -10,18 +9,9 @@ declare global {
   }
 }
 
-beforeEach(() => {
-  // @ts-expect-error
-  global.window.fetch = enhancedSpy()
-})
-
-afterEach(() => {
-  global.window.fetch.mockReset()
-})
-
 const createDefaultResponse = async () => {
   const response = {
-    json: () => Promise.resolve(),
+    json: () => Promise.resolve(''),
     status: 200,
     ok: true,
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -87,7 +77,7 @@ const mockFetch = async (
     if (debug) {
       printMultipleResponsesWarning(responseMatchingRequest)
     }
-    return
+    return createDefaultResponse()
   }
 
   responseNotYetReturned.hasBeenReturned = true

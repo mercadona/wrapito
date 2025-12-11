@@ -2,27 +2,20 @@ import * as React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
-import { updateOptions, getOptions } from './options'
-import type {
-  Response,
-  Wrap,
-  WrapExtensionAPI,
-  Extension,
-  Extensions,
-} from './models'
-import { enhancedSpy } from './utils/tinyspyWrapper'
-import { MockInstance } from './utils/types'
+import { getOptions, updateOptions } from './options'
+import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
+import { MockInstance, spyOn } from '@vitest/spy'
+import { ensureWindowFetch } from './utils/polyfills'
 
 // @ts-expect-error
 beforeEach(() => {
-  // @ts-expect-error
-  global.fetch = enhancedSpy()
+  ensureWindowFetch()
+  spyOn(global.window, 'fetch').mockRejectedValue(new Error('Mock instance failed.'))
 })
 
 // @ts-expect-error
 afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
+  const mockedFetch = global.window.fetch as MockInstance
   mockedFetch.mockReset()
 })
 

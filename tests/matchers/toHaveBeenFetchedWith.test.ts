@@ -1,9 +1,21 @@
 import '../../vitest.d.ts'
 import { matchers } from '../../src/matchers'
-import { describe, it, expect } from 'vitest'
 import { diff } from 'jest-diff'
+import { describe, expect, it, MockInstance } from 'vitest'
+import { spyOn } from '@vitest/spy'
 
 expect.extend(matchers)
+
+// @ts-expect-error
+beforeEach(() => {
+  spyOn(global.window, 'fetch').mockResolvedValue(undefined)
+})
+
+// @ts-expect-error
+afterEach(() => {
+  const mockedFetch = global.window.fetch as unknown as MockInstance
+  mockedFetch.mockReset()
+})
 
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
@@ -27,7 +39,7 @@ describe('toHaveBeenFetchedWith', () => {
     await fetch(new Request(path))
     const { message } = matchers.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
+    expect(message()).toBe('🌯 Wrapito: /some/unknown ain\'t got called')
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
@@ -371,7 +383,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
         body: {},
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer token'
+          'Authorization': 'Bearer token',
         },
       })
     })
