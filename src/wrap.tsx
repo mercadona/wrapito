@@ -4,23 +4,20 @@ import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
 import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
-import { enhancedSpy } from './utils/tinyspyWrapper'
+import { createMockInstance } from '@vitest/spy'
 import { MockInstance } from './utils/types'
 
 // @ts-expect-error
 beforeEach(() => {
   // @ts-expect-error
-  global.fetch = enhancedSpy()
-  console.log('global.fetch', { enhancedMocked: global.fetch })
+  global.fetch = createMockInstance()
 })
 
 // @ts-expect-error
 afterEach(() => {
   // @ts-expect-error
   const mockedFetch = global.fetch as MockInstance
-  console.log('mockedFetch', { mockedFetch })
   mockedFetch.mockReset()
-  console.log('mockedFetch after reset', { mockedFetch })
 })
 
 const wrap = (component: unknown): Wrap => {
