@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import type { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
-import type { MockInstance } from '../src/utils/types'
+import { MockInstance } from '@vitest/spy'
 
 declare global {
   interface Window {

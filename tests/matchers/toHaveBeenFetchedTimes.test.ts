@@ -1,6 +1,18 @@
 import { configure } from '../../src'
 import { matchers } from '../../src/matchers'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it, MockInstance } from 'vitest'
+import { spyOn } from '@vitest/spy'
+
+// @ts-expect-error
+beforeEach(() => {
+  spyOn(global.window, 'fetch').mockResolvedValue(undefined)
+})
+
+// @ts-expect-error
+afterEach(() => {
+  const mockedFetch = global.window.fetch as unknown as MockInstance
+  mockedFetch.mockReset()
+})
 
 describe('toHaveBeenFetchedTimes', () => {
   it('should count how many times an url is called', async () => {

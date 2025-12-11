@@ -4,19 +4,17 @@ import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
 import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
-import { createMockInstance } from '@vitest/spy'
-import { MockInstance } from './utils/types'
+import { MockInstance, spyOn } from '@vitest/spy'
 
 // @ts-expect-error
 beforeEach(() => {
-  // @ts-expect-error
-  global.window.fetch = createMockInstance()
+  spyOn(global.window, 'fetch').mockRejectedValue(new Error('Mock instance failed.'))
 })
 
 // @ts-expect-error
 afterEach(() => {
   const mockedFetch = global.window.fetch as MockInstance
-  mockedFetch.mockClear()
+  mockedFetch.mockReset()
 })
 
 const wrap = (component: unknown): Wrap => {
