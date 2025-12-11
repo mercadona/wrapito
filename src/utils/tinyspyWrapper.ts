@@ -1,5 +1,5 @@
-import * as tinyspy from 'tinyspy'
 import type { SpyInternalImpl } from 'tinyspy'
+import * as tinyspy from 'tinyspy'
 import { MockInstance } from './types'
 
 export const mocks = new Set<MockInstance>()
@@ -47,9 +47,10 @@ function enhanceSpy<TArgs extends any[], TReturns>(
     const impl = implementationChangedTemporarily
       ? implementation!
       : onceImplementations.shift() ||
-        implementation ||
-        state.getOriginal() ||
-        (() => {})
+      implementation ||
+      state.getOriginal() ||
+      (() => {
+      })
     return impl.apply(this, args)
   }
 
@@ -62,6 +63,7 @@ function enhanceSpy<TArgs extends any[], TReturns>(
   }
 
   stub.mockClear = () => {
+    console.log('mockClear')
     state.reset()
     instances = []
     invocations = []
@@ -69,6 +71,7 @@ function enhanceSpy<TArgs extends any[], TReturns>(
   }
 
   stub.mockReset = () => {
+    console.log('mockReset')
     stub.mockClear()
     implementation = () => undefined as unknown as TReturns
     onceImplementations = []
@@ -76,6 +79,7 @@ function enhanceSpy<TArgs extends any[], TReturns>(
   }
 
   stub.mockRestore = () => {
+    console.log('mockRestore')
     stub.mockReset()
     state.restore()
     implementation = undefined
@@ -134,7 +138,7 @@ function enhanceSpy<TArgs extends any[], TReturns>(
   stub.withImplementation = withImplementation
 
   stub.mockReturnThis = () =>
-    stub.mockImplementation(function (this: TReturns) {
+    stub.mockImplementation(function(this: TReturns) {
       return this
     })
 
@@ -167,5 +171,8 @@ function enhanceSpy<TArgs extends any[], TReturns>(
 
 export const enhancedSpy = (implementation?: (...args: any[]) => unknown) =>
   enhanceSpy(
-    tinyspy.internalSpyOn({ spy: implementation || (() => {}) }, 'spy'),
+    tinyspy.internalSpyOn({
+      spy: implementation || (() => {
+      }),
+    }, 'spy'),
   )
