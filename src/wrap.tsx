@@ -5,9 +5,41 @@ import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
 import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
 import { MockInstance, spyOn } from '@vitest/spy'
+import {
+  fetch as ponyfillFetch,
+  Headers as PonyHeaders,
+  Request as PonyRequest,
+  Response as PonyResponse,
+} from 'whatwg-fetch'
+
+// Ensure window.fetch exists so the spy below doesn't wrap undefined (CI/jsdom can lack it or other tests may reset it)
+const ensureWindowFetch = () => {
+  if (typeof global.window === 'undefined') return
+
+  if (typeof global.window.fetch !== 'function') {
+    const candidate =
+      typeof globalThis.fetch === 'function' ? globalThis.fetch : ponyfillFetch
+
+    if (candidate) {
+      // @ts-ignore
+      global.window.fetch = candidate.bind(globalThis) as typeof globalThis.fetch
+    }
+  }
+
+  if (!global.window.Request && PonyRequest) {
+    global.window.Request = PonyRequest as typeof globalThis.Request
+  }
+  if (!global.window.Response && PonyResponse) {
+    global.window.Response = PonyResponse as typeof globalThis.Response
+  }
+  if (!global.window.Headers && PonyHeaders) {
+    global.window.Headers = PonyHeaders as typeof globalThis.Headers
+  }
+}
 
 // @ts-expect-error
 beforeEach(() => {
+  ensureWindowFetch()
   spyOn(global.window, 'fetch').mockRejectedValue(new Error('Mock instance failed.'))
 })
 
