@@ -11,7 +11,7 @@ declare global {
 
 const createDefaultResponse = async () => {
   const response = {
-    json: () => Promise.resolve(),
+    json: () => Promise.resolve(''),
     status: 200,
     ok: true,
     headers: new Headers({ 'Content-Type': 'application/json' }),
