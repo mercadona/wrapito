@@ -5,10 +5,12 @@ interface MockResultReturn<T> {
    */
   value: T
 }
+
 interface MockResultIncomplete {
   type: 'incomplete'
   value: undefined
 }
+
 interface MockResultThrow {
   type: 'throw'
   /**
@@ -16,10 +18,12 @@ interface MockResultThrow {
    */
   value: any
 }
+
 type MockResult<T> =
   | MockResultReturn<T>
   | MockResultThrow
   | MockResultIncomplete
+
 interface MockContext<TArgs, TReturns> {
   /**
    * This is an array containing all arguments for each call. One item of the array is the arguments of that call.
@@ -222,6 +226,3 @@ export interface MockInstance<TArgs extends any[] = any[], TReturns = any> {
    */
   mockRejectedValueOnce: (obj: any) => this
 }
-
-type Fetch = typeof global.window.fetch
-export type FetchMockInstance = MockInstance & Fetch

@@ -10,14 +10,13 @@ import { MockInstance } from './utils/types'
 // @ts-expect-error
 beforeEach(() => {
   // @ts-expect-error
-  global.fetch = createMockInstance()
+  global.window.fetch = createMockInstance()
 })
 
 // @ts-expect-error
 afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
+  const mockedFetch = global.window.fetch as MockInstance
+  mockedFetch.mockClear()
 })
 
 const wrap = (component: unknown): Wrap => {
