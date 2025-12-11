@@ -1,7 +1,6 @@
 import chalk from 'chalk'
 import type { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
-import { enhancedSpy } from './utils/tinyspyWrapper'
 import type { MockInstance } from '../src/utils/types'
 
 declare global {
@@ -9,15 +8,6 @@ declare global {
     fetch: MockInstance
   }
 }
-
-beforeEach(() => {
-  // @ts-expect-error
-  global.window.fetch = enhancedSpy()
-})
-
-afterEach(() => {
-  global.window.fetch.mockClear()
-})
 
 const createDefaultResponse = async () => {
   const response = {
