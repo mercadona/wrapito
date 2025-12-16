@@ -45,6 +45,10 @@ export interface WrapResponse extends Partial<Response> {
 }
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
+export type NetworkMocker = (
+  responses: WrapResponse[],
+  debug: boolean,
+) => void | Promise<void>
 
 export type DefaultUserLib = unknown
 export type DefaultUserInstance = unknown
@@ -64,6 +68,7 @@ export interface Wrap<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
+  withMSW: (responses?: NetworkResponses) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>
   withInteraction: (
@@ -84,10 +89,12 @@ export interface WrapOptions<SetupOptions = DefaultUserSetupOptions> {
   hasPath: boolean
   debug: boolean
   interactionConfig?: SetupOptions
+  networkMocker?: NetworkMocker
 }
 
 export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
+  setNetworkMocker?: (networkMocker: NetworkMocker) => void
 }
 
 type Extension<
@@ -139,4 +146,5 @@ export {
   BrowserHistory,
   Extension,
   Extensions,
+  NetworkMocker,
 }

@@ -8,7 +8,6 @@ import type {
   WrapExtensionAPI,
   WrapRequest,
 } from './models'
-import { printMultipleResponsesWarning, printRequest } from './utils/networkLogs'
 
 const createDefaultHttpResponse = () =>
   HttpResponse.json(null, {
@@ -46,9 +45,6 @@ const createRequestMatcherHandler = (
     )
 
     if (!responseMatchingRequest) {
-      if (debug) {
-        printRequest(wrapRequest)
-      }
       return createDefaultHttpResponse()
     }
 
@@ -62,9 +58,6 @@ const createRequestMatcherHandler = (
     )
 
     if (!responseNotYetReturned) {
-      if (debug) {
-        printMultipleResponsesWarning(responseMatchingRequest)
-      }
       return createDefaultHttpResponse()
     }
 
@@ -106,4 +99,4 @@ const createMswExtension = () => {
 
 const mswExtension = createMswExtension()
 
-export { mswExtension, createMswExtension }
+export { mswExtension, createMswExtension, createMswNetworkMocker }

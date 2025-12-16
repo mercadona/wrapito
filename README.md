@@ -86,11 +86,6 @@ setupFiles: ['./src/setupTests.tsx']
 
 ## 🏰 Builder API
 
-#### withMocks (Deprecated)
-
-It has the same API than the withNetwork builder. The main difference between them is that withMocks will fail if a
-given request, done by the production code, is not set up in the `responses object`.
-
 #### withNetwork
 
 By using this feature you can configure the responses for your `http requests`. If your component is making a request
@@ -110,6 +105,12 @@ const responses = {
 }
 
 wrap(MyComponent).withNetwork(responses).mount()
+```
+
+You can also mock the same responses using MSW with the builder (works in both browser-like and Node test environments):
+
+```js
+wrap(MyComponent).withMSW(responses).mount()
 ```
 
 You can specify the default `host` via configuration:

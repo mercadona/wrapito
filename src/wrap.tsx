@@ -1,11 +1,41 @@
 import * as React from 'react'
 import 'whatwg-fetch'
 
-import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
-import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
+import type {
+  Extension,
+  Extensions,
+  NetworkMocker,
+  Response,
+  Wrap,
+  WrapExtensionAPI,
+} from './models'
+import { createMswNetworkMocker } from './mswExtension'
+import { enhancedSpy } from './utils/tinyspyWrapper'
+import { MockInstance } from './utils/types'
 
+const ensureFetch = () => {
+  if (typeof global.fetch === 'function') return global.fetch
+
+  return (input?: RequestInfo, init?: RequestInit) =>
+    Promise.resolve(new Response(null, { status: 200, headers: new Headers() }))
+}
+
+// @ts-expect-error
+beforeEach(() => {
+  // @ts-expect-error
+  const baseFetch = ensureFetch()
+  // @ts-expect-error
+  global.fetch = enhancedSpy(baseFetch)
+})
+
+// @ts-expect-error
+afterEach(() => {
+  // @ts-expect-error
+  const mockedFetch = global.fetch as MockInstance
+  mockedFetch.mockReset()
+})
 
 const wrap = (component: unknown): Wrap => {
   updateOptions({
@@ -16,6 +46,7 @@ const wrap = (component: unknown): Wrap => {
     hasPath: false,
     interactionConfig: undefined,
     debug: process.env.npm_config_debugRequests === 'true',
+    networkMocker: createMswNetworkMocker(),
   })
 
   return wrapWith()
@@ -27,6 +58,7 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
+    withMSW,
     withInteraction,
     atPath,
     debugRequests,
@@ -42,8 +74,13 @@ const addResponses = (newResponses: Response[]) => {
   updateOptions({ ...options, responses })
 }
 
+const setNetworkMocker = (networkMocker: NetworkMocker) => {
+  const options = getOptions()
+  updateOptions({ ...options, networkMocker })
+}
+
 const applyExtension = (args: any[], extension: Extension) => {
-  const wrapExtensionAPI: WrapExtensionAPI = { addResponses }
+  const wrapExtensionAPI: WrapExtensionAPI = { addResponses, setNetworkMocker }
 
   extension(wrapExtensionAPI, args)
 
@@ -88,10 +125,13 @@ const withNetwork = (responses: Response | Response[] = []) => {
   updateOptions({
     ...options,
     responses: [...options.responses, ...listOfResponses],
+    networkMocker: createMswNetworkMocker(),
   })
 
   return wrapWith()
 }
+
+const withMSW = withNetwork
 
 const atPath = (path: string, historyState?: object) => {
   const options = getOptions()
@@ -117,6 +157,7 @@ const getMount = () => {
     debug,
     historyState,
     interactionConfig,
+    networkMocker,
   } = getOptions()
 
   const C = Component as React.JSXElementConstructor<unknown>
@@ -143,7 +184,8 @@ const getMount = () => {
     changeRoute(path)
   }
 
-  mockNetwork(responses, debug)
+  const mocker = networkMocker ?? createMswNetworkMocker()
+  mocker(responses, debug)
 
   const rendered = mount(<C {...props} />)
 
