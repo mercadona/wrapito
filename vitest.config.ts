@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./config/setup.js', './config/polyfills.js'],
+    setupFiles: ['./config/setup.js'],
     coverage: {
       provider: 'istanbul',
     },

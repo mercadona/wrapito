@@ -1,30 +1,11 @@
 import * as React from 'react'
+import 'whatwg-fetch'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
-import { updateOptions, getOptions } from './options'
-import type {
-  Response,
-  Wrap,
-  WrapExtensionAPI,
-  Extension,
-  Extensions,
-} from './models'
-import { enhancedSpy } from './utils/tinyspyWrapper'
-import { MockInstance } from './utils/types'
+import { getOptions, updateOptions } from './options'
+import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
 
-// @ts-expect-error
-beforeEach(() => {
-  // @ts-expect-error
-  global.fetch = enhancedSpy()
-})
-
-// @ts-expect-error
-afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
-})
 
 const wrap = (component: unknown): Wrap => {
   updateOptions({
