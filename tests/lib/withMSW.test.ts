@@ -15,7 +15,7 @@ describe('withMSW builder', () => {
   it('mocks requests using msw by calling withMSW', async () => {
     const responses = [
       { path: '/path/', host: 'my-host', responseBody: 'SUCCESS' },
-      { path: '/path/with/response/', host: 'my-host', responseBody: 15 },
+      { path: '/path/with/response/', host: 'my-host', responseBody: '15' },
     ]
 
     wrap(MyComponentWithNetwork).withMSW(responses).mount()
