@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
+import { Route, Router, Switch, useLocation } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { applyMiddleware, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
@@ -114,22 +114,6 @@ export const MyAppWithRouting = () => {
   )
 }
 
-export const MyAppWithBrowserRouting = () => {
-  return (
-    <BrowserRouter>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-      </Switch>
-    </BrowserRouter>
-  )
-}
-
 const ACTION_TYPES = {
   ADD: 'ADD',
   REMOVE: 'REMOVE',
@@ -186,7 +170,7 @@ export const MyComponentMakingHttpCallsWithQueryParams = () => {
   }, [])
 
   const getQuantity = async () => {
-    const request = new Request('/path/with/query/params/?myAwesome=param')
+    const request = new Request('http://api.test/path/with/query/params/?myAwesome=param')
     const response = await fetch(request)
     if (!response) return
     const quantity = await response.json()
