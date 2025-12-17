@@ -59,8 +59,6 @@ const createRequestMatcherHandler = (
       getRequestMatcher(wrapRequest),
     )
 
-    console.log({ responses, wrapRequest, responseMatchingRequest })
-
     if (!responseMatchingRequest) {
       return createDefaultHttpResponse()
     }

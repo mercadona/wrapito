@@ -1,17 +1,9 @@
 import * as React from 'react'
-import 'whatwg-fetch'
 
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
-import type { Extension, Extensions, NetworkMocker, Response, Wrap, WrapExtensionAPI } from './models'
+import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
 import { createMswNetworkMocker } from './mswExtension'
-
-const ensureFetch = () => {
-  if (typeof global.fetch === 'function') return global.fetch
-
-  return (input?: RequestInfo, init?: RequestInit) =>
-    Promise.resolve(new Response(null, { status: 200, headers: new Headers() }))
-}
 
 
 const wrap = (component: unknown): Wrap => {
@@ -23,7 +15,6 @@ const wrap = (component: unknown): Wrap => {
     hasPath: false,
     interactionConfig: undefined,
     debug: process.env.npm_config_debugRequests === 'true',
-    networkMocker: createMswNetworkMocker(),
   })
 
   return wrapWith()
@@ -51,13 +42,8 @@ const addResponses = (newResponses: Response[]) => {
   updateOptions({ ...options, responses })
 }
 
-const setNetworkMocker = (networkMocker: NetworkMocker) => {
-  const options = getOptions()
-  updateOptions({ ...options, networkMocker })
-}
-
 const applyExtension = (args: any[], extension: Extension) => {
-  const wrapExtensionAPI: WrapExtensionAPI = { addResponses, setNetworkMocker }
+  const wrapExtensionAPI: WrapExtensionAPI = { addResponses }
 
   extension(wrapExtensionAPI, args)
 
@@ -102,7 +88,6 @@ const withNetwork = (responses: Response | Response[] = []) => {
   updateOptions({
     ...options,
     responses: [...options.responses, ...listOfResponses],
-    networkMocker: createMswNetworkMocker(),
   })
 
   return wrapWith()
@@ -134,7 +119,6 @@ const getMount = () => {
     debug,
     historyState,
     interactionConfig,
-    networkMocker,
   } = getOptions()
 
   const C = Component as React.JSXElementConstructor<unknown>
@@ -161,7 +145,7 @@ const getMount = () => {
     changeRoute(path)
   }
 
-  const mocker = networkMocker ?? createMswNetworkMocker()
+  const mocker = createMswNetworkMocker()
   mocker(responses, debug)
 
   const rendered = mount(<C {...props} />)
