@@ -2,7 +2,7 @@ import { http } from 'msw'
 import { setupServer } from 'msw/node'
 import { getRequestMatcher } from './requestMatcher'
 import { clearRequestLog, recordRequestCall } from './requestLog'
-import type { Response as WrapResponse, WrapRequest } from '../models'
+import type { Response as WrapResponse, WrapRequest } from '../@types/models'
 import { createDefaultHttpResponse, createHttpResponse } from './responses'
 import { printRequest } from './printRequest'
 

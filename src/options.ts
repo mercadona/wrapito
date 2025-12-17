@@ -1,4 +1,4 @@
-import type { WrapOptions } from './models'
+import type { WrapOptions } from './@types/models'
 
 let options: WrapOptions
 

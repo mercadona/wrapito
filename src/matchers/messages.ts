@@ -1,4 +1,4 @@
-import { RequestOptions } from '../models'
+import { RequestOptions } from '../@types/models'
 import { diff } from 'jest-diff'
 
 type Body = string | object | undefined

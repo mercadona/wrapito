@@ -1,5 +1,5 @@
 import { delay, HttpResponse } from 'msw'
-import type { Response as WrapResponse } from '../models'
+import type { Response as WrapResponse } from '../@types/models'
 
 const createDefaultHttpResponse = () =>
   HttpResponse.json(null, {

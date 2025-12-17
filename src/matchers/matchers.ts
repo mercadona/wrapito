@@ -1,4 +1,4 @@
-import { RequestOptions } from '../models'
+import { RequestOptions } from '../@types/models'
 import {
   bodyDoesNotMatchErrorMessage,
   doesNotHaveBodyErrorMessage,
@@ -22,7 +22,7 @@ import {
   headersDoNotMatch,
   hostDoesNotMatch,
   methodDoesNotMatch,
-} from '../utils'
+} from '../network/utils'
 
 const toHaveBeenFetchedWith = (
   path: string,

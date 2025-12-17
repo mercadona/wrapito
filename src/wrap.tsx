@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
-import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
+import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './@types/models'
 import { createMswNetworkMocker } from './network/mockNetwork'
 
 

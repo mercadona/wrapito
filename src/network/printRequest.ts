@@ -1,4 +1,4 @@
-import { WrapRequest } from '../models'
+import { WrapRequest } from '../@types/models'
 import chalk from 'chalk'
 
 const printRequest = (request: WrapRequest) => {
