@@ -3,21 +3,31 @@ import hash from 'object-hash'
 import { getConfig } from './config'
 import type { WrapRequest, Response } from './models'
 
+const getComparableUrl = (rawUrl: string, base: string, catchParams?: boolean) => {
+  const url = new URL(rawUrl, base)
+  const shouldConsiderQuery = !getConfig().handleQueryParams || catchParams
+  if (!shouldConsiderQuery) return url.pathname
+  return url.pathname + url.search
+}
+
 const getRequestMatcher =
   (request: WrapRequest) => (mockedRequest: Response) => {
     const {
       method = 'GET',
       path,
-      host = getConfig().defaultHost,
+      host,
       requestBody = undefined,
       catchParams,
     } = mockedRequest
 
-    const url = host + path
-    const isQueryParamsSensitive = !getConfig().handleQueryParams || catchParams
+    const defaultHost = getConfig().defaultHost || 'http://localhost'
+    const base = host?.startsWith('http') ? host : defaultHost
+
+    const mockedUrl = getComparableUrl(path, base, catchParams)
+    const requestUrl = getComparableUrl(request.url, defaultHost, catchParams)
 
     const mockedRequestHash = hash({
-      url: isQueryParamsSensitive ? url : url.split('?')[0],
+      url: mockedUrl,
       method: method.toUpperCase(),
       requestBody: requestBody,
     })
@@ -27,7 +37,7 @@ const getRequestMatcher =
       body = JSON.parse(request._bodyInit)
     }
     const requestHash = hash({
-      url: isQueryParamsSensitive ? request.url : request.url.split('?')[0],
+      url: requestUrl,
       method: request.method,
       requestBody: body,
     })

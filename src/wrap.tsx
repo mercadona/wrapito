@@ -3,17 +3,8 @@ import 'whatwg-fetch'
 
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
-import type {
-  Extension,
-  Extensions,
-  NetworkMocker,
-  Response,
-  Wrap,
-  WrapExtensionAPI,
-} from './models'
+import type { Extension, Extensions, NetworkMocker, Response, Wrap, WrapExtensionAPI } from './models'
 import { createMswNetworkMocker } from './mswExtension'
-import { enhancedSpy } from './utils/tinyspyWrapper'
-import { MockInstance } from './utils/types'
 
 const ensureFetch = () => {
   if (typeof global.fetch === 'function') return global.fetch
@@ -22,20 +13,6 @@ const ensureFetch = () => {
     Promise.resolve(new Response(null, { status: 200, headers: new Headers() }))
 }
 
-// @ts-expect-error
-beforeEach(() => {
-  // @ts-expect-error
-  const baseFetch = ensureFetch()
-  // @ts-expect-error
-  global.fetch = enhancedSpy(baseFetch)
-})
-
-// @ts-expect-error
-afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
-})
 
 const wrap = (component: unknown): Wrap => {
   updateOptions({

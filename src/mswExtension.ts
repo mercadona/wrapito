@@ -1,13 +1,9 @@
-import { http, HttpResponse, delay } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
+import { getConfig } from './config'
 import { getRequestMatcher } from './requestMatcher'
-import type {
-  NetworkMocker,
-  Response as WrapResponse,
-  WrapExtensionAPI,
-  WrapRequest,
-} from './models'
+import type { NetworkMocker, Response as WrapResponse, WrapExtensionAPI, WrapRequest } from './models'
 
 const createDefaultHttpResponse = () =>
   HttpResponse.json(null, {
@@ -28,14 +24,33 @@ const createHttpResponse = async (mockResponse: Partial<WrapResponse>) => {
   })
 }
 
+const normalizeUrl = (rawUrl: string, defaultHost: string) => {
+  const fallbackHost = defaultHost || 'http://localhost'
+  const hasProtocol = /^https?:\/\//i.test(rawUrl)
+  if (hasProtocol) return rawUrl
+
+  if (rawUrl.startsWith('/')) {
+    try {
+      return new URL(rawUrl, fallbackHost).toString()
+    } catch {
+      return rawUrl
+    }
+  }
+
+  // Treat as host without protocol
+  return `http://${rawUrl}`
+}
+
 const createRequestMatcherHandler = (
   responses: WrapResponse[],
   debug: boolean,
 ) =>
   http.all('*', async ({ request }) => {
     const body = await request.text()
+    const defaultHost = getConfig().defaultHost
+
     const wrapRequest: WrapRequest = {
-      url: request.url,
+      url: normalizeUrl(request.url, defaultHost),
       method: request.method,
       _bodyInit: body || undefined,
     }
@@ -43,6 +58,8 @@ const createRequestMatcherHandler = (
     const responseMatchingRequest = responses.find(
       getRequestMatcher(wrapRequest),
     )
+
+    console.log({ responses, wrapRequest, responseMatchingRequest })
 
     if (!responseMatchingRequest) {
       return createDefaultHttpResponse()
