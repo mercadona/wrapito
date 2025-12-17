@@ -20,7 +20,7 @@ it('should have network with an array of requests using MSW', async () => {
   vi.spyOn(console, 'warn')
   configure({ mount: render })
   wrap(MyComponentWithNetwork)
-    .withMSW([
+    .withNetwork([
       { path: '/path/with/response/', host: 'my-host', responseBody: '15' },
     ])
     .mount()
@@ -32,7 +32,7 @@ it('should have network with an array of requests using MSW', async () => {
 
 it('should have network without responses using MSW', async () => {
   configure({ mount: render })
-  wrap(MyComponentWithNetwork).withMSW().mount()
+  wrap(MyComponentWithNetwork).withNetwork().mount()
 
   expect(await screen.findByText('SUCCESS')).toBeInTheDocument()
 })
@@ -41,7 +41,7 @@ it('should resolve a request with delay after the specified time using MSW', asy
   configure({ mount: render })
   vi.useFakeTimers({ shouldAdvanceTime: true })
   wrap(MyComponentWithNetwork)
-    .withMSW([
+    .withNetwork([
       {
         path: '/path/',
         host: 'my-host',
@@ -73,7 +73,7 @@ it('should resolve a request with delay after the specified time using MSW', asy
 it('should resolve all the responses waiting for an unrelated text using MSW', async () => {
   configure({ mount: render })
   wrap(MyComponentWithNetwork)
-    .withMSW([
+    .withNetwork([
       {
         path: '/path/',
         host: 'my-host',
@@ -96,7 +96,7 @@ it('should resolve all the responses waiting for an unrelated text using MSW', a
 it('should match a request regardless the body order using MSW', async () => {
   configure({ mount: render })
   wrap(MyComponentWithPost)
-    .withMSW([
+    .withNetwork([
       {
         path: '/path/to/login/',
         host: 'my-host',
@@ -120,7 +120,7 @@ it('should match a request regardless the body order using MSW', async () => {
 it('should mock multiple POST responses using MSW', async () => {
   configure({ mount: render })
   wrap(MyComponentWithFeedback)
-    .withMSW({
+    .withNetwork({
       host: 'my-host',
       path: '/path/to/save/',
       method: 'POST',
@@ -143,7 +143,7 @@ it('should mock multiple POST responses using MSW', async () => {
 it('should not ignore the query params by default using MSW', async () => {
   configure({ mount: render })
   wrap(MyComponentMakingHttpCallsWithQueryParams)
-    .withMSW({
+    .withNetwork({
       path: '/path/with/query/params/?myAwesome=param',
       responseBody: '15',
     })
@@ -156,7 +156,7 @@ it('should ignore the query params when is configured using MSW', async () => {
   configure({ mount: render, handleQueryParams: true })
 
   wrap(MyComponentMakingHttpCallsWithQueryParams)
-    .withMSW({ path: '/path/with/query/params/', responseBody: '15' })
+    .withNetwork({ path: '/path/with/query/params/', responseBody: '15' })
     .mount()
 
   expect(await screen.findByText('quantity: 15')).toBeInTheDocument()
@@ -166,7 +166,7 @@ it('should ignore the query params when configured and the path have it using MS
   configure({ mount: render, handleQueryParams: true })
 
   wrap(MyComponentMakingHttpCallsWithQueryParams)
-    .withMSW({
+    .withNetwork({
       path: '/path/with/query/params/?myAwesome=param',
       responseBody: '15',
     })
@@ -179,7 +179,7 @@ it('should not ignore the query params when catchParams is specified using MSW',
   configure({ mount: render })
 
   wrap(MyComponentMakingHttpCallsWithQueryParams)
-    .withMSW({
+    .withNetwork({
       path: '/path/with/query/params/?myAwesome=param',
       responseBody: '15',
       catchParams: true,
@@ -194,7 +194,7 @@ it('should handle fetch default requests when a string is passed using MSW', asy
   configure({ mount: render })
 
   wrap(MyComponent)
-    .withMSW([{ path: '/foo/bar', responseBody: { foo: 'bar' } }])
+    .withNetwork([{ path: '/foo/bar', responseBody: { foo: 'bar' } }])
     .mount()
 
   const response = await fetch('/foo/bar').then(response => response.json())
@@ -207,7 +207,7 @@ it('should handle fetch requests with option when a string is passed using MSW',
   configure({ mount: render })
 
   wrap(MyComponent)
-    .withMSW([
+    .withNetwork([
       { path: '/foo/bar', method: 'POST', responseBody: { foo: 'bar' } },
     ])
     .mount()
@@ -223,7 +223,7 @@ it('matches requests even when the caller omits the host using MSW', async () =>
   configure({ mount: render })
 
   wrap(() => null)
-    .withMSW({ path: '/no-host', responseBody: { ok: true } })
+    .withNetwork({ path: '/no-host', responseBody: { ok: true } })
     .mount()
 
   const response = await fetch('/no-host')

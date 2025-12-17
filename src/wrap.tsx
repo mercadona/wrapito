@@ -26,7 +26,6 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
-    withMSW,
     withInteraction,
     atPath,
     debugRequests,
@@ -92,8 +91,6 @@ const withNetwork = (responses: Response | Response[] = []) => {
 
   return wrapWith()
 }
-
-const withMSW = withNetwork
 
 const atPath = (path: string, historyState?: object) => {
   const options = getOptions()
