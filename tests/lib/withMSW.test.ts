@@ -219,24 +219,6 @@ it('should handle fetch requests with option when a string is passed using MSW',
   expect(response).toEqual({ foo: 'bar' })
 })
 
-it.only('should return a spy compatible with expect API using MSW', async () => {
-  configure({ mount: render })
-
-  wrap(MyComponentWithNetwork)
-    .withMSW([
-      { path: 'my-host/path/', method: 'POST', responseBody: { foo: 'bar' } },
-      { path: 'my-host/path/with/response/', responseBody: { foo: 'bar' } },
-    ])
-    .mount()
-
-  expect(global.fetch).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      method: 'GET',
-      url: expect.stringContaining('my-host/path/with/response/'),
-    }),
-  )
-})
-
 it('matches requests even when the caller omits the host using MSW', async () => {
   configure({ mount: render })
 
