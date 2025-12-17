@@ -1,73 +1,35 @@
 import { http } from 'msw'
 import { setupServer } from 'msw/node'
-import { getRequestMatcher } from './requestMatcher'
 import { clearRequestLog, recordRequestCall } from './requestLog'
-import type { Response as WrapResponse, WrapRequest } from '../@types/models'
-import { createDefaultHttpResponse, createHttpResponse } from './responses'
-import { printRequest } from './printRequest'
+import type { Response as WrapResponse } from '../@types/models'
+import {
+  buildHttpResponse,
+  createRecordedRequest,
+  createWrapRequest,
+  extractRequestBody,
+  findMatchingResponse,
+} from './interceptHelpers'
 
 const interceptNetworkRequests = (
-  responses: WrapResponse[],
+  mockedResponses: WrapResponse[],
   debug: boolean,
 ) =>
-  http.all('*', async ({ request }) => {
-    const body = await request.text()
+  http.all('*', async ({ request: interceptedRequest }) => {
+    const body = await extractRequestBody(interceptedRequest)
+    const wrapRequest = createWrapRequest(interceptedRequest, body)
 
-    const wrapRequest: WrapRequest = {
-      url: request.url,
-      method: request.method,
-      _bodyInit: body || undefined,
-    }
-
-    const recordedRequest = new Request(wrapRequest.url, {
-      method: request.method,
-      headers: request.headers,
-      body: body || undefined,
-    })
-    if (body) {
-      // Preserve the same private field our matchers inspect for request bodies
-      ;(recordedRequest as any)._bodyInit = body
-    }
+    const recordedRequest = createRecordedRequest(interceptedRequest, body)
     recordRequestCall(recordedRequest)
 
-    const responseMatchingRequest = responses.find(
-      getRequestMatcher(wrapRequest),
-    )
-
-    if (!responseMatchingRequest) {
-      if (debug) {
-        printRequest(wrapRequest)
-      }
-
-      return createDefaultHttpResponse()
-    }
-
-    const { multipleResponses } = responseMatchingRequest
-    if (!multipleResponses) {
-      return createHttpResponse(responseMatchingRequest)
-    }
-
-    const responseNotYetReturned = multipleResponses.find(
-      response => !response.hasBeenReturned,
-    )
-
-    if (!responseNotYetReturned) {
-      if (debug) {
-        printRequest(wrapRequest)
-      }
-
-      return createDefaultHttpResponse()
-    }
-
-    responseNotYetReturned.hasBeenReturned = true
-    return createHttpResponse(responseNotYetReturned)
+    const matchingResponse = findMatchingResponse(mockedResponses, wrapRequest)
+    return buildHttpResponse(matchingResponse, wrapRequest, debug)
   })
 
 let server = setupServer()
 let serverStarted = false
 
 const createMswNetworkMocker = () => {
-  return (responses: WrapResponse[] = [], debug: boolean = false) => {
+  return (mockedResponses: WrapResponse[] = [], debug: boolean = false) => {
     if (!serverStarted) {
       server.listen({ onUnhandledRequest: 'bypass' })
       serverStarted = true
@@ -75,7 +37,7 @@ const createMswNetworkMocker = () => {
 
     clearRequestLog()
     server.resetHandlers()
-    server.use(interceptNetworkRequests(responses, debug))
+    server.use(interceptNetworkRequests(mockedResponses, debug))
   }
 }
 
