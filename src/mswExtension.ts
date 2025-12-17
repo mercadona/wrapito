@@ -3,7 +3,8 @@ import { setupServer } from 'msw/node'
 
 import { getConfig } from './config'
 import { getRequestMatcher } from './requestMatcher'
-import type { NetworkMocker, Response as WrapResponse, WrapExtensionAPI, WrapRequest } from './models'
+import { clearRequestLog, recordRequestCall } from './utils/requestLog'
+import type { Response as WrapResponse, WrapRequest } from './models'
 
 const createDefaultHttpResponse = () =>
   HttpResponse.json(null, {
@@ -55,6 +56,17 @@ const createRequestMatcherHandler = (
       _bodyInit: body || undefined,
     }
 
+    const recordedRequest = new Request(wrapRequest.url, {
+      method: request.method,
+      headers: request.headers,
+      body: body || undefined,
+    })
+    if (body) {
+      // Preserve the same private field our matchers inspect for request bodies
+      ;(recordedRequest as any)._bodyInit = body
+    }
+    recordRequestCall(recordedRequest)
+
     const responseMatchingRequest = responses.find(
       getRequestMatcher(wrapRequest),
     )
@@ -83,35 +95,17 @@ const createRequestMatcherHandler = (
 let server = setupServer()
 let serverStarted = false
 
-const createMswNetworkMocker = (): NetworkMocker => {
+const createMswNetworkMocker = () => {
   return (responses: WrapResponse[] = [], debug: boolean = false) => {
     if (!serverStarted) {
       server.listen({ onUnhandledRequest: 'bypass' })
       serverStarted = true
     }
 
+    clearRequestLog()
     server.resetHandlers()
     server.use(createRequestMatcherHandler(responses, debug))
   }
 }
 
-const createMswExtension = () => {
-  const networkMocker = createMswNetworkMocker()
-
-  return (
-    { addResponses, setNetworkMocker }: WrapExtensionAPI,
-    responses: any,
-  ) => {
-    const responsesList = responses
-      ? Array.isArray(responses)
-        ? responses
-        : [responses]
-      : []
-    addResponses(responsesList)
-    setNetworkMocker?.(networkMocker)
-  }
-}
-
-const mswExtension = createMswExtension()
-
-export { mswExtension, createMswExtension, createMswNetworkMocker }
+export { createMswNetworkMocker }
