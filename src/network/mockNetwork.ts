@@ -1,58 +1,12 @@
-import { delay, http, HttpResponse } from 'msw'
+import { http } from 'msw'
 import { setupServer } from 'msw/node'
-import chalk from 'chalk'
 import { getRequestMatcher } from './requestMatcher'
-import { clearRequestLog, recordRequestCall } from './utils/requestLog'
-import type { Response as WrapResponse, WrapRequest } from './models'
+import { clearRequestLog, recordRequestCall } from './requestLog'
+import type { Response as WrapResponse, WrapRequest } from '../models'
+import { createDefaultHttpResponse, createHttpResponse } from './responses'
+import { printRequest } from './printRequest'
 
-const createDefaultHttpResponse = () =>
-  HttpResponse.json(null, {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
-
-const createHttpResponse = async (mockResponse: Partial<WrapResponse>) => {
-  const { responseBody, status = 200, headers = {}, delay: ms } = mockResponse
-
-  if (ms) {
-    await delay(ms)
-  }
-
-  return HttpResponse.json(responseBody ?? null, {
-    status,
-    headers: { 'Content-Type': 'application/json', ...headers },
-  })
-}
-
-const normalizeUrl = (rawUrl: string, defaultHost: string) => {
-  const fallbackHost = defaultHost || 'http://localhost'
-  const hasProtocol = /^https?:\/\//i.test(rawUrl)
-  if (hasProtocol) return rawUrl
-
-  if (rawUrl.startsWith('/')) {
-    try {
-      return new URL(rawUrl, fallbackHost).toString()
-    } catch {
-      return rawUrl
-    }
-  }
-
-  // Treat as host without protocol
-  return `http://${rawUrl}`
-}
-
-const printRequest = (request: WrapRequest) => {
-  return console.warn(`
-${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
-    'cannot find any mock matching:',
-  )}
-  ${chalk.greenBright(`URL: ${request.url}`)}
-  ${chalk.greenBright(`METHOD: ${request.method?.toLowerCase()}`)}
-  ${chalk.greenBright(`REQUEST BODY: ${request._bodyInit}`)}
- `)
-}
-
-const createRequestMatcherHandler = (
+const interceptNetworkRequests = (
   responses: WrapResponse[],
   debug: boolean,
 ) =>
@@ -121,7 +75,7 @@ const createMswNetworkMocker = () => {
 
     clearRequestLog()
     server.resetHandlers()
-    server.use(createRequestMatcherHandler(responses, debug))
+    server.use(interceptNetworkRequests(responses, debug))
   }
 }
 

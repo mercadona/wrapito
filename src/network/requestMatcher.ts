@@ -1,7 +1,7 @@
 import hash from 'object-hash'
 
-import { getConfig } from './config'
-import type { Response, WrapRequest } from './models'
+import { getConfig } from '../config'
+import type { Response, WrapRequest } from '../models'
 
 const stripProtocol = (url: string) =>
   url.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '')

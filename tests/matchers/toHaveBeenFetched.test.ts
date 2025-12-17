@@ -1,6 +1,6 @@
 import { configure } from '../../src'
 import { matchers } from '../../src/matchers'
-import { createMswNetworkMocker } from '../../src/mswExtension'
+import { createMswNetworkMocker } from '../../src/network/mockNetwork'
 import { describe, expect, it } from 'vitest'
 
 const mocker = createMswNetworkMocker()

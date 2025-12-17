@@ -1,7 +1,7 @@
 import '../../vitest.d.ts'
 import { matchers } from '../../src/matchers'
-import { createMswNetworkMocker } from '../../src/mswExtension'
-import { getRequestLog } from '../../src/utils/requestLog'
+import { createMswNetworkMocker } from '../../src/network/mockNetwork'
+import { getRequestLog } from '../../src/network/requestLog'
 import { describe, expect, it } from 'vitest'
 import { diff } from 'jest-diff'
 

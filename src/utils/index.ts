@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal'
 import { getConfig } from '../config'
 import { RequestOptions, WrapRequest } from '../models'
-import { getRequestLog } from './requestLog'
+import { getRequestLog } from '../network/requestLog'
 
 const getDefaultHost = () => {
   const configuredHost = getConfig().defaultHost
