@@ -1,27 +1,27 @@
 import { RequestOptions } from '../models'
 import {
+  bodyDoesNotMatchErrorMessage,
+  doesNotHaveBodyErrorMessage,
   emptyErrorMessage,
   fetchLengthErrorMessage,
-  methodDoesNotMatchErrorMessage,
-  bodyDoesNotMatchErrorMessage,
-  hostDoesNotMatchErrorMessage,
-  doesNotHaveBodyErrorMessage,
-  successMessage,
   haveBeenFetchedSuccessMessage,
   headersDoNotMatchErrorMessage,
+  hostDoesNotMatchErrorMessage,
+  methodDoesNotMatchErrorMessage,
+  successMessage,
 } from './messages'
 
 import {
-  findRequestsByPath,
-  empty,
-  getRequestsMethods,
-  getRequestsBodies,
   bodyDoesNotMatch,
-  methodDoesNotMatch,
-  getRequestsHosts,
-  hostDoesNotMatch,
+  empty,
+  findRequestsByPath,
   getRequestHeaders,
+  getRequestsBodies,
+  getRequestsHosts,
+  getRequestsMethods,
   headersDoNotMatch,
+  hostDoesNotMatch,
+  methodDoesNotMatch,
 } from '../utils'
 
 const toHaveBeenFetchedWith = (

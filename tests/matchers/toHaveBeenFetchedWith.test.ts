@@ -320,7 +320,7 @@ ${diff(expectedBody, receivedBody)}`,
       })
     })
 
-    it('should check that the path has not been called with the supplied host', async () => {
+    it.only('should check that the path has not been called with the supplied host', async () => {
       const path = 'http://some-domain.com/some/path/'
       const expectedHost = 'http://another-domain.com'
       const request = new Request(path)

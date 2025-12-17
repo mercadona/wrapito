@@ -1,7 +1,6 @@
 import { delay, http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-
-import { getConfig } from './config'
+import chalk from 'chalk'
 import { getRequestMatcher } from './requestMatcher'
 import { clearRequestLog, recordRequestCall } from './utils/requestLog'
 import type { Response as WrapResponse, WrapRequest } from './models'
@@ -42,16 +41,26 @@ const normalizeUrl = (rawUrl: string, defaultHost: string) => {
   return `http://${rawUrl}`
 }
 
+const printRequest = (request: WrapRequest) => {
+  return console.warn(`
+${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
+    'cannot find any mock matching:',
+  )}
+  ${chalk.greenBright(`URL: ${request.url}`)}
+  ${chalk.greenBright(`METHOD: ${request.method?.toLowerCase()}`)}
+  ${chalk.greenBright(`REQUEST BODY: ${request._bodyInit}`)}
+ `)
+}
+
 const createRequestMatcherHandler = (
   responses: WrapResponse[],
   debug: boolean,
 ) =>
   http.all('*', async ({ request }) => {
     const body = await request.text()
-    const defaultHost = getConfig().defaultHost
 
     const wrapRequest: WrapRequest = {
-      url: normalizeUrl(request.url, defaultHost),
+      url: request.url,
       method: request.method,
       _bodyInit: body || undefined,
     }
@@ -72,6 +81,10 @@ const createRequestMatcherHandler = (
     )
 
     if (!responseMatchingRequest) {
+      if (debug) {
+        printRequest(wrapRequest)
+      }
+
       return createDefaultHttpResponse()
     }
 
@@ -85,6 +98,10 @@ const createRequestMatcherHandler = (
     )
 
     if (!responseNotYetReturned) {
+      if (debug) {
+        printRequest(wrapRequest)
+      }
+
       return createDefaultHttpResponse()
     }
 

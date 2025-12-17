@@ -3,8 +3,6 @@ import { getConfig } from '../config'
 import { RequestOptions, WrapRequest } from '../models'
 import { getRequestLog } from './requestLog'
 
-import type { MockInstance } from 'vitest'
-
 const getDefaultHost = () => {
   const configuredHost = getConfig().defaultHost
   return configuredHost?.includes('http')
@@ -24,9 +22,10 @@ export const findRequestsByPath = (
   expectedPath: string,
   options: RequestOptions = { method: 'GET' },
 ) => {
-  const typedFetch = fetch as Partial<MockInstance>
-  const mockCalls = typedFetch.mock?.calls ?? getRequestLog()
+  const mockCalls = getRequestLog()
   if (!mockCalls) return []
+
+  console.log({ mockCalls })
 
   return mockCalls.filter(([call]) => {
     const url = getUrl(call)
@@ -43,6 +42,7 @@ export const findRequestsByPath = (
       return matchPathName && matchSearchParams
     }
     if (options?.host) {
+      console.log('2', { url, defaultHost, path })
       return matchPathName && matchHost
     }
     return matchPathName

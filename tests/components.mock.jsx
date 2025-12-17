@@ -311,14 +311,14 @@ export const GreetingComponent = () => {
   useEffect(() => {
     async function fetchData() {
       await fetch(
-        new Request('http://api.test/request1', {
+        new Request('http://my-host/request1', {
           method: 'POST',
           body: JSON.stringify({ id: 1 }),
         }),
       )
 
       const response = await fetch(
-        new Request('http://api.test/request2', {
+        new Request('http://my-host/request2', {
           method: 'POST',
           body: JSON.stringify({ id: 2 }),
         }),
