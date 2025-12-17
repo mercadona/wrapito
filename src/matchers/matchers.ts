@@ -102,4 +102,4 @@ const matchers = {
   toHaveBeenFetchedTimes,
 }
 
-export { matchers, matchers as assertions }
+export { matchers }
