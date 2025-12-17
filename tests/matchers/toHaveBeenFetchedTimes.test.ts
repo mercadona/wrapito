@@ -1,12 +1,23 @@
 import { configure } from '../../src'
 import { matchers } from '../../src/matchers'
-import { describe, it, expect } from 'vitest'
+import { createMswNetworkMocker } from '../../src/mswExtension'
+import { describe, expect, it } from 'vitest'
+
+const mocker = createMswNetworkMocker()
+const mockNetwork = (responses: any[] = []) => mocker(responses)
 
 describe('toHaveBeenFetchedTimes', () => {
   it('should count how many times an url is called', async () => {
-    const path = '//some-domain.com/some/path/'
+    const path = 'http://some-domain.com/some/path/'
     const expectedPath = '/some/path/'
 
+    mockNetwork([
+      {
+        path: '/some/path/',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
     await fetch(new Request(path))
 
@@ -14,10 +25,22 @@ describe('toHaveBeenFetchedTimes', () => {
   })
 
   it('should match the whole url', async () => {
-    const path = '//some-domain.com/some/path/'
-    const similarPath = '//some-domain.com/some/path/with/something/else/'
+    const path = 'http://some-domain.com/some/path/'
+    const similarPath = 'http://some-domain.com/some/path/with/something/else/'
     const expectedPath = '/some/path/'
 
+    mockNetwork([
+      {
+        path: '/some/path/',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+      {
+        path: '/some/path/with/something/else/',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
     await fetch(new Request(similarPath))
 
@@ -25,18 +48,32 @@ describe('toHaveBeenFetchedTimes', () => {
   })
 
   it('should match the url without query params', async () => {
-    const path = '//some-domain.com/some/path/?foo=bar'
+    const path = 'http://some-domain.com/some/path/?foo=bar'
     const expectedPath = '/some/path/'
 
+    mockNetwork([
+      {
+        path: '/some/path/',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1)
   })
 
   it('should match the url with query params', async () => {
-    const path = '//some-domain.com/some/path/?foo=bar'
+    const path = 'http://some-domain.com/some/path/?foo=bar'
     const expectedPath = '/some/path/?foo=bar'
 
+    mockNetwork([
+      {
+        path: '/some/path/?foo=bar',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1)
@@ -50,6 +87,13 @@ describe('toHaveBeenFetchedTimes', () => {
     const path = `${DEFAULT_HOST}/some/path/`
     const expectedPath = '/some/path/'
 
+    mockNetwork([
+      {
+        path: '/some/path/',
+        host: DEFAULT_HOST,
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1, options)
@@ -64,6 +108,13 @@ describe('toHaveBeenFetchedTimes', () => {
     const path = `${DEFAULT_HOST}/api/some/path/`
     const expectedPath = '/api/some/path/'
 
+    mockNetwork([
+      {
+        path: '/api/some/path/',
+        host: DEFAULT_HOST,
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
 
     expect(expectedPath).toHaveBeenFetchedTimes(1, options)
@@ -71,9 +122,16 @@ describe('toHaveBeenFetchedTimes', () => {
   })
 
   it('should check that the path has not been called', async () => {
-    const path = '//some-domain.com/some/path/'
+    const path = 'http://some-domain.com/some/path/'
     const expectedPath = '/some/path/'
 
+    mockNetwork([
+      {
+        path: '/some/path/',
+        host: 'http://some-domain.com',
+        responseBody: {},
+      },
+    ])
     await fetch(new Request(path))
     const { message } = matchers.toHaveBeenFetchedTimes(expectedPath, 2)
 
