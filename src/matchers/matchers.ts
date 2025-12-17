@@ -24,15 +24,19 @@ import {
   headersDoNotMatch,
 } from '../utils'
 
-const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
-  const targetRequests = findRequestsByPath(path)
+const toHaveBeenFetchedWith = (
+  path: string,
+  options: RequestOptions = { method: 'GET' },
+) => {
+  const normalizedOptions = options || { method: 'GET' }
+  const targetRequests = findRequestsByPath(path, normalizedOptions)
 
   if (empty(targetRequests)) {
     return emptyErrorMessage(path)
   }
 
   const receivedRequestsMethods = getRequestsMethods(targetRequests)
-  const expectedMethod = options?.method
+  const expectedMethod = normalizedOptions.method
 
   if (methodDoesNotMatch(expectedMethod, receivedRequestsMethods)) {
     return methodDoesNotMatchErrorMessage(
@@ -42,7 +46,7 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
   }
 
   const receivedRequestsBodies = getRequestsBodies(targetRequests)
-  const expectedBody = options?.body
+  const expectedBody = normalizedOptions.body
 
   if (!expectedBody) return doesNotHaveBodyErrorMessage()
 
@@ -51,14 +55,14 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
   }
 
   const receivedRequestsHosts = getRequestsHosts(targetRequests)
-  const expectedHost = options?.host
+  const expectedHost = normalizedOptions.host
 
   if (expectedHost && hostDoesNotMatch(expectedHost, receivedRequestsHosts)) {
     return hostDoesNotMatchErrorMessage(expectedHost, receivedRequestsHosts)
   }
 
   const receivedRequestsHeaders = getRequestHeaders(targetRequests)
-  const expectedHeaders = options?.headers
+  const expectedHeaders = normalizedOptions.headers
 
   if (
     expectedHeaders &&

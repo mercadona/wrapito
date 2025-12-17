@@ -1,19 +1,27 @@
 import '../../vitest.d.ts'
 import { matchers } from '../../src/matchers'
-import { describe, it, expect } from 'vitest'
+import { createMswNetworkMocker } from '../../src/mswExtension'
+import { getRequestLog } from '../../src/utils/requestLog'
+import { describe, expect, it } from 'vitest'
 import { diff } from 'jest-diff'
 
 expect.extend(matchers)
 
+const mocker = createMswNetworkMocker()
+const mockNetwork = (responses: any[] = []) => mocker(responses)
+
 describe('toHaveBeenFetchedWith', () => {
   it('should check that the path has been called', async () => {
-    const path = '//some-domain.com/some/path/'
+    const path = 'http://some-domain.com/some/path/'
     const expectedPath = '/some/path/'
     const body = {
       method: 'POST' as const,
       body: JSON.stringify({ name: 'some name' }),
     }
 
+    mockNetwork([
+      { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+    ])
     await fetch(new Request(path, body))
     matchers.toHaveBeenFetchedWith(expectedPath, body)
 
@@ -21,20 +29,24 @@ describe('toHaveBeenFetchedWith', () => {
   })
 
   it('should check that the path has not been called', async () => {
-    const path = '//some-domain.com/some/path/'
+    const path = 'http://some-domain.com/some/path/'
     const expectedPath = '/some/unknown'
 
+    mockNetwork()
     await fetch(new Request(path))
     const { message } = matchers.toHaveBeenFetchedWith(expectedPath)
 
-    expect(message()).toBe("🌯 Wrapito: /some/unknown ain't got called")
+    expect(message()).toBe('🌯 Wrapito: /some/unknown ain\'t got called')
     expect(expectedPath).not.toHaveBeenFetchedWith()
   })
 
   describe('request body', () => {
     it('should check that the request has body', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(new Request(path))
       const { message, pass } = matchers.toHaveBeenFetchedWith(path)
 
@@ -43,11 +55,14 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should check that the path has been called with the supplied body', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'some name' }),
       })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -65,7 +80,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should not throw already read TypeError', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'some name' }),
@@ -73,10 +88,14 @@ describe('toHaveBeenFetchedWith', () => {
         _bodyInit: JSON.stringify({ name: 'some name' }),
       })
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
-      //@ts-ignore
-      fetch.mock.calls[0][0].json()
+      const [recordedRequest] = getRequestLog()[0] || []
+      expect(recordedRequest).toBeDefined()
+      await recordedRequest?.json()
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {
@@ -93,7 +112,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should differentiate between to request to the same path but with different body', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const firstRequest = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'some name' }),
@@ -102,6 +121,9 @@ describe('toHaveBeenFetchedWith', () => {
         method: 'POST',
         body: JSON.stringify({ age: 32 }),
       })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(firstRequest)
       await fetch(secondRequest)
 
@@ -118,11 +140,14 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should allow to specify the body elements in different order', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'name', surname: 'surname' }),
       })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -142,7 +167,7 @@ describe('toHaveBeenFetchedWith', () => {
     })
 
     it('should check that the path has not been called with the supplied body', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const expectedBody = { name: 'some name' }
       const receivedBody = { surname: 'some surname' }
       const request = new Request(path, {
@@ -150,6 +175,9 @@ describe('toHaveBeenFetchedWith', () => {
         body: JSON.stringify(receivedBody),
       })
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: expectedBody,
@@ -167,9 +195,12 @@ ${diff(expectedBody, receivedBody)}`,
 
   describe('request method', () => {
     it('should check that the path has been called with the supplied method', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const body = { method: 'POST' }
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(new Request(path, body))
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
@@ -184,7 +215,7 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should check complex body requests', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({
@@ -194,6 +225,9 @@ ${diff(expectedBody, receivedBody)}`,
         }),
       })
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       expect(path).toHaveBeenFetchedWith({
@@ -206,9 +240,12 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should differentiate between to request to the same path with different methods', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const postRequest = new Request(path, { method: 'POST' })
       const putRequest = new Request(path, { method: 'PUT' })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(postRequest)
       await fetch(putRequest)
 
@@ -225,8 +262,11 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should check that the path has not been called with the supplied method', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, { method: 'PUT' })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -242,8 +282,11 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should allow to leave the method empty', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const request = new Request(path, { method: 'POST' })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -257,14 +300,17 @@ ${diff(expectedBody, receivedBody)}`,
 
   describe('request host', () => {
     it('should check that the path has been called with the supplied host', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const expectedHost = 'some-domain.com'
       const body = {}
 
+      mockNetwork([
+        { path: '/some/path/', host: 'http://some-domain.com', responseBody: {} },
+      ])
       await fetch(new Request(path, body))
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
-        host: 'some-domain.com',
+        host: 'http://some-domain.com',
       })
 
       expect(message()).toBe('Test passing')
@@ -275,14 +321,17 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should check that the path has not been called with the supplied host', async () => {
-      const path = '//some-domain.com/some/path/'
-      const expectedHost = 'another-domain.com'
+      const path = 'http://some-domain.com/some/path/'
+      const expectedHost = 'http://another-domain.com'
       const request = new Request(path)
+      mockNetwork([
+        { path: '/some/path/', host: 'http://some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
-        host: 'another-domain.com',
+        host: 'http://another-domain.com',
       })
 
       expect(message()).toBe(
@@ -297,7 +346,7 @@ ${diff(expectedBody, receivedBody)}`,
 
   describe('request headers', () => {
     it('should check that the path has been called with the supplied headers', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const headers = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer token',
@@ -308,6 +357,9 @@ ${diff(expectedBody, receivedBody)}`,
         headers,
       }
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(new Request(path, body))
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
@@ -322,7 +374,7 @@ ${diff(expectedBody, receivedBody)}`,
     })
 
     it('should check that the path has not been called with the supplied headers', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const sentHeaders = {
         'content-type': 'application/json',
       }
@@ -331,6 +383,9 @@ ${diff(expectedBody, receivedBody)}`,
         Authorization: 'Bearer token',
       }
       const request = new Request(path, { headers: sentHeaders })
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(request)
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -349,7 +404,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
     })
 
     it('should check that the path has been called with the supplied headers case insensitive', async () => {
-      const path = '//some-domain.com/some/path/'
+      const path = 'http://some-domain.com/some/path/'
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer token',
@@ -360,6 +415,9 @@ ${diff(expectedHeaders, sentHeaders)}`,
         headers,
       }
 
+      mockNetwork([
+        { path: '/some/path/', host: 'some-domain.com', responseBody: {} },
+      ])
       await fetch(new Request(path, body))
       const { message } = matchers.toHaveBeenFetchedWith(path, {
         body: {},
@@ -371,7 +429,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
         body: {},
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer token'
+          'Authorization': 'Bearer token',
         },
       })
     })
