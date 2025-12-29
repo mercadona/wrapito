@@ -13,6 +13,8 @@ import type {
 import { enhancedSpy } from './utils/tinyspyWrapper'
 import { MockInstance } from './utils/types'
 
+const originalFetch = global.fetch
+
 // @ts-expect-error
 beforeEach(() => {
   // @ts-expect-error
@@ -24,6 +26,8 @@ afterEach(() => {
   // @ts-expect-error
   const mockedFetch = global.fetch as MockInstance
   mockedFetch.mockRestore()
+  // @ts-expect-error
+  global.fetch = originalFetch
 })
 
 const wrap = (component: unknown): Wrap => {

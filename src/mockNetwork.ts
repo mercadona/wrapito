@@ -10,6 +10,8 @@ declare global {
   }
 }
 
+const originalFetch = global.window.fetch
+
 beforeEach(() => {
   // @ts-expect-error
   global.window.fetch = enhancedSpy()
@@ -17,6 +19,8 @@ beforeEach(() => {
 
 afterEach(() => {
   global.window.fetch.mockRestore()
+  // @ts-expect-error
+  global.window.fetch = originalFetch
 })
 
 const createDefaultResponse = async () => {
