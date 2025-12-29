@@ -16,7 +16,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  global.window.fetch.mockReset()
+  global.window.fetch.mockRestore()
 })
 
 const createDefaultResponse = async () => {

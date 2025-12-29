@@ -23,7 +23,7 @@ beforeEach(() => {
 afterEach(() => {
   // @ts-expect-error
   const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
+  mockedFetch.mockRestore()
 })
 
 const wrap = (component: unknown): Wrap => {
