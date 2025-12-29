@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import type { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
 import { enhancedSpy } from './utils/tinyspyWrapper'
+import { createDefaultFetchResponse } from './utils/defaultFetchResponse'
 import type { MockInstance } from '../src/utils/types'
 
 declare global {
@@ -14,7 +15,9 @@ const originalFetch = global.window.fetch
 
 beforeEach(() => {
   // @ts-expect-error
-  global.window.fetch = enhancedSpy()
+  global.window.fetch = enhancedSpy(() =>
+    Promise.resolve(createDefaultFetchResponse()),
+  )
 })
 
 afterEach(() => {
@@ -23,14 +26,7 @@ afterEach(() => {
 })
 
 const createDefaultResponse = async () => {
-  const response = {
-    json: () => Promise.resolve(),
-    status: 200,
-    ok: true,
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-  }
-
-  return Promise.resolve(response)
+  return Promise.resolve(createDefaultFetchResponse())
 }
 
 const createResponse = async (mockResponse: Partial<Response>) => {
