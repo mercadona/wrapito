@@ -87,7 +87,7 @@ const mockFetch = async (
     if (debug) {
       printMultipleResponsesWarning(responseMatchingRequest)
     }
-    return
+    return createDefaultResponse()
   }
 
   responseNotYetReturned.hasBeenReturned = true

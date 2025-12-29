@@ -76,9 +76,13 @@ function enhanceSpy<TArgs extends any[], TReturns>(
   }
 
   stub.mockRestore = () => {
-    stub.mockReset()
+    const originalImplementation = state.getOriginal()
+    stub.mockClear()
+    onceImplementations = []
+    implementationChangedTemporarily = false
     state.restore()
-    implementation = state.getOriginal()
+    implementation = originalImplementation
+    state.willCall(mockCall)
     return stub
   }
 
