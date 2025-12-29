@@ -19,7 +19,6 @@ beforeEach(() => {
 
 afterEach(() => {
   global.window.fetch.mockRestore()
-  // @ts-expect-error
   global.window.fetch = originalFetch
 })
 

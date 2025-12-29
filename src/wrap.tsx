@@ -2,14 +2,8 @@ import * as React from 'react'
 
 import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
-import { updateOptions, getOptions } from './options'
-import type {
-  Response,
-  Wrap,
-  WrapExtensionAPI,
-  Extension,
-  Extensions,
-} from './models'
+import { getOptions, updateOptions } from './options'
+import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
 import { enhancedSpy } from './utils/tinyspyWrapper'
 import { MockInstance } from './utils/types'
 
@@ -26,7 +20,6 @@ afterEach(() => {
   // @ts-expect-error
   const mockedFetch = global.fetch as MockInstance
   mockedFetch.mockRestore()
-  // @ts-expect-error
   global.fetch = originalFetch
 })
 
