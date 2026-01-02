@@ -32,13 +32,16 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  if (typeof globalThis.fetch === 'function') {
-    // @ts-expect-error
-    globalThis.fetch.mockRestore()
+  const mockedFetch = globalThis.fetch as unknown as MockInstance | undefined
+  if (mockedFetch?.mockRestore) {
+    mockedFetch.mockRestore()
   }
-  globalThis.fetch = originalGlobalFetch
+
+  const restoredFetch = originalGlobalFetch ?? originalWindowFetch
+  // Avoid restoring to undefined; keep a usable fetch to prevent late async crashes.
+  globalThis.fetch = restoredFetch ?? globalThis.fetch
   if (typeof window !== 'undefined') {
-    window.fetch = originalWindowFetch ?? originalGlobalFetch
+    window.fetch = originalWindowFetch ?? originalGlobalFetch ?? globalThis.fetch
   }
 })
 
