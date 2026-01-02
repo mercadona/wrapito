@@ -4,25 +4,6 @@ import { mockNetwork } from './mockNetwork'
 import { getConfig } from './config'
 import { getOptions, updateOptions } from './options'
 import type { Extension, Extensions, Response, Wrap, WrapExtensionAPI } from './models'
-import { enhancedSpy } from './utils/tinyspyWrapper'
-import { createDefaultFetchResponse } from './utils/defaultFetchResponse'
-import { MockInstance } from './utils/types'
-
-const originalFetch = global.fetch
-
-// @ts-expect-error
-beforeEach(() => {
-  // @ts-expect-error
-  global.fetch = enhancedSpy(() => Promise.resolve(createDefaultFetchResponse()))
-})
-
-// @ts-expect-error
-afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockRestore()
-  global.fetch = originalFetch
-})
 
 const wrap = (component: unknown): Wrap => {
   updateOptions({

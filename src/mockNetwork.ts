@@ -11,18 +11,35 @@ declare global {
   }
 }
 
-const originalFetch = global.window.fetch
+let originalGlobalFetch: typeof globalThis.fetch | undefined
+let originalWindowFetch: typeof globalThis.fetch | undefined
 
 beforeEach(() => {
+  originalGlobalFetch = globalThis.fetch
+  if (typeof window !== 'undefined') {
+    originalWindowFetch = window.fetch
+  }
   // @ts-expect-error
-  global.window.fetch = enhancedSpy(() =>
+  const mockedFetch = enhancedSpy(() =>
     Promise.resolve(createDefaultFetchResponse()),
   )
+  // @ts-expect-error
+  globalThis.fetch = mockedFetch
+  if (typeof window !== 'undefined') {
+    // @ts-expect-error
+    window.fetch = mockedFetch
+  }
 })
 
 afterEach(() => {
-  global.window.fetch.mockRestore()
-  global.window.fetch = originalFetch
+  if (typeof globalThis.fetch === 'function') {
+    // @ts-expect-error
+    globalThis.fetch.mockRestore()
+  }
+  globalThis.fetch = originalGlobalFetch
+  if (typeof window !== 'undefined') {
+    window.fetch = originalWindowFetch ?? originalGlobalFetch
+  }
 })
 
 const createDefaultResponse = async () => {
@@ -94,7 +111,7 @@ const mockFetch = async (
 }
 
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
-  const fetch = global.window.fetch
+  const fetch = globalThis.fetch
 
   fetch.mockImplementation((input: WrapRequest, init?: RequestInit) => {
     if (typeof input === 'string') {
