@@ -15,10 +15,6 @@ beforeEach(() => {
   global.window.fetch = enhancedSpy()
 })
 
-afterEach(() => {
-  global.window.fetch.mockReset()
-})
-
 const createDefaultResponse = async () => {
   const response = {
     json: () => Promise.resolve(),
