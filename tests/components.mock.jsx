@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
+import { Route, Router, Switch, useLocation } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { applyMiddleware, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
@@ -28,7 +28,7 @@ export class MyComponentMakingHttpCalls extends Component {
   }
 
   componentDidMount = async () => {
-    const request = new Request('my-host/path/to/get/quantity/')
+    const request = new Request('http://api.test/path/to/get/quantity/')
     const quantityResponse = await fetch(request)
     if (!quantityResponse) return
     if (quantityResponse.status !== 200) {
@@ -41,7 +41,7 @@ export class MyComponentMakingHttpCalls extends Component {
   }
 
   saveQuantity = async () => {
-    const request = new Request('my-host/path/to/save/quantity/', {
+    const request = new Request('http://api.test/path/to/save/quantity/', {
       method: 'POST',
       body: JSON.stringify({ quantity: this.state.quantity }),
     })
@@ -114,22 +114,6 @@ export const MyAppWithRouting = () => {
   )
 }
 
-export const MyAppWithBrowserRouting = () => {
-  return (
-    <BrowserRouter>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-      </Switch>
-    </BrowserRouter>
-  )
-}
-
 const ACTION_TYPES = {
   ADD: 'ADD',
   REMOVE: 'REMOVE',
@@ -186,7 +170,7 @@ export const MyComponentMakingHttpCallsWithQueryParams = () => {
   }, [])
 
   const getQuantity = async () => {
-    const request = new Request('/path/with/query/params/?myAwesome=param')
+    const request = new Request('http://api.test/path/with/query/params/?myAwesome=param')
     const response = await fetch(request)
     if (!response) return
     const quantity = await response.json()
@@ -207,7 +191,7 @@ export const MyComponentWithNetwork = () => {
   }, [])
 
   const doRequest = async () => {
-    const request = new Request('my-host/path/')
+    const request = new Request('http://api.test/path/')
     const response = await fetch(request)
     if (response) {
       setStatus('SUCCESS')
@@ -215,7 +199,7 @@ export const MyComponentWithNetwork = () => {
   }
 
   const doRequestWithResponse = async () => {
-    const request = new Request('my-host/path/with/response/')
+    const request = new Request('http://api.test/path/with/response/')
     const response = await fetch(request)
     const quantity = await response.json()
     setQuantity(quantity)
@@ -239,7 +223,7 @@ export const MyComponentWithLogin = () => {
   }, [])
 
   const login = async () => {
-    const request = new Request('my-host/path/to/login/', { method: 'POST' })
+    const request = new Request('http://api.test/path/to/login/', { method: 'POST' })
     const response = await fetch(request)
     const username = await response.json()
     setUser(username)
@@ -247,7 +231,7 @@ export const MyComponentWithLogin = () => {
   }
 
   const logout = async () => {
-    const request = new Request('my-host/path/to/logout/', { method: 'POST' })
+    const request = new Request('http://api.test/path/to/logout/', { method: 'POST' })
     const response = await fetch(request)
     const username = await response.json()
     setUser(username)
@@ -275,7 +259,7 @@ export const MyComponentWithPost = () => {
   }, [])
 
   const login = async () => {
-    const request = new Request('my-host/path/to/login/', {
+    const request = new Request('http://api.test/path/to/login/', {
       method: 'POST',
       body: JSON.stringify({
         bar: 'bar',
@@ -303,7 +287,7 @@ export const MyComponentWithFeedback = () => {
   const [feedback, setFeedback] = useState('DEFAULT')
 
   const save = async () => {
-    const request = new Request('my-host/path/to/save/', {
+    const request = new Request('http://api.test/path/to/save/', {
       method: 'POST',
     })
 
@@ -327,14 +311,14 @@ export const GreetingComponent = () => {
   useEffect(() => {
     async function fetchData() {
       await fetch(
-        new Request('my-host/request1', {
+        new Request('http://my-host/request1', {
           method: 'POST',
           body: JSON.stringify({ id: 1 }),
         }),
       )
 
       const response = await fetch(
-        new Request('my-host/request2', {
+        new Request('http://my-host/request2', {
           method: 'POST',
           body: JSON.stringify({ id: 2 }),
         }),

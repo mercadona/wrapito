@@ -1,7 +1,7 @@
 import hash from 'object-hash'
 
-import { getConfig } from './config'
-import type { WrapRequest, Response } from './models'
+import { getConfig } from '../config'
+import type { Response, WrapRequest } from '../@types/models'
 
 const getRequestMatcher =
   (request: WrapRequest) => (mockedRequest: Response) => {
@@ -13,7 +13,7 @@ const getRequestMatcher =
       catchParams,
     } = mockedRequest
 
-    const url = host + path
+    const url = 'http://' + host + path
     const isQueryParamsSensitive = !getConfig().handleQueryParams || catchParams
 
     const mockedRequestHash = hash({
@@ -31,6 +31,7 @@ const getRequestMatcher =
       method: request.method,
       requestBody: body,
     })
+
     return requestHash === mockedRequestHash
   }
 

@@ -19,7 +19,8 @@ From the version 13 wrapito is compatible with the new version of React and requ
   }
 ```
 
-If your project uses React <=18.0.0, you can use wrapito <=12, but we extremely recommend to migrate to newest versions, because we are not maintaining legacy dependencies.
+If your project uses React <=18.0.0, you can use wrapito <=12, but we extremely recommend to migrate to newest versions,
+because we are not maintaining legacy dependencies.
 
 ## 🎯 Motivation
 
@@ -59,7 +60,8 @@ const myWrappedComponent = wrap(MyComponent).mount()
 
 ## 👣 Initial setup
 
-In the latest version of 🌯 `wrapito` passing the rendering/mounting function is optional, because we use `render` from `@testing-library/react` by default.
+In the latest version of 🌯 `wrapito` passing the rendering/mounting function is optional, because we use `render` from
+`@testing-library/react` by default.
 
 If one or more of your components use a `react portal` in any way, you will need to specify the `id` of the node where
 it will be added.
@@ -86,15 +88,11 @@ setupFiles: ['./src/setupTests.tsx']
 
 ## 🏰 Builder API
 
-#### withMocks (Deprecated)
-
-It has the same API than the withNetwork builder. The main difference between them is that withMocks will fail if a
-given request, done by the production code, is not set up in the `responses object`.
-
 #### withNetwork
 
 By using this feature you can configure the responses for your `http requests`. If your component is making a request
-that is not set up in the `responses object`, it will not be validated and it will return an empty response with code 200.
+that is not set up in the `responses object`, it will not be validated and it will return an empty response with code
+200.
 
 ```js
 import { wrap } from 'wrapito'
@@ -321,7 +319,8 @@ This will run a workflow in github that will publish this version for you.
 
 ### Release beta versions
 
-WARNING: DO NOT MERGE YOUR PR IF YOU WANT TO DO A BETA RELEASE, SINCE THE CHANGES ARE NOT FULLY TRUSTED THEY SHOULD NOT GO TO MASTER
+WARNING: DO NOT MERGE YOUR PR IF YOU WANT TO DO A BETA RELEASE, SINCE THE CHANGES ARE NOT FULLY TRUSTED THEY SHOULD NOT
+GO TO MASTER
 
 If you need to release beta versions to test things, you may do so with the -beta tag. E.g:
 

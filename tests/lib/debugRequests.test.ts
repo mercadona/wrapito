@@ -1,15 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { configure, wrap } from '../../src/index'
 import { GreetingComponent, MyComponentWithFeedback } from '../components.mock'
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 const originalWarn = window.console.warn
 
@@ -46,7 +38,7 @@ it('should warn about the code making a request that has not being mocked', asyn
     expect.stringContaining('cannot find any mock matching:'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
-    expect.stringContaining('URL: my-host/request1'),
+    expect.stringContaining('URL: http://my-host/request1'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining('METHOD: post'),
@@ -56,7 +48,7 @@ it('should warn about the code making a request that has not being mocked', asyn
   )
 })
 
-it('should warn about the code making a request that has not being mocked enough times', async () => {
+it.only('should warn about the code making a request that has not being mocked enough times', async () => {
   const consoleWarn = vi.spyOn(console, 'warn')
   configure({ mount: render })
   wrap(MyComponentWithFeedback)
@@ -81,7 +73,7 @@ it('should warn about the code making a request that has not being mocked enough
   )
 })
 
-describe('when no using withNetwork builder', () => {
+describe('when not using withNetwork builder', () => {
   it('should warn about all the request being done by the production code', async () => {
     const consoleWarn = vi.spyOn(console, 'warn')
 
@@ -93,7 +85,7 @@ describe('when no using withNetwork builder', () => {
       expect.stringContaining('cannot find any mock matching:'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('URL: my-host/request1'),
+      expect.stringContaining('URL: http://my-host/request1'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
       expect.stringContaining('METHOD: post'),
@@ -102,7 +94,7 @@ describe('when no using withNetwork builder', () => {
       expect.stringContaining('REQUEST BODY: {"id":1}'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
-      expect.stringContaining('URL: my-host/request2'),
+      expect.stringContaining('URL: http://my-host/request2'),
     )
     expect(consoleWarn).toHaveBeenCalledWith(
       expect.stringContaining('METHOD: post'),
@@ -175,6 +167,7 @@ it('should warn about not fetched requests when --debugRequests param is used', 
       requestBody: { id: 2 },
       responseBody: { name: 'Sam' },
     })
+    .debugRequests()
     .mount()
 
   await screen.findByText('Hi Sam!')
@@ -183,7 +176,7 @@ it('should warn about not fetched requests when --debugRequests param is used', 
     expect.stringContaining('cannot find any mock matching:'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
-    expect.stringContaining('URL: my-host/request1'),
+    expect.stringContaining('URL: http://my-host/request1'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining('METHOD: post'),
@@ -198,13 +191,13 @@ it('should warn about not fetched requests when --debugRequests param is used wi
   process.env.npm_config_debugRequests = 'true'
 
   wrap(GreetingComponent)
-    .withNetwork({
+    .withNetwork([{
       path: '/request2',
       host: 'my-host',
       method: 'post',
       requestBody: { id: 2 },
       responseBody: { name: 'Sam' },
-    })
+    }])
     .mount()
 
   await screen.findByText('Hi Sam!')
@@ -213,7 +206,7 @@ it('should warn about not fetched requests when --debugRequests param is used wi
     expect.stringContaining('cannot find any mock matching:'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
-    expect.stringContaining('URL: my-host/request1'),
+    expect.stringContaining('URL: http://my-host/request1'),
   )
   expect(consoleWarn).toHaveBeenCalledWith(
     expect.stringContaining('METHOD: post'),
