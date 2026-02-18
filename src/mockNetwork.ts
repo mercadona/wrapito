@@ -16,7 +16,15 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  global.window.fetch.mockReset()
+  const currentFetch = global.window.fetch
+  global.fetch = (...args) => {
+    console.warn(`${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
+      'fetch is being called after the test has been finished: ' +
+        JSON.stringify(args),
+    )}
+ `)
+    return currentFetch(...args)
+  }
 })
 
 const createDefaultResponse = async () => {
