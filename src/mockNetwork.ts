@@ -16,7 +16,16 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  global.window.fetch.mockReset()
+  const originalImpl = global.window.fetch.getMockImplementation()
+
+  global.window.fetch.mockImplementation((...args) => {
+    console.warn(`${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
+      'ed after the test has been finished: ' +
+        JSON.stringify(args),
+    )}
+ `)
+    return originalImpl(...args)
+  })
 })
 
 const createDefaultResponse = async () => {

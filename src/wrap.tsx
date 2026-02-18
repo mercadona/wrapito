@@ -12,6 +12,7 @@ import type {
 } from './models'
 import { enhancedSpy } from './utils/tinyspyWrapper'
 import { MockInstance } from './utils/types'
+import chalk from 'chalk'
 
 // @ts-expect-error
 beforeEach(() => {
@@ -22,8 +23,17 @@ beforeEach(() => {
 // @ts-expect-error
 afterEach(() => {
   // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
+  const originalImpl = global.fetch.getMockImplementation()
+
+  // @ts-expect-error
+  global.fetch.mockImplementation((...args) => {
+    console.warn(`${chalk.white.bold.bgRed('wrapito')} ${chalk.redBright.bold(
+      'fetch is being called after the test has been finished: ' +
+        JSON.stringify(args),
+    )}
+ `)
+    return originalImpl(...args)
+  })
 })
 
 const wrap = (component: unknown): Wrap => {
@@ -166,7 +176,7 @@ const getMount = () => {
 
   const rendered = mount(<C {...props} />)
 
-  if (!!interaction) {
+  if (interaction) {
     const user = interaction.setup
       ? interaction.setup(interaction.userLib, interactionConfig)
       : interaction.userLib
