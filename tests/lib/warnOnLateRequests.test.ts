@@ -64,7 +64,9 @@ describe('warnOnPendingRequests', () => {
       )
 
       expect(consoleWarn).toHaveBeenCalledWith(
-        expect.stringContaining('late request detected after test finished:'),
+        expect.stringContaining(
+          'pending request detected after test finished:',
+        ),
       )
       expect(consoleWarn).toHaveBeenCalledWith(
         expect.stringContaining('URL: my-host/late-request'),
@@ -121,7 +123,9 @@ describe('warnOnPendingRequests', () => {
       )
 
       expect(consoleWarn).toHaveBeenCalledWith(
-        expect.stringContaining('late request detected after test finished:'),
+        expect.stringContaining(
+          'pending request detected after test finished:',
+        ),
       )
       expect(consoleWarn).not.toHaveBeenCalledWith(
         expect.stringContaining('TEST:'),
@@ -172,7 +176,9 @@ describe('warnOnPendingRequests', () => {
       expect(json).toBeUndefined()
 
       expect(consoleWarn).not.toHaveBeenCalledWith(
-        expect.stringContaining('late request detected after test finished:'),
+        expect.stringContaining(
+          'pending request detected after test finished:',
+        ),
       )
     })
   })

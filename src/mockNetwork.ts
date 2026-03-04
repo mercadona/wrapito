@@ -111,12 +111,11 @@ const setupLateRequestWarning = (testName?: string) => {
       const method =
         init?.method || (typeof input !== 'string' ? input.method : 'GET')
 
-      console.warn(
-        `\n${chalk.white.bold.bgYellow('wrapito')} ${chalk.yellowBright.bold('late request detected after test finished:')}\n` +
-          `  ${chalk.greenBright(`URL: ${url}`)}\n` +
-          `  ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}\n` +
-          (testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''),
-      )
+      console.warn(`
+${chalk.white.bold.bgYellow(' 🌯 wrapito ')} ${chalk.yellowBright.bold('⚠️  pending request detected after test finished:')}
+  ${chalk.greenBright(`URL: ${url}`)}
+  ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}
+${testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''}`)
       return createDefaultResponse()
     },
   )
