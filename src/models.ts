@@ -127,6 +127,7 @@ export interface Config<
   portals?: string[]
   handleQueryParams?: boolean
   interaction?: InteractionOptions<UserInteraction>
+  warnOnPendingRequests?: boolean
 }
 
 interface BrowserHistory extends History {

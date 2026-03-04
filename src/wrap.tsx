@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { mockNetwork } from './mockNetwork'
+import { mockNetwork, setupLateRequestWarning } from './mockNetwork'
 import { getConfig } from './config'
 import { updateOptions, getOptions } from './options'
 import type {
@@ -11,7 +11,6 @@ import type {
   Extensions,
 } from './models'
 import { enhancedSpy } from './utils/tinyspyWrapper'
-import { MockInstance } from './utils/types'
 
 // @ts-expect-error
 beforeEach(() => {
@@ -21,9 +20,12 @@ beforeEach(() => {
 
 // @ts-expect-error
 afterEach(() => {
-  // @ts-expect-error
-  const mockedFetch = global.fetch as MockInstance
-  mockedFetch.mockReset()
+  const { warnOnPendingRequests } = getConfig()
+  if (warnOnPendingRequests) {
+    // @ts-expect-error
+    const testName = expect.getState?.()?.currentTestName
+    setupLateRequestWarning(testName)
+  }
 })
 
 const wrap = (component: unknown): Wrap => {
