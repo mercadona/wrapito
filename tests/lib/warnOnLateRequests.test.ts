@@ -12,16 +12,16 @@ import {
   vi,
 } from 'vitest'
 
-const originalWarn = window.console.warn
+const originalWarn = console.warn
 
-beforeAll(() => (window.console.warn = vi.fn()))
+beforeAll(() => (console.warn = vi.fn()))
 
 afterEach(() => {
   cleanup()
 })
 
 afterAll(() => {
-  window.console.warn = originalWarn
+  console.warn = originalWarn
 })
 
 describe('warnOnPendingRequests', () => {
@@ -59,7 +59,7 @@ describe('warnOnPendingRequests', () => {
       setupLateRequestWarning('my test name')
 
       // Now simulate a late fetch
-      const response = await window.fetch(
+      const response = await fetch(
         new Request('my-host/late-request', { method: 'POST' }),
       )
 
@@ -118,9 +118,7 @@ describe('warnOnPendingRequests', () => {
 
       consoleWarn.mockClear()
 
-      await window.fetch(
-        new Request('my-host/another-request', { method: 'GET' }),
-      )
+      await fetch(new Request('my-host/another-request', { method: 'GET' }))
 
       expect(consoleWarn).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -130,6 +128,47 @@ describe('warnOnPendingRequests', () => {
       expect(consoleWarn).not.toHaveBeenCalledWith(
         expect.stringContaining('TEST:'),
       )
+    })
+
+    it('should preserve the original mock response for matching requests', async () => {
+      configure({
+        defaultHost: 'my-host',
+        mount: render,
+        warnOnPendingRequests: true,
+      })
+
+      wrap(GreetingComponent)
+        .withNetwork([
+          {
+            path: '/request1',
+            host: 'my-host',
+            method: 'POST',
+            requestBody: { id: 1 },
+            responseBody: { name: 'Joe' },
+          },
+          {
+            path: '/request2',
+            host: 'my-host',
+            method: 'POST',
+            requestBody: { id: 2 },
+            responseBody: { name: 'Sam' },
+          },
+        ])
+        .mount()
+
+      await screen.findByText('Hi Sam!')
+
+      setupLateRequestWarning()
+
+      const response = await fetch(
+        new Request('my-host/request2', {
+          method: 'POST',
+          body: JSON.stringify({ id: 2 }),
+        }),
+      )
+
+      const json = await response.json()
+      expect(json).toEqual({ name: 'Sam' })
     })
   })
 
@@ -163,7 +202,7 @@ describe('warnOnPendingRequests', () => {
 
       await screen.findByText('Hi Sam!')
 
-      const response = await window.fetch(
+      const response = await fetch(
         new Request('my-host/late-request', { method: 'POST' }),
       )
 

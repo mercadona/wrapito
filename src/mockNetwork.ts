@@ -98,14 +98,17 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
 }
 
 const printMultipleResponsesWarning = (response: Response) => {
-  const errorMessage = `🌯 Wrapito:  Missing response in the multipleResponses
-   array for path ${response.path} and method ${response.method}.`
+  const errorMessage =
+    `🌯 Wrapito:  Missing response in the multipleResponses` +
+    ` array for path ${response.path} and method ${response.method}.`
   const formattedErrorMessage = chalk.greenBright(errorMessage)
 
   console.warn(formattedErrorMessage)
 }
 
 const setupLateRequestWarning = (testName?: string) => {
+  const currentImpl = global.window.fetch.getMockImplementation()
+
   global.window.fetch.mockImplementation(
     (input: WrapRequest, init?: RequestInit) => {
       const url = typeof input === 'string' ? input : input.url
@@ -118,6 +121,7 @@ ${chalk.white.bold.bgYellow(' 🌯 wrapito ')}
   ${chalk.greenBright(`URL: ${url}`)}
   ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}
 ${testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''}`)
+      if (currentImpl) return currentImpl(input, init)
       return createDefaultResponse()
     },
   )
