@@ -98,7 +98,8 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
 }
 
 const printMultipleResponsesWarning = (response: Response) => {
-  const errorMessage = `🌯 Wrapito:  Missing response in the multipleResponses array for path ${response.path} and method ${response.method}.`
+  const errorMessage = `🌯 Wrapito:  Missing response in the multipleResponses
+   array for path ${response.path} and method ${response.method}.`
   const formattedErrorMessage = chalk.greenBright(errorMessage)
 
   console.warn(formattedErrorMessage)
@@ -112,7 +113,8 @@ const setupLateRequestWarning = (testName?: string) => {
         init?.method || (typeof input !== 'string' ? input.method : 'GET')
 
       console.warn(`
-${chalk.white.bold.bgYellow(' 🌯 wrapito ')} ${chalk.yellowBright.bold('⚠️  pending request detected after test finished:')}
+${chalk.white.bold.bgYellow(' 🌯 wrapito ')}
+ ${chalk.yellowBright.bold('⚠️  pending request detected after test finished:')}
   ${chalk.greenBright(`URL: ${url}`)}
   ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}
 ${testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''}`)
