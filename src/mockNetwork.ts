@@ -1,7 +1,6 @@
 import chalk from 'chalk'
 import type { Response, WrapRequest } from './models'
 import { getRequestMatcher } from './requestMatcher'
-import { enhancedSpy } from './utils/tinyspyWrapper'
 import type { MockInstance } from '../src/utils/types'
 
 declare global {
@@ -9,15 +8,6 @@ declare global {
     fetch: MockInstance
   }
 }
-
-beforeEach(() => {
-  // @ts-expect-error
-  global.window.fetch = enhancedSpy()
-})
-
-afterEach(() => {
-  global.window.fetch.mockReset()
-})
 
 const createDefaultResponse = async () => {
   const response = {
@@ -108,10 +98,33 @@ const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
 }
 
 const printMultipleResponsesWarning = (response: Response) => {
-  const errorMessage = `🌯 Wrapito:  Missing response in the multipleResponses array for path ${response.path} and method ${response.method}.`
+  const errorMessage =
+    `🌯 Wrapito:  Missing response in the multipleResponses` +
+    ` array for path ${response.path} and method ${response.method}.`
   const formattedErrorMessage = chalk.greenBright(errorMessage)
 
   console.warn(formattedErrorMessage)
 }
 
-export { mockNetwork }
+const setupLateRequestWarning = (testName?: string) => {
+  const currentImpl = global.window.fetch.getMockImplementation()
+
+  global.window.fetch.mockImplementation(
+    (input: WrapRequest, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input.url
+      const method =
+        init?.method || (typeof input !== 'string' ? input.method : 'GET')
+
+      console.warn(`
+${chalk.white.bold.bgYellow(' 🌯 wrapito ')}
+ ${chalk.yellowBright.bold('⚠️  pending request detected after test finished:')}
+  ${chalk.greenBright(`URL: ${url}`)}
+  ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}
+${testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''}`)
+      if (currentImpl) return currentImpl(input, init)
+      return createDefaultResponse()
+    },
+  )
+}
+
+export { mockNetwork, setupLateRequestWarning }
