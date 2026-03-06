@@ -84,6 +84,34 @@ Add this line in your project setup (vite/cra):
 setupFiles: ['./src/setupTests.tsx']
 ```
 
+#### warnOnPendingRequests
+
+When rendering a full application, some API calls may still be pending when the test finishes. This can lead to flaky
+tests if those pending requests resolve after the test cleanup phase.
+
+By enabling `warnOnPendingRequests`, wrapito will log a warning to the console whenever a fetch call is detected after
+a test has finished, including the request URL, method and the name of the test that left it pending. This helps
+identify tests that need proper cleanup or `await` handling.
+
+```js
+import { configure } from 'wrapito'
+
+configure({
+  ...configuration,
+  warnOnPendingRequests: true,
+})
+```
+
+When a pending request is detected, you will see a warning like:
+
+```
+🌯 wrapito
+⚠️  pending request detected after test finished:
+  URL: https://my-host/api/products/
+  METHOD: get
+  TEST: should render the product list
+```
+
 ## 🏰 Builder API
 
 #### withMocks (Deprecated)
