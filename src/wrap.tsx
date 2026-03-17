@@ -9,6 +9,7 @@ import type {
   WrapExtensionAPI,
   Extension,
   Extensions,
+  BrowserHistory,
 } from './models'
 import { enhancedSpy } from './utils/tinyspyWrapper'
 
@@ -126,6 +127,34 @@ const debugRequests = () => {
   return wrapWith()
 }
 
+const buildResponses = (responses: Response[]): Response[] => {
+  const { defaultResponses = [] } = getConfig()
+  return [...responses, ...defaultResponses]
+}
+
+const setupRoute = (
+  hasPath: boolean,
+  path: string,
+  historyState: object | undefined,
+  history: BrowserHistory | undefined,
+  changeRoute: (path: string) => void,
+) => {
+  if (!hasPath) return
+
+  if (history) {
+    console.warn(
+      'wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.',
+    )
+    console.warn(
+      'Read about changeRoute in: https://github.com/mercadona/wrapito#changeRoute',
+    )
+    history.push(path, historyState)
+    return
+  }
+
+  changeRoute(path)
+}
+
 const getMount = () => {
   const { portal, portals, changeRoute, history, mount, interaction } =
     getConfig()
@@ -150,21 +179,9 @@ const getMount = () => {
     setupPortals(portals)
   }
 
-  if (hasPath && history) {
-    console.warn(
-      'wrapito WARNING: history is DEPRECATED. Pass a changeRoute function to the config instead.',
-    )
-    console.warn(
-      'Read about changeRoute in: https://github.com/mercadona/wrapito#changeRoute',
-    )
-    history.push(path, historyState)
-  }
+  setupRoute(hasPath, path, historyState, history, changeRoute)
 
-  if (hasPath && !history) {
-    changeRoute(path)
-  }
-
-  mockNetwork(responses, debug)
+  mockNetwork(buildResponses(responses), debug)
 
   const rendered = mount(<C {...props} />)
 

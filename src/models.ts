@@ -128,6 +128,7 @@ export interface Config<
   handleQueryParams?: boolean
   interaction?: InteractionOptions<UserInteraction>
   warnOnPendingRequests?: boolean
+  defaultResponses?: WrapResponse[]
 }
 
 interface BrowserHistory extends History {
