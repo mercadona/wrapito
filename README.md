@@ -112,6 +112,30 @@ When a pending request is detected, you will see a warning like:
   TEST: should render the product list
 ```
 
+#### defaultResponses
+
+If your tests share common network mocks (e.g. auth, config, feature flags), you can define them once via `defaultResponses` instead of repeating them in every test or extension.
+
+These responses are automatically included in every `wrap(...).mount()` call. Test-specific mocks added via `withNetwork` or extensions take precedence over default responses.
+
+```js
+import { configure } from 'wrapito'
+
+configure({
+  ...configuration,
+  defaultResponses: [
+    {
+      path: '/api/auth/',
+      responseBody: { user: 'authenticated-user' },
+    },
+    {
+      path: '/api/feature-flags/',
+      responseBody: { newFeature: true },
+    },
+  ],
+})
+```
+
 ## 🏰 Builder API
 
 #### withMocks (Deprecated)
