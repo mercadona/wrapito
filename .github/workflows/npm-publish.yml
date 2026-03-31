@@ -33,7 +33,7 @@ jobs:
           fi
       - name: Build Changelog
         id: github_release
-        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8 #6.1.1
+        uses: mikepenz/release-changelog-builder-action@2cb9befdbc05f65b8354cc9873cd506509bd0782 #6.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
