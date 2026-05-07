@@ -2,8 +2,7 @@ import { cleanup } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import { MyComponentWithProps } from '../components.mock'
-import { it, expect, afterEach, vi } from 'vitest'
-import { describe } from 'node:test'
+import { it, expect, afterEach, vi, describe } from 'vitest'
 
 const defaultMocksConfig = getConfig()
 
