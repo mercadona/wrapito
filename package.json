@@ -57,6 +57,7 @@
     "deep-equal": "^2.2.3",
     "jest-diff": "^29.7.0",
     "object-hash": "^3.0.0",
+    "tinyspy": "^2.2.1",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
@@ -67,12 +68,12 @@
     "@types/object-hash": "^3.0.6",
     "@types/react": "^19.1.8",
     "@types/react-router-dom": "^5.3.3",
-    "@vitest/coverage-istanbul": "^1.1.0",
-    "eslint": "^8.56.0",
+    "@vitest/coverage-istanbul": "^1.6.1",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-prettier": "^5.1.1",
-    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
     "history": "^4.10.1",
     "jsdom": "^26.1.0",
     "prettier": "^3.1.1",
@@ -82,10 +83,9 @@
     "react-router-dom": "^5.3.4",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
-    "tinyspy": "^2.2.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^1.1.0"
+    "vitest": "^1.6.1"
   },
   "peerDependencies": {
     "@testing-library/jest-dom": ">=5.16.4",
