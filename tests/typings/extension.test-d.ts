@@ -1,11 +1,14 @@
+import { expectTypeOf, test } from 'vitest'
 import type { Extension, Wrap, WrapExtensionAPI } from '../../src/models'
 
-type AssertTrue<T extends true> = T
+test('Extension accepts void-returning callbacks', () => {
+  expectTypeOf<
+    <T>(api: WrapExtensionAPI, args: T) => void
+  >().toMatchTypeOf<Extension>()
+})
 
-type _AssertVoidExtension = AssertTrue<
-  (<T>(api: WrapExtensionAPI, args: T) => void) extends Extension ? true : false
->
-
-type _AssertWrapExtension = AssertTrue<
-  (<T>(api: WrapExtensionAPI, args: T) => Wrap) extends Extension ? true : false
->
+test('Extension accepts Wrap-returning callbacks', () => {
+  expectTypeOf<
+    <T>(api: WrapExtensionAPI, args: T) => Wrap
+  >().toMatchTypeOf<Extension>()
+})

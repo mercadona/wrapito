@@ -22,7 +22,6 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "test": "vitest",
-    "posttest": "tsc --noEmit -p tests/typings/tsconfig.json",
     "test:coverage": "vitest --coverage",
     "test:publish": "npm publish --dry-run",
     "build:types": "tsc --build",
