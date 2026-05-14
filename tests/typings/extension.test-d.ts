@@ -1,13 +1,13 @@
-import { expectTypeOf, test } from 'vitest'
+import { expectTypeOf, it } from 'vitest'
 import type { Extension, Wrap, WrapExtensionAPI } from '../../src/models'
 
-test('Extension accepts void-returning callbacks', () => {
+it('should accept void-returning extension callbacks', () => {
   expectTypeOf<
     <T>(api: WrapExtensionAPI, args: T) => void
   >().toMatchTypeOf<Extension>()
 })
 
-test('Extension accepts Wrap-returning callbacks', () => {
+it('should accept Wrap-returning extension callbacks', () => {
   expectTypeOf<
     <T>(api: WrapExtensionAPI, args: T) => Wrap
   >().toMatchTypeOf<Extension>()
