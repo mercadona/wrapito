@@ -92,7 +92,7 @@ export interface WrapExtensionAPI {
 
 type Extension<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
-> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction>
+> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction> | void
 
 type Extensions<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
