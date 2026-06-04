@@ -7,6 +7,9 @@ updates:
       interval: "daily"
       time: "07:00"
     open-pull-requests-limit: 15
+    commit-message:
+      prefix: chore
+      include: scope
     groups:
       react:
         patterns:
@@ -35,3 +38,6 @@ updates:
       interval: "daily"
       time: "07:00"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
