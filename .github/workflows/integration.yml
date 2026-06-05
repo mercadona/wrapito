@@ -19,3 +19,4 @@ jobs:
           npm ci
           npm run test
           npm run build
+          npm run check:exports
