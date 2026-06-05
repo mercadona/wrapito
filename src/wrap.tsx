@@ -15,14 +15,8 @@ import { enhancedSpy } from './utils/tinyspyWrapper'
 
 // @ts-expect-error
 beforeEach(() => {
-  const spy = enhancedSpy()
   // @ts-expect-error
-  global.fetch = spy
-  // Same instance on window.fetch so tracking and implementation share one object.
-  // In Vitest both globals were already aliased; in Jest they are not, which caused
-  // matchers to read from a different spy than the one consumers configure.
-  // @ts-expect-error
-  global.window.fetch = spy
+  global.fetch = enhancedSpy()
 })
 
 // @ts-expect-error
