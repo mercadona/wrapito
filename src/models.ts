@@ -91,13 +91,14 @@ export interface WrapExtensionAPI {
 }
 
 type Extension<
+  Args extends unknown[] = unknown[],
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
-> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction> | void
+> = (extensionAPI: WrapExtensionAPI, args: Args) => Wrap<UserInteraction> | void
 
 type Extensions<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > = {
-  [key: string]: Extension<UserInteraction>
+  [key: string]: Extension<any, UserInteraction>
 }
 
 type Component = React.ReactElement<any, any>
