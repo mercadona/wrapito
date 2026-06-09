@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { applyMiddleware, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
@@ -65,8 +65,9 @@ export const myFakeModule = {
   myFakeFunction: () => null,
 }
 
-const Home = ({ history }) => {
-  const goToCategories = () => history.push('/categories')
+const Home = () => {
+  const navigate = useNavigate()
+  const goToCategories = () => navigate('/categories')
   myFakeModule.myFakeFunction('HOME')
   return (
     <div>
@@ -93,40 +94,28 @@ const PageUsingLocationState = () => {
 export const history = createBrowserHistory()
 
 export const MyAppWithRouting = () => {
+  const pathname = window.location.pathname
+  const state = window.history.state?.usr ?? null
   return (
-    <Router history={history}>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-        <Route
-          component={PageUsingLocationState}
-          key="page-using-location-state"
-          path="/page-using-location-state"
-          exact={true}
-        />
-      </Switch>
-    </Router>
+    <MemoryRouter initialEntries={[{ pathname, state }]}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/page-using-location-state" element={<PageUsingLocationState />} />
+      </Routes>
+    </MemoryRouter>
   )
 }
 
 export const MyAppWithBrowserRouting = () => {
+  const pathname = window.location.pathname
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-      </Switch>
-    </BrowserRouter>
+    <MemoryRouter initialEntries={[pathname]}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<Categories />} />
+      </Routes>
+    </MemoryRouter>
   )
 }
 
