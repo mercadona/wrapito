@@ -69,13 +69,13 @@ describe('toHaveBeenFetchedWith', () => {
       const request = new Request(path, {
         method: 'POST',
         body: JSON.stringify({ name: 'some name' }),
-        //@ts-ignore
+        //@ts-expect-error
         _bodyInit: JSON.stringify({ name: 'some name' }),
       })
 
       await fetch(request)
 
-      //@ts-ignore
+      //@ts-expect-error
       fetch.mock.calls[0][0].json()
 
       const { message } = matchers.toHaveBeenFetchedWith(path, {
@@ -352,7 +352,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
       const path = '//some-domain.com/some/path/'
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer token',
+        Authorization: 'Bearer token',
       }
       const body = {
         method: 'POST' as const,
@@ -371,7 +371,7 @@ ${diff(expectedHeaders, sentHeaders)}`,
         body: {},
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer token'
+          Authorization: 'Bearer token',
         },
       })
     })
