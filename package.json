@@ -6,12 +6,17 @@
   "type": "module",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
@@ -27,7 +32,9 @@
     "build:types": "tsc --build",
     "publish-package": "npm run build && npm publish",
     "publish-package:beta": "npm run build && npm publish --tag beta",
-    "typecheck": "tsc --noEmit dist/index.d.ts"
+    "typecheck": "tsc --noEmit dist/index.d.ts",
+    "check:exports": "attw --pack .",
+    "prepublishOnly": "npm run build && npm run check:exports"
   },
   "repository": {
     "type": "git",
@@ -60,6 +67,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/deep-equal": "^1.0.4",
