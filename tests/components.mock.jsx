@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { applyMiddleware, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
@@ -94,28 +94,25 @@ const PageUsingLocationState = () => {
 export const history = createBrowserHistory()
 
 export const MyAppWithRouting = () => {
-  const pathname = window.location.pathname
-  const state = window.history.state?.usr ?? null
   return (
-    <MemoryRouter initialEntries={[{ pathname, state }]}>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/page-using-location-state" element={<PageUsingLocationState />} />
       </Routes>
-    </MemoryRouter>
+    </BrowserRouter>
   )
 }
 
 export const MyAppWithBrowserRouting = () => {
-  const pathname = window.location.pathname
   return (
-    <MemoryRouter initialEntries={[pathname]}>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<Categories />} />
       </Routes>
-    </MemoryRouter>
+    </BrowserRouter>
   )
 }
 
