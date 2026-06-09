@@ -1,8 +1,7 @@
 {
   "name": "wrapito",
   "version": "0.0.0",
-  "packageManager": "npm@11.12.1",
-  "description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
+"description": "🌯 🌯 Wrap you tests so that you can test both behaviour and components with less effort.",
   "type": "module",
   "exports": {
     ".": {
