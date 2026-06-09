@@ -3,8 +3,7 @@ import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
-import { applyMiddleware, createStore } from 'redux'
-import { thunk } from 'redux-thunk'
+import { configureStore, createSlice } from '@reduxjs/toolkit'
 
 export const MyComponent = () => <div>Foo</div>
 
@@ -116,30 +115,16 @@ export const MyAppWithBrowserRouting = () => {
   )
 }
 
-const ACTION_TYPES = {
-  ADD: 'ADD',
-  REMOVE: 'REMOVE',
-}
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState: { products: 10 },
+  reducers: {
+    add: state => { state.products += 1 },
+    remove: state => { state.products -= 1 },
+  },
+})
 
-const add = () => ({ type: ACTION_TYPES.ADD })
-const remove = () => dispatch => dispatch({ type: ACTION_TYPES.REMOVE })
-
-function reducer(state = { products: 10 }, action) {
-  switch (action.type) {
-    case ACTION_TYPES.ADD:
-      return {
-        products: state.products + 1,
-      }
-
-    case ACTION_TYPES.REMOVE:
-      return {
-        products: state.products - 1,
-      }
-
-    default:
-      return state
-  }
-}
+const { add, remove } = cartSlice.actions
 
 const Cart = () => {
   const { products } = useSelector(state => state)
@@ -157,7 +142,7 @@ const Cart = () => {
 export const MyAppWithStore = () => {
   return (
     <Provider
-      store={createStore(reducer, { products: 10 }, applyMiddleware(thunk))}
+      store={configureStore({ reducer: cartSlice.reducer, preloadedState: { products: 10 } })}
     >
       <Cart />
     </Provider>
