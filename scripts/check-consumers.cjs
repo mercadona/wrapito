@@ -1,10 +1,3 @@
-// Packs wrapito and runs the consumer fixture against the tarball, so the
-// check covers exactly what gets published: the exports map, the files
-// allowlist and the resolvability of every runtime dependency. attw and
-// publint cannot catch ESM-only dependencies (e.g. chalk@5) because they
-// analyze the tarball without installing node_modules.
-//
-// Same pattern as Redux Toolkit's examples/publish-ci/node-standard.
 const { execFileSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')

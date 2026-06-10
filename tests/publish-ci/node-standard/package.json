@@ -1,7 +1,7 @@
 {
   "name": "wrapito-node-standard-consumer",
   "private": true,
-  "description": "Consumer fixture: loads the packed wrapito tarball the way a real CJS project does. --no-experimental-require-module simulates Node versions without require(ESM) support (<20.19, 22.0-22.11), where an externalized ESM-only dependency breaks CJS consumers.",
+  "description": "Requires the packed wrapito tarball like a CJS consumer on Node without require(ESM) support (<20.19, 22.0-22.11).",
   "scripts": {
     "test": "node --no-experimental-require-module test-cjs.js"
   }

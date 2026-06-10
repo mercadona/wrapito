@@ -1,7 +1,6 @@
 const assert = require('node:assert')
 
-// wrapito registers test hooks at module top level; stub the test runner
-// globals so the package can be loaded outside vitest.
+// wrapito registers test hooks on load; stub them to run outside a test runner
 globalThis.beforeEach = () => {}
 globalThis.afterEach = () => {}
 
