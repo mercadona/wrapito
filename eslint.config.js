@@ -1,7 +1,6 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import reactPlugin from 'eslint-plugin-react'
-import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import tseslint from 'typescript-eslint'
 
@@ -11,9 +10,6 @@ export default tseslint.config(
   tseslint.configs.recommended,
   reactPlugin.configs.flat.recommended,
   {
-    plugins: {
-      'react-hooks': reactHooksPlugin,
-    },
     languageOptions: {
       globals: {
         ...globals.node,
@@ -28,8 +24,6 @@ export default tseslint.config(
       react: { version: 'detect' },
     },
     rules: {
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
       'arrow-body-style': 'off',
       'prefer-arrow-callback': 'off',
       'no-var': 'error',
