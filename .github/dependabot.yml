@@ -10,6 +10,11 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # chalk >=5 is ESM-only and the CJS build externalizes it, which breaks
+      # CJS consumers on Node <20.19 / 22.0-22.11 (see #349, gated by check:consumers)
+      - dependency-name: "chalk"
+        update-types: ["version-update:semver-major"]
     groups:
       react:
         patterns:
