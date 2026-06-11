@@ -13,8 +13,7 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.es2015,
-        ...globals.jest,
+        ...globals.vitest,
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },
