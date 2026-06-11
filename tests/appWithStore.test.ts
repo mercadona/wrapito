@@ -23,7 +23,7 @@ it('should render a simple app and fire a store action', () => {
 })
 
 it('should render an app using redux middlewares', () => {
-  const { container, getByText } = wrap(MyAppWithStore).mount()
+  const { container } = wrap(MyAppWithStore).mount()
 
   expect(container).toHaveTextContent('10')
 

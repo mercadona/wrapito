@@ -1,8 +1,7 @@
-import { render, cleanup, screen } from '@testing-library/react'
+import { cleanup, screen } from '@testing-library/react'
 import { wrap, configure } from '../../src/index'
 import { getConfig } from '../../src/config'
 import {
-  MyComponent,
   MyComponentWithProps,
   MyComponentWithPortal,
   MyComponentWithPortals,
