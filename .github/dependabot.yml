@@ -28,6 +28,7 @@ updates:
       eslint:
         patterns:
           - "eslint"
+          - "@eslint/*"
           - "@typescript-eslint/*"
           - "eslint-plugin-*"
       testing:
@@ -35,6 +36,7 @@ updates:
           - "@testing-library/*"
           - "vitest"
           - "jsdom"
+          - "@vitest/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"

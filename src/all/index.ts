@@ -1,6 +1,6 @@
 import * as matchers from '../matchers'
 
-// @ts-ignore
+// @ts-expect-error
 const globalExpect = global.expect // eslint-ignore
 
 if (globalExpect !== undefined) {

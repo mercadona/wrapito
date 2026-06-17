@@ -64,7 +64,10 @@ const toHaveBeenFetchedWith = (path: string, options?: RequestOptions) => {
     expectedHeaders &&
     headersDoNotMatch(expectedHeaders, receivedRequestsHeaders)
   ) {
-    return headersDoNotMatchErrorMessage(expectedHeaders, receivedRequestsHeaders)
+    return headersDoNotMatchErrorMessage(
+      expectedHeaders,
+      receivedRequestsHeaders,
+    )
   }
 
   return successMessage()
