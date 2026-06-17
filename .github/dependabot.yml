@@ -32,6 +32,7 @@ updates:
           - "@testing-library/*"
           - "vitest"
           - "jsdom"
+          - "@vitest/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
