@@ -185,7 +185,7 @@ const getMount = () => {
 
   const rendered = mount(<C {...props} />)
 
-  if (!!interaction) {
+  if (interaction) {
     const user = interaction.setup
       ? interaction.setup(interaction.userLib, interactionConfig)
       : interaction.userLib

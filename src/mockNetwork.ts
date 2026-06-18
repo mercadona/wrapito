@@ -85,7 +85,7 @@ const mockFetch = async (
 }
 
 const mockNetwork = (responses: Response[] = [], debug: boolean = false) => {
-  const fetch = global.window.fetch
+  const fetch = global.fetch
 
   fetch.mockImplementation((input: WrapRequest, init?: RequestInit) => {
     if (typeof input === 'string') {
@@ -107,24 +107,22 @@ const printMultipleResponsesWarning = (response: Response) => {
 }
 
 const setupLateRequestWarning = (testName?: string) => {
-  const currentImpl = global.window.fetch.getMockImplementation()
+  const currentImpl = global.fetch.getMockImplementation()
 
-  global.window.fetch.mockImplementation(
-    (input: WrapRequest, init?: RequestInit) => {
-      const url = typeof input === 'string' ? input : input.url
-      const method =
-        init?.method || (typeof input !== 'string' ? input.method : 'GET')
+  global.fetch.mockImplementation((input: WrapRequest, init?: RequestInit) => {
+    const url = typeof input === 'string' ? input : input.url
+    const method =
+      init?.method || (typeof input !== 'string' ? input.method : 'GET')
 
-      console.warn(`
+    console.warn(`
 ${chalk.white.bold.bgYellow(' 🌯 wrapito ')}
  ${chalk.yellowBright.bold('⚠️  pending request detected after test finished:')}
   ${chalk.greenBright(`URL: ${url}`)}
   ${chalk.greenBright(`METHOD: ${method?.toLowerCase()}`)}
 ${testName ? `  ${chalk.greenBright(`TEST: ${testName}`)}\n` : ''}`)
-      if (currentImpl) return currentImpl(input, init)
-      return createDefaultResponse()
-    },
-  )
+    if (currentImpl) return currentImpl(input, init)
+    return createDefaultResponse()
+  })
 }
 
 export { mockNetwork, setupLateRequestWarning }

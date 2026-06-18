@@ -1,15 +1,49 @@
 version: 2
-# Keep Dependabot lockfile updates consistent with CI/local npm to avoid
-# npm ci failures from lockfile shape drift (e.g. optional peer entries).
+
 updates:
-  - package-ecosystem: npm
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: daily
-      time: '07:00'
+      interval: "daily"
+      time: "07:00"
     open-pull-requests-limit: 15
-  - package-ecosystem: github-actions
-    directory: '/'
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "@typescript-eslint/*"
+          - "eslint-plugin-*"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "vitest"
+          - "jsdom"
+          - "@vitest/*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: daily
-      time: '07:00'
+      interval: "daily"
+      time: "07:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      actions:
+        patterns:
+          - "*"

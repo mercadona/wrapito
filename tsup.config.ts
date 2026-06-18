@@ -11,6 +11,6 @@ export default defineConfig(options => ({
   dts: true,
   minify: !options?.watch,
   outExtension: ({ format }) => ({
-    js: format === 'cjs' ? '.js' : '.mjs',
+    js: format === 'cjs' ? '.cjs' : '.mjs',
   }),
 }))
