@@ -23,7 +23,11 @@ const getRequestMatcher =
     })
 
     let body: unknown = undefined
-    if (requestBody !== undefined && '_bodyInit' in request && request._bodyInit !== undefined) {
+    if (
+      requestBody !== undefined &&
+      '_bodyInit' in request &&
+      request._bodyInit !== undefined
+    ) {
       body = JSON.parse(request._bodyInit)
     }
     const requestHash = hash({
