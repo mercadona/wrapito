@@ -102,11 +102,14 @@ export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Extension = (extensionAPI: WrapExtensionAPI, args: any) => unknown
+type Extension<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction>
 
-type Extensions = {
-  [key: string]: Extension
+type Extensions<
+  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
+> = {
+  [key: string]: Extension<UserInteraction>
 }
 
 type Component = React.ReactElement<any, any>
@@ -129,7 +132,7 @@ export interface Config<
 > {
   defaultHost: string
   mount: Mount
-  extend: Extensions
+  extend: Extensions<UserInteraction>
   changeRoute: (path: string) => void
   history?: BrowserHistory
   portal?: string
