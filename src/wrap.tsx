@@ -5,6 +5,8 @@ import { getConfig } from './config'
 import { updateOptions, getOptions } from './options'
 import type {
   Response,
+  StreamChunk,
+  StreamingNetworkConfig,
   Wrap,
   WrapExtensionAPI,
   Extension,
@@ -49,6 +51,7 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
+    withStreamingNetwork,
     withInteraction,
     atPath,
     debugRequests,
@@ -89,6 +92,45 @@ const extendWith = () => {
   const extensionNames = Object.keys(extensions)
 
   return extensionNames.reduce(buildExtensions, {})
+}
+
+const buildReadableStream = (
+  chunks: StreamChunk[],
+  delayBetweenChunks: number,
+  keepOpen: boolean,
+): ReadableStream<Uint8Array<ArrayBuffer>> => {
+  const encoder = new TextEncoder()
+  return new ReadableStream<Uint8Array<ArrayBuffer>>({
+    async start(controller) {
+      for (const chunk of chunks) {
+        const text = typeof chunk === 'string' ? chunk : chunk.text
+        const chunkDelay =
+          typeof chunk === 'object' && chunk.delay !== undefined
+            ? chunk.delay
+            : delayBetweenChunks
+        if (chunkDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, chunkDelay))
+        }
+        controller.enqueue(encoder.encode(text))
+      }
+      if (!keepOpen) {
+        controller.close()
+      }
+    },
+  })
+}
+
+const withStreamingNetwork = (config: StreamingNetworkConfig) => {
+  const { path, host, method = 'GET', chunks, delayBetweenChunks = 0, keepOpen = false } = config
+  const options = getOptions()
+  updateOptions({
+    ...options,
+    responses: [
+      ...options.responses,
+      { path, host, method, body: buildReadableStream(chunks, delayBetweenChunks, keepOpen) },
+    ],
+  })
+  return wrapWith()
 }
 
 const withProps = (props: object) => {

@@ -270,6 +270,52 @@ export const MyComponentWithPost = () => {
   return <span>Not logged</span>
 }
 
+export const MyStreamingChatComponent = () => {
+  const [messages, setMessages] = useState([])
+  const [isStreaming, setIsStreaming] = useState(false)
+
+  useEffect(() => {
+    let reader = null
+    let mounted = true
+
+    const startStreaming = async () => {
+      setIsStreaming(true)
+      const response = await fetch(new Request('my-host/chat/stream/', { method: 'POST' }))
+      const decoder = new TextDecoder()
+      reader = response.body.getReader()
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done || !mounted) {
+            if (mounted) setIsStreaming(false)
+            break
+          }
+          setMessages(prev => [...prev, decoder.decode(value)])
+        }
+      } catch {
+        // Stream was cancelled on unmount
+      }
+    }
+
+    startStreaming()
+
+    return () => {
+      mounted = false
+      if (reader) reader.cancel()
+    }
+  }, [])
+
+  return (
+    <div>
+      {isStreaming && <span>Streaming...</span>}
+      {messages.map((msg, i) => (
+        <span key={i}>{msg}</span>
+      ))}
+    </div>
+  )
+}
+
 export const MyComponentWithFeedback = () => {
   const [feedback, setFeedback] = useState('DEFAULT')
 

@@ -46,6 +46,17 @@ export interface WrapResponse extends Partial<Response> {
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
 
+export type StreamChunk = string | { text: string; delay?: number }
+
+export interface StreamingNetworkConfig {
+  path: string
+  host?: string
+  method?: HttpMethod
+  chunks: StreamChunk[]
+  delayBetweenChunks?: number
+  keepOpen?: boolean
+}
+
 export type DefaultUserLib = unknown
 export type DefaultUserInstance = unknown
 export type DefaultUserSetupOptions = unknown
@@ -64,6 +75,7 @@ export interface Wrap<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
+  withStreamingNetwork: (config: StreamingNetworkConfig) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>
   withInteraction: (
@@ -90,14 +102,11 @@ export interface WrapExtensionAPI {
   addResponses: (responses: Array<WrapResponse>) => unknown
 }
 
-type Extension<
-  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
-> = <T>(extensionAPI: WrapExtensionAPI, args: T) => Wrap<UserInteraction>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Extension = (extensionAPI: WrapExtensionAPI, args: any) => unknown
 
-type Extensions<
-  UserInteraction extends InteractionDescriptor = InteractionDescriptor,
-> = {
-  [key: string]: Extension<UserInteraction>
+type Extensions = {
+  [key: string]: Extension
 }
 
 type Component = React.ReactElement<any, any>
@@ -120,7 +129,7 @@ export interface Config<
 > {
   defaultHost: string
   mount: Mount
-  extend: Extensions<UserInteraction>
+  extend: Extensions
   changeRoute: (path: string) => void
   history?: BrowserHistory
   portal?: string

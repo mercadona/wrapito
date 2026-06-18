@@ -21,13 +21,21 @@ const createDefaultResponse = async () => {
 }
 
 const createResponse = async (mockResponse: Partial<Response>) => {
-  const { responseBody, status = 200, headers = {}, delay } = mockResponse
-  const response = {
-    json: () => Promise.resolve(responseBody),
-    status,
-    ok: status >= 200 && status <= 299,
-    headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-  }
+  const { responseBody, body, status = 200, headers = {}, delay } = mockResponse
+
+  const response = body
+    ? {
+        body,
+        status,
+        ok: status >= 200 && status <= 299,
+        headers: new Headers({ 'Content-Type': 'text/event-stream', ...headers }),
+      }
+    : {
+        json: () => Promise.resolve(responseBody),
+        status,
+        ok: status >= 200 && status <= 299,
+        headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
+      }
 
   if (!delay) return Promise.resolve(response)
 
