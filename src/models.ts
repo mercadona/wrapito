@@ -75,7 +75,9 @@ export interface Wrap<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
-  withStreamingNetwork: (config: StreamingNetworkConfig) => Wrap<UserInteraction>
+  withStreamingNetwork: (
+    config: StreamingNetworkConfig,
+  ) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>
   withInteraction: (

@@ -121,13 +121,25 @@ const buildReadableStream = (
 }
 
 const withStreamingNetwork = (config: StreamingNetworkConfig) => {
-  const { path, host, method = 'GET', chunks, delayBetweenChunks = 0, keepOpen = false } = config
+  const {
+    path,
+    host,
+    method = 'GET',
+    chunks,
+    delayBetweenChunks = 0,
+    keepOpen = false,
+  } = config
   const options = getOptions()
   updateOptions({
     ...options,
     responses: [
       ...options.responses,
-      { path, host, method, body: buildReadableStream(chunks, delayBetweenChunks, keepOpen) },
+      {
+        path,
+        host,
+        method,
+        body: buildReadableStream(chunks, delayBetweenChunks, keepOpen),
+      },
     ],
   })
   return wrapWith()
