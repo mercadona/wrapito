@@ -138,7 +138,7 @@ const withStreamingNetwork = (config: StreamingNetworkConfig) => {
         path,
         host,
         method,
-        body: buildReadableStream(chunks, delayBetweenChunks, keepOpen),
+        streamBody: buildReadableStream(chunks, delayBetweenChunks, keepOpen),
       },
     ],
   })

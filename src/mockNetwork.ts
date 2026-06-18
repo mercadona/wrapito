@@ -20,35 +20,35 @@ const createDefaultResponse = async () => {
   return Promise.resolve(response)
 }
 
+const buildStreamingResponse = (mockResponse: Partial<Response>) => {
+  const { streamBody, status = 200, headers = {} } = mockResponse
+  return {
+    body: streamBody,
+    status,
+    ok: status >= 200 && status <= 299,
+    headers: new Headers({ 'Content-Type': 'text/event-stream', ...headers }),
+  }
+}
+
+const buildJsonResponse = (mockResponse: Partial<Response>) => {
+  const { responseBody, status = 200, headers = {} } = mockResponse
+  return {
+    json: () => Promise.resolve(responseBody),
+    status,
+    ok: status >= 200 && status <= 299,
+    headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
+  }
+}
+
 const createResponse = async (mockResponse: Partial<Response>) => {
-  const { responseBody, body, status = 200, headers = {}, delay } = mockResponse
+  const response = mockResponse.streamBody
+    ? buildStreamingResponse(mockResponse)
+    : buildJsonResponse(mockResponse)
 
-  const response = body
-    ? {
-        body,
-        status,
-        ok: status >= 200 && status <= 299,
-        headers: new Headers({
-          'Content-Type': 'text/event-stream',
-          ...headers,
-        }),
-      }
-    : {
-        json: () => Promise.resolve(responseBody),
-        status,
-        ok: status >= 200 && status <= 299,
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          ...headers,
-        }),
-      }
-
-  if (!delay) return Promise.resolve(response)
+  if (!mockResponse.delay) return Promise.resolve(response)
 
   return new Promise(resolve =>
-    setTimeout(() => {
-      return resolve(response)
-    }, delay),
+    setTimeout(() => resolve(response), mockResponse.delay),
   )
 }
 

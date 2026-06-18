@@ -42,6 +42,7 @@ export interface WrapResponse extends Partial<Response> {
   catchParams?: boolean
   delay?: number
   hasBeenReturned?: boolean
+  streamBody?: ReadableStream<Uint8Array<ArrayBuffer>>
 }
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
