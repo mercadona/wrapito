@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { it, expect, vi } from 'vitest'
 import { wrap, configure } from '../../src/index'
 
@@ -94,15 +94,15 @@ it('should deliver chunks sequentially, not all at once', async () => {
     })
     .mount()
 
-  await vi.advanceTimersByTimeAsync(0)
+  await act(async () => vi.advanceTimersByTimeAsync(0))
   expect(screen.getByText('First')).toBeInTheDocument()
   expect(screen.queryByText('Second')).not.toBeInTheDocument()
 
-  await vi.advanceTimersByTimeAsync(100)
+  await act(async () => vi.advanceTimersByTimeAsync(100))
   expect(screen.getByText('Second')).toBeInTheDocument()
   expect(screen.queryByText('Third')).not.toBeInTheDocument()
 
-  await vi.advanceTimersByTimeAsync(100)
+  await act(async () => vi.advanceTimersByTimeAsync(100))
   expect(screen.getByText('Third')).toBeInTheDocument()
 
   vi.useRealTimers()
