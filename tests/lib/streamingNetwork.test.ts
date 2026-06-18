@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { it, expect } from 'vitest'
+import { it, expect, vi } from 'vitest'
 import { wrap, configure } from '../../src/index'
 
 import { MyStreamingChatComponent } from '../components.mock'
@@ -75,4 +75,35 @@ it('should stream chunks with global delay between chunks', async () => {
 
   expect(await screen.findByText('Chunk A')).toBeInTheDocument()
   expect(await screen.findByText('Chunk B')).toBeInTheDocument()
+})
+
+it('should deliver chunks sequentially, not all at once', async () => {
+  vi.useFakeTimers()
+  configure({ mount: render })
+
+  wrap(MyStreamingChatComponent)
+    .withStreamingNetwork({
+      path: '/chat/stream/',
+      host: 'my-host',
+      method: 'POST',
+      chunks: [
+        { text: 'First' },
+        { text: 'Second', delay: 100 },
+        { text: 'Third', delay: 100 },
+      ],
+    })
+    .mount()
+
+  await vi.advanceTimersByTimeAsync(0)
+  expect(screen.getByText('First')).toBeInTheDocument()
+  expect(screen.queryByText('Second')).not.toBeInTheDocument()
+
+  await vi.advanceTimersByTimeAsync(100)
+  expect(screen.getByText('Second')).toBeInTheDocument()
+  expect(screen.queryByText('Third')).not.toBeInTheDocument()
+
+  await vi.advanceTimersByTimeAsync(100)
+  expect(screen.getByText('Third')).toBeInTheDocument()
+
+  vi.useRealTimers()
 })
