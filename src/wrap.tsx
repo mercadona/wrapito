@@ -120,27 +120,48 @@ const buildReadableStream = (
   })
 }
 
-const withStreamingNetwork = (config: StreamingNetworkConfig) => {
+const createStreamController = () => {
+  const encoder = new TextEncoder()
+  let controller: ReadableStreamDefaultController<Uint8Array<ArrayBuffer>>
+  const stream = new ReadableStream<Uint8Array<ArrayBuffer>>({
+    start(streamController) {
+      controller = streamController
+    },
+  })
+  return {
+    stream,
+    sendChunk: (text: string) => controller.enqueue(encoder.encode(text)),
+    close: () => controller.close(),
+  }
+}
+
+const toStreamingResponse = (config: StreamingNetworkConfig): Response => {
   const {
     path,
     host,
     method = 'GET',
-    chunks,
+    chunks = [],
     delayBetweenChunks = 0,
     keepOpen = false,
+    stream,
   } = config
+  return {
+    path,
+    host,
+    method,
+    streamBody:
+      stream ?? buildReadableStream(chunks, delayBetweenChunks, keepOpen),
+  }
+}
+
+const withStreamingNetwork = (
+  config: StreamingNetworkConfig | StreamingNetworkConfig[],
+) => {
+  const configs = Array.isArray(config) ? config : [config]
   const options = getOptions()
   updateOptions({
     ...options,
-    responses: [
-      ...options.responses,
-      {
-        path,
-        host,
-        method,
-        streamBody: buildReadableStream(chunks, delayBetweenChunks, keepOpen),
-      },
-    ],
+    responses: [...options.responses, ...configs.map(toStreamingResponse)],
   })
   return wrapWith()
 }
@@ -273,4 +294,4 @@ const setupPortals = (portalRootIds: string[]) => {
   })
 }
 
-export { wrap }
+export { wrap, createStreamController }

@@ -316,6 +316,47 @@ export const MyStreamingChatComponent = () => {
   )
 }
 
+export const MyTwoMessageStreamingComponent = () => {
+  const [responses, setResponses] = useState([])
+
+  useEffect(() => {
+    const readAll = async reader => {
+      const decoder = new TextDecoder()
+      let acc = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        acc += decoder.decode(value)
+      }
+      return acc
+    }
+
+    const run = async () => {
+      const first = await fetch(
+        new Request('my-host/chat/stream/', { method: 'POST' }),
+      )
+      const firstMessage = await readAll(first.body.getReader())
+      setResponses(prev => [...prev, firstMessage])
+
+      const second = await fetch(
+        new Request('my-host/chat/stream/', { method: 'POST' }),
+      )
+      const secondMessage = await readAll(second.body.getReader())
+      setResponses(prev => [...prev, secondMessage])
+    }
+
+    run()
+  }, [])
+
+  return (
+    <div>
+      {responses.map((message, index) => (
+        <span key={index}>{message}</span>
+      ))}
+    </div>
+  )
+}
+
 export const MyComponentWithFeedback = () => {
   const [feedback, setFeedback] = useState('DEFAULT')
 

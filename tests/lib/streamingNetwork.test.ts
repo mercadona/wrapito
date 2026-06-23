@@ -1,8 +1,11 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, waitFor } from '@testing-library/react'
 import { it, expect, vi } from 'vitest'
-import { wrap, configure } from '../../src/index'
+import { wrap, configure, createStreamController } from '../../src/index'
 
-import { MyStreamingChatComponent } from '../components.mock'
+import {
+  MyStreamingChatComponent,
+  MyTwoMessageStreamingComponent,
+} from '../components.mock'
 
 it('should stream all chunks and close', async () => {
   configure({ mount: render })
@@ -75,6 +78,56 @@ it('should stream chunks with global delay between chunks', async () => {
 
   expect(await screen.findByText('Chunk A')).toBeInTheDocument()
   expect(await screen.findByText('Chunk B')).toBeInTheDocument()
+})
+
+it('should serve sequential streaming responses to the same endpoint in order', async () => {
+  configure({ mount: render })
+
+  wrap(MyTwoMessageStreamingComponent)
+    .withStreamingNetwork([
+      {
+        path: '/chat/stream/',
+        host: 'my-host',
+        method: 'POST',
+        chunks: ['First response'],
+      },
+      {
+        path: '/chat/stream/',
+        host: 'my-host',
+        method: 'POST',
+        chunks: ['Second response'],
+      },
+    ])
+    .mount()
+
+  expect(await screen.findByText('First response')).toBeInTheDocument()
+  expect(await screen.findByText('Second response')).toBeInTheDocument()
+})
+
+it('should support a controllable stream that emits chunks on demand', async () => {
+  configure({ mount: render })
+
+  const chatStream = createStreamController()
+  wrap(MyStreamingChatComponent)
+    .withStreamingNetwork({
+      path: '/chat/stream/',
+      host: 'my-host',
+      method: 'POST',
+      stream: chatStream.stream,
+    })
+    .mount()
+
+  expect(await screen.findByText('Streaming...')).toBeInTheDocument()
+  expect(screen.queryByText('Hello')).not.toBeInTheDocument()
+
+  chatStream.sendChunk('Hello')
+  expect(await screen.findByText('Hello')).toBeInTheDocument()
+  expect(screen.getByText('Streaming...')).toBeInTheDocument()
+
+  chatStream.close()
+  await waitFor(() =>
+    expect(screen.queryByText('Streaming...')).not.toBeInTheDocument(),
+  )
 })
 
 it('should deliver chunks sequentially, not all at once', async () => {

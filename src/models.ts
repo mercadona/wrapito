@@ -53,9 +53,10 @@ export interface StreamingNetworkConfig {
   path: string
   host?: string
   method?: HttpMethod
-  chunks: StreamChunk[]
+  chunks?: StreamChunk[]
   delayBetweenChunks?: number
   keepOpen?: boolean
+  stream?: ReadableStream<Uint8Array<ArrayBuffer>>
 }
 
 export type DefaultUserLib = unknown
@@ -77,7 +78,7 @@ export interface Wrap<
 > {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
   withStreamingNetwork: (
-    config: StreamingNetworkConfig,
+    config: StreamingNetworkConfig | StreamingNetworkConfig[],
   ) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>

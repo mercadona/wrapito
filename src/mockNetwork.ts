@@ -68,7 +68,12 @@ const mockFetch = async (
   request: WrapRequest,
   debug: boolean,
 ) => {
-  const responseMatchingRequest = responses.find(getRequestMatcher(request))
+  const matchesRequest = getRequestMatcher(request)
+  const responseMatchingRequest = responses.find(
+    response =>
+      matchesRequest(response) &&
+      !(response.streamBody && response.hasBeenReturned),
+  )
 
   if (!responseMatchingRequest) {
     if (debug) {
@@ -76,6 +81,11 @@ const mockFetch = async (
     }
 
     return createDefaultResponse()
+  }
+
+  if (responseMatchingRequest.streamBody) {
+    responseMatchingRequest.hasBeenReturned = true
+    return createResponse(responseMatchingRequest)
   }
 
   const { multipleResponses } = responseMatchingRequest
