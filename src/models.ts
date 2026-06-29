@@ -42,9 +42,22 @@ export interface WrapResponse extends Partial<Response> {
   catchParams?: boolean
   delay?: number
   hasBeenReturned?: boolean
+  streamBody?: ReadableStream<Uint8Array<ArrayBuffer>>
 }
 
 export type NetworkResponses = WrapResponse | WrapResponse[]
+
+export type StreamChunk = string | { text: string; delay?: number }
+
+export interface StreamingNetworkConfig {
+  path: string
+  host?: string
+  method?: HttpMethod
+  chunks?: StreamChunk[]
+  delayBetweenChunks?: number
+  keepOpen?: boolean
+  stream?: ReadableStream<Uint8Array<ArrayBuffer>>
+}
 
 export type DefaultUserLib = unknown
 export type DefaultUserInstance = unknown
@@ -64,6 +77,9 @@ export interface Wrap<
   UserInteraction extends InteractionDescriptor = InteractionDescriptor,
 > {
   withNetwork: (responses?: NetworkResponses) => Wrap<UserInteraction>
+  withStreamingNetwork: (
+    config: StreamingNetworkConfig | StreamingNetworkConfig[],
+  ) => Wrap<UserInteraction>
   atPath: (path: string, historyState?: object) => Wrap<UserInteraction>
   withProps: (props: object) => Wrap<UserInteraction>
   withInteraction: (

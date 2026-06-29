@@ -20,21 +20,35 @@ const createDefaultResponse = async () => {
   return Promise.resolve(response)
 }
 
-const createResponse = async (mockResponse: Partial<Response>) => {
-  const { responseBody, status = 200, headers = {}, delay } = mockResponse
-  const response = {
+const buildStreamingResponse = (mockResponse: Partial<Response>) => {
+  const { streamBody, status = 200, headers = {} } = mockResponse
+  return {
+    body: streamBody,
+    status,
+    ok: status >= 200 && status <= 299,
+    headers: new Headers({ 'Content-Type': 'text/event-stream', ...headers }),
+  }
+}
+
+const buildJsonResponse = (mockResponse: Partial<Response>) => {
+  const { responseBody, status = 200, headers = {} } = mockResponse
+  return {
     json: () => Promise.resolve(responseBody),
     status,
     ok: status >= 200 && status <= 299,
     headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
   }
+}
 
-  if (!delay) return Promise.resolve(response)
+const createResponse = async (mockResponse: Partial<Response>) => {
+  const response = mockResponse.streamBody
+    ? buildStreamingResponse(mockResponse)
+    : buildJsonResponse(mockResponse)
+
+  if (!mockResponse.delay) return Promise.resolve(response)
 
   return new Promise(resolve =>
-    setTimeout(() => {
-      return resolve(response)
-    }, delay),
+    setTimeout(() => resolve(response), mockResponse.delay),
   )
 }
 
@@ -54,7 +68,12 @@ const mockFetch = async (
   request: WrapRequest,
   debug: boolean,
 ) => {
-  const responseMatchingRequest = responses.find(getRequestMatcher(request))
+  const matchesRequest = getRequestMatcher(request)
+  const responseMatchingRequest = responses.find(
+    response =>
+      matchesRequest(response) &&
+      !(response.streamBody && response.hasBeenReturned),
+  )
 
   if (!responseMatchingRequest) {
     if (debug) {
@@ -62,6 +81,11 @@ const mockFetch = async (
     }
 
     return createDefaultResponse()
+  }
+
+  if (responseMatchingRequest.streamBody) {
+    responseMatchingRequest.hasBeenReturned = true
+    return createResponse(responseMatchingRequest)
   }
 
   const { multipleResponses } = responseMatchingRequest
