@@ -20,4 +20,4 @@ jobs:
           npm run lint
           npm run test
           npm run build
-          npm run check:exports
+          npm run check:consumers

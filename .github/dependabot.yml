@@ -10,6 +10,10 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # chalk >=5 is ESM-only and breaks CJS consumers (#349)
+      - dependency-name: "chalk"
+        update-types: ["version-update:semver-major"]
     groups:
       react:
         patterns:

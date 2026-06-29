@@ -1,0 +1,8 @@
+{
+  "name": "wrapito-node-standard-consumer",
+  "private": true,
+  "description": "Requires the packed wrapito tarball like a CJS consumer on Node without require(ESM) support (<20.19, 22.0-22.11).",
+  "scripts": {
+    "test": "node --no-experimental-require-module test-cjs.js"
+  }
+}
