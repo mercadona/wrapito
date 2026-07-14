@@ -1,10 +1,9 @@
 import React, { Component, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter, Route, Router, Switch, useLocation } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
-import { applyMiddleware, createStore } from 'redux'
-import { thunk } from 'redux-thunk'
+import { configureStore, createSlice } from '@reduxjs/toolkit'
 
 export const MyComponent = () => <div>Foo</div>
 
@@ -65,8 +64,9 @@ export const myFakeModule = {
   myFakeFunction: () => null,
 }
 
-const Home = ({ history }) => {
-  const goToCategories = () => history.push('/categories')
+const Home = () => {
+  const navigate = useNavigate()
+  const goToCategories = () => navigate('/categories')
   myFakeModule.myFakeFunction('HOME')
   return (
     <div>
@@ -94,66 +94,37 @@ export const history = createBrowserHistory()
 
 export const MyAppWithRouting = () => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-        <Route
-          component={PageUsingLocationState}
-          key="page-using-location-state"
-          path="/page-using-location-state"
-          exact={true}
-        />
-      </Switch>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/page-using-location-state" element={<PageUsingLocationState />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
 export const MyAppWithBrowserRouting = () => {
   return (
     <BrowserRouter>
-      <Switch>
-        <Route key="home" path="/" component={Home} exact={true} />
-        <Route
-          key="categories"
-          path="/categories"
-          component={Categories}
-          exact={true}
-        />
-      </Switch>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<Categories />} />
+      </Routes>
     </BrowserRouter>
   )
 }
 
-const ACTION_TYPES = {
-  ADD: 'ADD',
-  REMOVE: 'REMOVE',
-}
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState: { products: 10 },
+  reducers: {
+    add: state => { state.products += 1 },
+    remove: state => { state.products -= 1 },
+  },
+})
 
-const add = () => ({ type: ACTION_TYPES.ADD })
-const remove = () => dispatch => dispatch({ type: ACTION_TYPES.REMOVE })
-
-function reducer(state = { products: 10 }, action) {
-  switch (action.type) {
-    case ACTION_TYPES.ADD:
-      return {
-        products: state.products + 1,
-      }
-
-    case ACTION_TYPES.REMOVE:
-      return {
-        products: state.products - 1,
-      }
-
-    default:
-      return state
-  }
-}
+const { add, remove } = cartSlice.actions
 
 const Cart = () => {
   const { products } = useSelector(state => state)
@@ -171,7 +142,7 @@ const Cart = () => {
 export const MyAppWithStore = () => {
   return (
     <Provider
-      store={createStore(reducer, { products: 10 }, applyMiddleware(thunk))}
+      store={configureStore({ reducer: cartSlice.reducer, preloadedState: { products: 10 } })}
     >
       <Cart />
     </Provider>
@@ -297,6 +268,93 @@ export const MyComponentWithPost = () => {
   }
 
   return <span>Not logged</span>
+}
+
+export const MyStreamingChatComponent = () => {
+  const [messages, setMessages] = useState([])
+  const [isStreaming, setIsStreaming] = useState(false)
+
+  useEffect(() => {
+    let reader = null
+    let mounted = true
+
+    const startStreaming = async () => {
+      setIsStreaming(true)
+      const response = await fetch(new Request('my-host/chat/stream/', { method: 'POST' }))
+      const decoder = new TextDecoder()
+      reader = response.body.getReader()
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done || !mounted) {
+            if (mounted) setIsStreaming(false)
+            break
+          }
+          setMessages(prev => [...prev, decoder.decode(value)])
+        }
+      } catch {
+        // Stream was cancelled on unmount
+      }
+    }
+
+    startStreaming()
+
+    return () => {
+      mounted = false
+      if (reader) reader.cancel()
+    }
+  }, [])
+
+  return (
+    <div>
+      {isStreaming && <span>Streaming...</span>}
+      {messages.map((msg, i) => (
+        <span key={i}>{msg}</span>
+      ))}
+    </div>
+  )
+}
+
+export const MyTwoMessageStreamingComponent = () => {
+  const [responses, setResponses] = useState([])
+
+  useEffect(() => {
+    const readAll = async reader => {
+      const decoder = new TextDecoder()
+      let acc = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        acc += decoder.decode(value)
+      }
+      return acc
+    }
+
+    const run = async () => {
+      const first = await fetch(
+        new Request('my-host/chat/stream/', { method: 'POST' }),
+      )
+      const firstMessage = await readAll(first.body.getReader())
+      setResponses(prev => [...prev, firstMessage])
+
+      const second = await fetch(
+        new Request('my-host/chat/stream/', { method: 'POST' }),
+      )
+      const secondMessage = await readAll(second.body.getReader())
+      setResponses(prev => [...prev, secondMessage])
+    }
+
+    run()
+  }, [])
+
+  return (
+    <div>
+      {responses.map((message, index) => (
+        <span key={index}>{message}</span>
+      ))}
+    </div>
+  )
 }
 
 export const MyComponentWithFeedback = () => {

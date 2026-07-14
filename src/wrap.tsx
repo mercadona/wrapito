@@ -5,6 +5,8 @@ import { getConfig } from './config'
 import { updateOptions, getOptions } from './options'
 import type {
   Response,
+  StreamChunk,
+  StreamingNetworkConfig,
   Wrap,
   WrapExtensionAPI,
   Extension,
@@ -49,6 +51,7 @@ const wrapWith = (): Wrap => {
   return {
     withProps,
     withNetwork,
+    withStreamingNetwork,
     withInteraction,
     atPath,
     debugRequests,
@@ -89,6 +92,78 @@ const extendWith = () => {
   const extensionNames = Object.keys(extensions)
 
   return extensionNames.reduce(buildExtensions, {})
+}
+
+const buildReadableStream = (
+  chunks: StreamChunk[],
+  delayBetweenChunks: number,
+  keepOpen: boolean,
+): ReadableStream<Uint8Array<ArrayBuffer>> => {
+  const encoder = new TextEncoder()
+  return new ReadableStream<Uint8Array<ArrayBuffer>>({
+    async start(controller) {
+      for (const chunk of chunks) {
+        const text = typeof chunk === 'string' ? chunk : chunk.text
+        const chunkDelay =
+          typeof chunk === 'object' && chunk.delay !== undefined
+            ? chunk.delay
+            : delayBetweenChunks
+        if (chunkDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, chunkDelay))
+        }
+        controller.enqueue(encoder.encode(text))
+      }
+      if (!keepOpen) {
+        controller.close()
+      }
+    },
+  })
+}
+
+const createStreamController = () => {
+  const encoder = new TextEncoder()
+  let controller: ReadableStreamDefaultController<Uint8Array<ArrayBuffer>>
+  const stream = new ReadableStream<Uint8Array<ArrayBuffer>>({
+    start(streamController) {
+      controller = streamController
+    },
+  })
+  return {
+    stream,
+    sendChunk: (text: string) => controller.enqueue(encoder.encode(text)),
+    close: () => controller.close(),
+  }
+}
+
+const toStreamingResponse = (config: StreamingNetworkConfig): Response => {
+  const {
+    path,
+    host,
+    method = 'GET',
+    chunks = [],
+    delayBetweenChunks = 0,
+    keepOpen = false,
+    stream,
+  } = config
+  return {
+    path,
+    host,
+    method,
+    streamBody:
+      stream ?? buildReadableStream(chunks, delayBetweenChunks, keepOpen),
+  }
+}
+
+const withStreamingNetwork = (
+  config: StreamingNetworkConfig | StreamingNetworkConfig[],
+) => {
+  const configs = Array.isArray(config) ? config : [config]
+  const options = getOptions()
+  updateOptions({
+    ...options,
+    responses: [...options.responses, ...configs.map(toStreamingResponse)],
+  })
+  return wrapWith()
 }
 
 const withProps = (props: object) => {
@@ -185,7 +260,7 @@ const getMount = () => {
 
   const rendered = mount(<C {...props} />)
 
-  if (!!interaction) {
+  if (interaction) {
     const user = interaction.setup
       ? interaction.setup(interaction.userLib, interactionConfig)
       : interaction.userLib
@@ -219,4 +294,4 @@ const setupPortals = (portalRootIds: string[]) => {
   })
 }
 
-export { wrap }
+export { wrap, createStreamController }
