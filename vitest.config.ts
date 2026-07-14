@@ -9,5 +9,10 @@ export default defineConfig({
     coverage: {
       provider: 'istanbul',
     },
+    typecheck: {
+      enabled: true,
+      ignoreSourceErrors: true,
+      tsconfig: './tests/typings/tsconfig.json',
+    },
   },
 })
