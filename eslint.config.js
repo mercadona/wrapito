@@ -5,7 +5,7 @@ import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'scripts/check-consumers.cjs', 'tests/publish-ci'] },
   js.configs.recommended,
   tseslint.configs.recommended,
   reactPlugin.configs.flat.recommended,

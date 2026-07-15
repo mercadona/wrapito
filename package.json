@@ -33,8 +33,8 @@
     "publish-package": "npm run build && npm publish",
     "publish-package:beta": "npm run build && npm publish --tag beta",
     "typecheck": "tsc --noEmit dist/index.d.ts",
-    "check:exports": "attw --pack .",
-    "prepublishOnly": "npm run build && npm run check:exports"
+    "check:consumers": "node scripts/check-consumers.cjs",
+    "prepublishOnly": "npm run build && npm run check:consumers"
   },
   "repository": {
     "type": "git",
@@ -67,7 +67,6 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "0.18.3",
     "@eslint/js": "^9.39.4",
     "@reduxjs/toolkit": "^2.12.0",
     "@testing-library/jest-dom": "^6.9.1",
