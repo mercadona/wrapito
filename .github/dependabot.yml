@@ -10,6 +10,13 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # chalk is ESM-only from 5.0.0 (4.1.2 is the last CJS release). tsup
+      # externalises it, so dist/index.cjs ships a bare require("chalk") that
+      # breaks every CommonJS consumer. CI never runs the CJS bundle, so a
+      # major bump lands green.
+      - dependency-name: "chalk"
+        update-types: ["version-update:semver-major"]
     groups:
       patches:
         applies-to: version-updates
