@@ -23,6 +23,40 @@ updates:
           - "minor"
         patterns:
           - "*"
+      react:
+        applies-to: version-updates
+        update-types:
+          - "major"
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      vite:
+        applies-to: version-updates
+        update-types:
+          - "major"
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+      eslint:
+        applies-to: version-updates
+        update-types:
+          - "major"
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "@typescript-eslint/*"
+          - "eslint-plugin-*"
+      testing:
+        applies-to: version-updates
+        update-types:
+          - "major"
+        patterns:
+          - "@testing-library/*"
+          - "vitest"
+          - "jsdom"
+          - "@vitest/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
