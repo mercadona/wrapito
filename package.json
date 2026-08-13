@@ -67,7 +67,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "0.18.3",
+    "@arethetypeswrong/cli": "0.18.5",
     "@eslint/js": "^9.39.4",
     "@reduxjs/toolkit": "^2.12.0",
     "@testing-library/jest-dom": "^6.9.1",
