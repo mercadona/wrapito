@@ -34,7 +34,8 @@
     "publish-package:beta": "npm run build && npm publish --tag beta",
     "typecheck": "tsc --noEmit dist/index.d.ts",
     "check:exports": "attw --pack .",
-    "prepublishOnly": "npm run build && npm run check:exports"
+    "check:cjs-deps": "node scripts/check-cjs-deps.js",
+    "prepublishOnly": "npm run build && npm run check:exports && npm run check:cjs-deps"
   },
   "repository": {
     "type": "git",

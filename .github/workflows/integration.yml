@@ -21,3 +21,4 @@ jobs:
           npm run test
           npm run build
           npm run check:exports
+          npm run check:cjs-deps
