@@ -17,9 +17,7 @@ interface MockResultThrow {
   value: any
 }
 type MockResult<T> =
-  | MockResultReturn<T>
-  | MockResultThrow
-  | MockResultIncomplete
+  MockResultReturn<T> | MockResultThrow | MockResultIncomplete
 interface MockContext<TArgs, TReturns> {
   /**
    * This is an array containing all arguments for each call. One item of the array is the arguments of that call.
