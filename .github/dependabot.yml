@@ -7,6 +7,13 @@ updates:
       interval: "daily"
       time: "07:00"
     open-pull-requests-limit: 15
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+      exclude:
+        - "@mercadona/*"
     commit-message:
       prefix: chore
       include: scope
@@ -18,6 +25,19 @@ updates:
       - dependency-name: "chalk"
         update-types: ["version-update:semver-major"]
     groups:
+      security:
+        applies-to: security-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+      security-major:
+        applies-to: security-updates
+        update-types:
+          - "major"
+        patterns:
+          - "*"
       patches:
         applies-to: version-updates
         update-types:
